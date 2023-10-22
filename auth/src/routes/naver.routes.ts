@@ -7,13 +7,13 @@ const router = Router();
 router.get('/callback',  asyncErrorHandler(
     async (req: Request, res: Response, next: NextFunction) => {
         const { code } = req.query;
-        const userInfo = await naverAuthentication(code as string);
+        const authToken = await naverAuthentication(code as string);
 
         const response: ApiResponse<string> = {
             status: 200,
             data: '성공'
         }
-        res.cookie('joonbee-token',userInfo, { httpOnly : false});
+        res.cookie('joonbee-token', authToken, { httpOnly: false, sameSite: 'none', secure: true });
         res.json(response);
     })
 );

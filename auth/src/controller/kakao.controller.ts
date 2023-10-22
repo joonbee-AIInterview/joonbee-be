@@ -28,8 +28,21 @@ export const kakaoAuthentication = async (code: string) => {
             Authorization: `Bearer ${accessToken}`,
         },
     });
-    const token: string = JWT.generateToken(userInfoRequest.data.id);
+    const userData = userInfoRequest.data.kakao_account;
+    const kakaoPK = userInfoRequest.data.id;
+    const token: string = await JWT.generateToken(userInfoRequest.data.id);
     console.log(token);
+
+    const hasEmail: boolean = userData.has_email;
+
+    // 프로필 사진은 필수동의함
+    let profileImage = userData.profile.thumbnail_image_url;
+    let email: string = 'joonbee@kakao.com';
+
+    if(hasEmail){
+        email = userData.email;
+    }
+
     return token;
   
 }

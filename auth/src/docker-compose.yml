@@ -7,7 +7,7 @@ services:
     environment:
       POSTGRES_USER: user
       POSTGRES_PASSWORD: password
-      POSTGRES_DB: mydatabase
+      POSTGRES_DB: member
       POSTGRES_INITDB_ARGS: "--encoding=UTF-8 --lc-collate=C.UTF-8 --lc-ctype=C.UTF-8"
     ports:
       - "5432:5432"
@@ -17,9 +17,11 @@ services:
   redis:
     image: redis:latest
     container_name: joonbee_redis_container
-    command: redis-server --requirepass 1234
+    volumes:
+      - ./redis.conf:/usr/local/etc/redis/redis.conf
+    command: redis-server /usr/local/etc/redis/redis.conf
     ports:
-      - "6379:6379"
+      - "6378:6379"
 
 volumes:
   pgdata:

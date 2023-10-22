@@ -3,6 +3,7 @@ import dotenv from 'dotenv';
 import axios from 'axios';
 import kakaoRouter from './routes/kakao.routes';
 import naverRouter from './routes/naver.routes';
+import googleRouter from './routes/google.routes';
 import { CustomError, ApiResponse } from './utils/api.utils';
 
 const app = express();
@@ -10,9 +11,9 @@ const PORT = 3000;
 
 app.use('/auth/kakao',kakaoRouter);
 app.use('/auth/naver', naverRouter);
+app.use('/auth/google',googleRouter);
 
 app.use((err: any, req: any, res: any, next: any) => { // Exception 비들웨어는 라우터 뒤에 위치해야한다.
-    console.log('에러잡기');
     if (err instanceof CustomError) {
         const response :ApiResponse<string> = {
             status: err.statusCode,

@@ -30,7 +30,7 @@ export const naverAuthentication = async (code: string) => {
     });
 
     console.log(userInfoRequest.data.response);
-    const token: string = JWT.generateToken(userInfoRequest.data.response);
+    const token: string = await JWT.generateToken(userInfoRequest.data.response);
     return token;
 
 }
