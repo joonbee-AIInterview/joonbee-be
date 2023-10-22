@@ -3,14 +3,13 @@ version: '3'
 services:
   postgres:
     image: postgres:latest
-    container_name: joonbee-test-server
+    container_name: joonbee-postgres-server
     environment:
-      POSTGRES_USER: user
-      POSTGRES_PASSWORD: password
-      POSTGRES_DB: member
-      POSTGRES_INITDB_ARGS: "--encoding=UTF-8 --lc-collate=C.UTF-8 --lc-ctype=C.UTF-8"
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=postgres
     ports:
-      - "5432:5432"
+      - "5436:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
 

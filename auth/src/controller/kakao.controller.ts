@@ -1,6 +1,7 @@
 import axios from 'axios';
 import * as JWT from '../utils/jwt.utils';
 import dotenv from 'dotenv';
+import * as crypto from 'crypto';
 
 dotenv.config();
 
@@ -9,6 +10,10 @@ export const kakaoAuthentication = async (code: string) => {
     const clientSecret: string = process.env.KAKAO_CLIENTSECRET as string;
     const KAKAO_TOKEN_URL: string = process.env.KAKAO_TOKEN_URL as string;
     const KAKAO_USERINFO_URL: string = process.env.KAKAO_USERINFO_URL as string;
+
+    const sha256Hash = crypto.createHash('sha256');
+    const tempPwd = "1234";
+
 
     const { data } = await axios.post(KAKAO_TOKEN_URL, null,{
         params: {
@@ -23,6 +28,7 @@ export const kakaoAuthentication = async (code: string) => {
     });
     const accessToken = data.access_token;
     console.log(accessToken);
+
     const userInfoRequest = await axios.get(KAKAO_USERINFO_URL,{
         headers: {
             Authorization: `Bearer ${accessToken}`,
@@ -30,11 +36,7 @@ export const kakaoAuthentication = async (code: string) => {
     });
     const userData = userInfoRequest.data.kakao_account;
     const kakaoPK = userInfoRequest.data.id;
-    const token: string = await JWT.generateToken(userInfoRequest.data.id);
-    console.log(token);
-
     const hasEmail: boolean = userData.has_email;
-
     // 프로필 사진은 필수동의함
     let profileImage = userData.profile.thumbnail_image_url;
     let email: string = 'joonbee@kakao.com';
@@ -42,6 +44,13 @@ export const kakaoAuthentication = async (code: string) => {
     if(hasEmail){
         email = userData.email;
     }
+    const payLoad: JWT.Payload = {
+        id: kakaoPK,
+        email: email,
+        password: sha256Hash.update(tempPwd).digest('hex'),
+        thumbnail: profileImage
+    }
+    const token: string = await JWT.generateToken(payLoad);
 
     return token;
   

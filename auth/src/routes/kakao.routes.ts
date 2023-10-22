@@ -22,13 +22,4 @@ router.get('/callback', asyncErrorHandler(
     }
 ));
 
-router.get('/test', asyncErrorHandler(
-    async (req: Request, res: Response) => {
-       
-        const test = await JWT.generateToken('test');
-        res.cookie('joonbee-token',test, { httpOnly : false});
-        res.json(test);
-    }
-));
-
 export default router;
