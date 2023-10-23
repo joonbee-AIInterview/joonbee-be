@@ -3,12 +3,17 @@ import pool from '../utils/database.utils';
 
 export class UserRepository {
     
-    async insertMember(id: string, email: string, password: string, thumbnail: string): Promise<void> {
+    async insertMember(id: string, email: string, password: string, thumbnail: string, type: string): Promise<void> {
         const client = await pool.connect();
 
         try{
-            const queryText = 'INSERT INTO Member(id, email, password, thumbnail) VALUES($1, $2, $3, $4)';
-            await client.query(queryText, [id, email, password, thumbnail]);
+            const currentDate = new Date();
+            const formattedDate = (currentDate.getFullYear().toString())+(currentDate.getMonth() + 1)+(currentDate.getDate().toString());
+            const queryText = `INSERT INTO Member(id, email, password, thumbnail, created_at, updated_at, login_type) 
+            VALUES($1, $2, $3, $4, TO_TIMESTAMP($5, 'YYYYMMDDHH24'), TO_TIMESTAMP($5, 'YYYYMMDDHH24'), $6)`;
+            console.log(formattedDate);
+            await client.query(queryText, [id, email, password, thumbnail, formattedDate, type]);
+            
         }catch(err){
             console.error(err);
             throw new CustomError("insertMember ERROR member.repository 12", 500);

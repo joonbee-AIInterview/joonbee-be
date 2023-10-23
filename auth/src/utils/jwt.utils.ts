@@ -9,7 +9,8 @@ export interface Payload { // 구현 다 되면 사용예쩡
     id: string,
     email: string,
     password: string,
-    thumbnail: string
+    thumbnail: string,
+    loginType: string
 }
 
 /**
@@ -26,9 +27,11 @@ export const generateToken = async (payload: Payload): Promise<string> => {
     try{
         setAsync(accessToken, expire, refreshToken);
         const existMemberData: boolean = await userRepository.existMember(payload.id, payload.email);
+        
         if(!existMemberData){
-            userRepository.insertMember(payload.id, payload.email, payload.password, payload.thumbnail);
+            userRepository.insertMember(payload.id, payload.email, payload.password, payload.thumbnail, payload.loginType);
         }
+
         return accessToken;
 
     }catch(err){

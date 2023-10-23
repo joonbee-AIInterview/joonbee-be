@@ -14,7 +14,6 @@ export const kakaoAuthentication = async (code: string) => {
     const sha256Hash = crypto.createHash('sha256');
     const tempPwd = "1234";
 
-
     const { data } = await axios.post(KAKAO_TOKEN_URL, null,{
         params: {
             grant_type: 'authorization_code',
@@ -35,24 +34,28 @@ export const kakaoAuthentication = async (code: string) => {
         },
     });
     const userData = userInfoRequest.data.kakao_account;
-    const kakaoPK = userInfoRequest.data.id;
-    const hasEmail: boolean = userData.has_email;
     // 프로필 사진은 필수동의함
-    let profileImage = userData.profile.thumbnail_image_url;
-    let email: string = 'joonbee@kakao.com';
-
-    if(hasEmail){
-        email = userData.email;
-    }
-    const payLoad: JWT.Payload = {
-        id: kakaoPK,
-        email: email,
+    let payLoad: JWT.Payload = {
+        id: userInfoRequest.data.id,
+        email: userData.email,
         password: sha256Hash.update(tempPwd).digest('hex'),
-        thumbnail: profileImage
+        thumbnail: userData.profile.thumbnail_image_url,
+        loginType: 'KAKAO'
     }
-    const token: string = await JWT.generateToken(payLoad);
+    payLoad = handleNullCheck(payLoad);
 
+    const token: string = await JWT.generateToken(payLoad);
     return token;
   
+}
+
+const handleNullCheck = (payLoad: JWT.Payload): JWT.Payload => {
+    return {
+        id : payLoad.id !== null ? payLoad.id : 'NONE',
+        email : payLoad.email !== null ? payLoad.email : 'NONE',
+        password : payLoad.password !== null ? payLoad.password : 'NONE',
+        thumbnail : payLoad.thumbnail !== null ? payLoad.thumbnail : 'NONE', 
+        loginType: 'KAKAO'
+    };
 }
 
