@@ -2,3 +2,4 @@
 /docker-compose.yml
 /auth/dist
 /api/joonbee-api/node_modules
+/api/joonbee-api/.env
