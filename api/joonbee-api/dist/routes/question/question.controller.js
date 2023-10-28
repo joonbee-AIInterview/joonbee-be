@@ -14,8 +14,9 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.QuestionController = void 0;
 const common_1 = require("@nestjs/common");
-const save_in_question_dto_1 = require("../../dto/question/save-in-question.dto");
+const save_request_dto_1 = require("./dto/save.request.dto");
 const question_service_1 = require("./question.service");
+const update_request_dto_1 = require("./dto/update.request.dto");
 let QuestionController = class QuestionController {
     constructor(questionService) {
         this.questionService = questionService;
@@ -23,9 +24,9 @@ let QuestionController = class QuestionController {
     async saveQuestion(saveQuestionDto) {
         const questionId = await this.questionService.saveQuestion(saveQuestionDto);
         return Object.assign({
-            data: questionId,
+            data: { questionId: questionId },
             statusCode: 201,
-            statusMsg: `saved successfully`,
+            statusMsg: `saveQuestion을 이용한 Question 데이터 추가가 성공적으로 완료되었습니다.`,
         });
     }
     async findAllWithCategory() {
@@ -36,7 +37,20 @@ let QuestionController = class QuestionController {
             statusMsg: `findAllWithCategory을 이용한 Question 데이터 조회가 성공적으로 완료되었습니다.`,
         });
     }
-    async deleteQuestion() {
+    async deleteQuestion(questionId) {
+        await this.questionService.deleteQuestion(questionId);
+        return Object.assign({
+            data: { questionId: questionId },
+            statusCode: 201,
+            statusMsg: `deleteQuestion을 이용한 Question 데이터 삭제가 성공적으로 완료되었습니다.`,
+        });
+    }
+    async updateQuestion(questionId, updateQuestionDto) {
+        await this.questionService.updateQuestion(questionId, updateQuestionDto);
+        return Object.assign({
+            statusCode: 201,
+            statusMsg: `updateQuestion을 이용한 Question 데이터 수정이 성공적으로 완료되었습니다.`,
+        });
     }
 };
 exports.QuestionController = QuestionController;
@@ -44,7 +58,7 @@ __decorate([
     (0, common_1.Post)('save'),
     __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [save_in_question_dto_1.SaveQuestionDto]),
+    __metadata("design:paramtypes", [save_request_dto_1.SaveQuestionDto]),
     __metadata("design:returntype", Promise)
 ], QuestionController.prototype, "saveQuestion", null);
 __decorate([
@@ -54,13 +68,22 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], QuestionController.prototype, "findAllWithCategory", null);
 __decorate([
-    (0, common_1.Delete)(),
+    (0, common_1.Delete)('delete/:questionId'),
+    __param(0, (0, common_1.Param)('questionId')),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
+    __metadata("design:paramtypes", [Number]),
     __metadata("design:returntype", Promise)
 ], QuestionController.prototype, "deleteQuestion", null);
+__decorate([
+    (0, common_1.Put)('update/:questionId'),
+    __param(0, (0, common_1.Param)('questionId')),
+    __param(1, (0, common_1.Body)(new common_1.ValidationPipe())),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Number, update_request_dto_1.UpdateQuestionDto]),
+    __metadata("design:returntype", Promise)
+], QuestionController.prototype, "updateQuestion", null);
 exports.QuestionController = QuestionController = __decorate([
-    (0, common_1.Controller)('question'),
+    (0, common_1.Controller)('api/question'),
     __metadata("design:paramtypes", [question_service_1.QuestionService])
 ], QuestionController);
 //# sourceMappingURL=question.controller.js.map

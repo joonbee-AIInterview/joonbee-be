@@ -25,16 +25,18 @@ let QuestionService = class QuestionService {
     }
     async saveQuestion(saveQuestionDto) {
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
+=======
+>>>>>>> 80c5793 (KAN-27 FEAT: Question 등록 삭제 전체조회 구현, 수정 미완성)
         const categoryPS = await this.categoryRepository.findOne({ where: { category_name: saveQuestionDto.category_name,
-                category_level: saveQuestionDto.category_level } });
+                category_upper_id: saveQuestionDto.category_upper_id } });
         if (categoryPS == null) {
-            console.log('잘못된 category_name 또는 category_level을 입력했습니다.');
+            console.log('잘못된 category_name 또는 category_upper_id을 입력했습니다.');
             return;
         }
         const questionPS = await this.questionRepository.createQueryBuilder('question')
-            .insert()
-            .values({
+            .insert().values({
             category: categoryPS,
             gpt_flag: saveQuestionDto.gpt_flag,
             question_level: saveQuestionDto.question_level,
@@ -47,7 +49,21 @@ let QuestionService = class QuestionService {
         return await this.questionRepository.createQueryBuilder('question')
             .leftJoinAndSelect('question.category', 'category')
             .getMany();
+<<<<<<< HEAD
 >>>>>>> d342bec (KAN-27 FEAT: findAllWithCategory, saveQuestion 구현)
+=======
+    }
+    async deleteQuestion(questionId) {
+        await this.questionRepository.delete(questionId);
+    }
+    async updateQuestion(questionId, updateQuestionDto) {
+        const questionPS = await this.questionRepository.findOne({ where: { id: questionId } });
+        if (!questionPS) {
+            throw new common_1.HttpException('NOT_FOUND', common_1.HttpStatus.NOT_FOUND);
+        }
+        console.log('전 : ' + questionPS.question_content);
+        console.log('후 : ' + questionPS);
+>>>>>>> 80c5793 (KAN-27 FEAT: Question 등록 삭제 전체조회 구현, 수정 미완성)
     }
 };
 exports.QuestionService = QuestionService;

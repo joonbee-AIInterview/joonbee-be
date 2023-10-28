@@ -1,3 +1,4 @@
+import { UpdateQuestionDto } from './../routes/question/dto/update.request.dto';
 import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm/index';
 import { Category } from './category.entity';
 
@@ -29,4 +30,17 @@ export class Question {
 
      @UpdateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP', onUpdate: 'CURRENT_TIMESTAMP'  })
      updated_at: Date;
+
+     /**
+      * 의미있는 메소드
+      */
+     updateQuestion(updateQuestionDto: UpdateQuestionDto) {
+          this.category.category_name = updateQuestionDto.category_name;
+          this.category.category_level = updateQuestionDto.category_level;
+          this.category.category_upper_id = updateQuestionDto.category_upper_id;
+          this.gpt_flag = updateQuestionDto.gpt_flag;
+          this.question_level = updateQuestionDto.question_level;
+          this.writer = updateQuestionDto.writer;
+          this.question_content = updateQuestionDto.question_content;
+     }
 }

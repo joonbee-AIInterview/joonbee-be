@@ -27,6 +27,10 @@ __decorate([
     __metadata("design:type", Number)
 ], Category.prototype, "category_level", void 0);
 __decorate([
+    (0, index_1.Column)(),
+    __metadata("design:type", Number)
+], Category.prototype, "category_upper_id", void 0);
+__decorate([
     (0, index_1.CreateDateColumn)(),
     __metadata("design:type", Date)
 ], Category.prototype, "created_at", void 0);

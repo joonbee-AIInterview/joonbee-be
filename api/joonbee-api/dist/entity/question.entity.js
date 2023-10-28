@@ -13,6 +13,15 @@ exports.Question = void 0;
 const index_1 = require("typeorm/index");
 const category_entity_1 = require("./category.entity");
 let Question = class Question {
+    updateQuestion(updateQuestionDto) {
+        this.category.category_name = updateQuestionDto.category_name;
+        this.category.category_level = updateQuestionDto.category_level;
+        this.category.category_upper_id = updateQuestionDto.category_upper_id;
+        this.gpt_flag = updateQuestionDto.gpt_flag;
+        this.question_level = updateQuestionDto.question_level;
+        this.writer = updateQuestionDto.writer;
+        this.question_content = updateQuestionDto.question_content;
+    }
 };
 exports.Question = Question;
 __decorate([

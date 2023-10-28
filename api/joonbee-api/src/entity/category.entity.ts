@@ -12,6 +12,9 @@ export class Category { // 1 Category : N Question
      @Column()
      category_level: number; // 0 1
 
+     @Column()
+     category_upper_id: number;
+
      @CreateDateColumn()
      created_at: Date;
 
