@@ -24,6 +24,30 @@ let QuestionService = class QuestionService {
         this.categoryRepository = categoryRepository;
     }
     async saveQuestion(saveQuestionDto) {
+<<<<<<< HEAD
+=======
+        const categoryPS = await this.categoryRepository.findOne({ where: { category_name: saveQuestionDto.category_name,
+                category_level: saveQuestionDto.category_level } });
+        if (categoryPS == null) {
+            console.log('잘못된 category_name 또는 category_level을 입력했습니다.');
+            return;
+        }
+        const questionPS = await this.questionRepository.createQueryBuilder('question')
+            .insert()
+            .values({
+            category: categoryPS,
+            gpt_flag: saveQuestionDto.gpt_flag,
+            question_level: saveQuestionDto.question_level,
+            writer: saveQuestionDto.writer,
+            question_content: saveQuestionDto.question_content
+        }).execute();
+        return questionPS.identifiers[0].id;
+    }
+    async findAllWithCategory() {
+        return await this.questionRepository.createQueryBuilder('question')
+            .leftJoinAndSelect('question.category', 'category')
+            .getMany();
+>>>>>>> d342bec (KAN-27 FEAT: findAllWithCategory, saveQuestion 구현)
     }
 };
 exports.QuestionService = QuestionService;

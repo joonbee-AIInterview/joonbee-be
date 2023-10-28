@@ -21,7 +21,7 @@ let CategoryController = class CategoryController {
         return Object.assign({
             data: categoryList,
             statusCode: 200,
-            statusMsg: `findAll을 이용한 데이터 조회가 성공적으로 완료되었습니다.`,
+            statusMsg: `findAll을 이용한 Category 데이터 조회가 성공적으로 완료되었습니다.`,
         });
     }
 };

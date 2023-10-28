@@ -13,7 +13,7 @@ export class Question {
      category: Category;
 
      @Column('tinyint', { nullable: false })
-     gpt_flag: number;
+     gpt_flag: number; // 0 1
 
      @Column('int', { nullable: false })
      question_level: number;

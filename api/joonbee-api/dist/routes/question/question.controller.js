@@ -21,7 +21,22 @@ let QuestionController = class QuestionController {
         this.questionService = questionService;
     }
     async saveQuestion(saveQuestionDto) {
-        console.log(saveQuestionDto);
+        const questionId = await this.questionService.saveQuestion(saveQuestionDto);
+        return Object.assign({
+            data: questionId,
+            statusCode: 201,
+            statusMsg: `saved successfully`,
+        });
+    }
+    async findAllWithCategory() {
+        const questionList = await this.questionService.findAllWithCategory();
+        return Object.assign({
+            data: questionList,
+            statusCode: 200,
+            statusMsg: `findAllWithCategory을 이용한 Question 데이터 조회가 성공적으로 완료되었습니다.`,
+        });
+    }
+    async deleteQuestion() {
     }
 };
 exports.QuestionController = QuestionController;
@@ -32,6 +47,18 @@ __decorate([
     __metadata("design:paramtypes", [save_in_question_dto_1.SaveQuestionDto]),
     __metadata("design:returntype", Promise)
 ], QuestionController.prototype, "saveQuestion", null);
+__decorate([
+    (0, common_1.Get)('all'),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", Promise)
+], QuestionController.prototype, "findAllWithCategory", null);
+__decorate([
+    (0, common_1.Delete)(),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", Promise)
+], QuestionController.prototype, "deleteQuestion", null);
 exports.QuestionController = QuestionController = __decorate([
     (0, common_1.Controller)('question'),
     __metadata("design:paramtypes", [question_service_1.QuestionService])
