@@ -12,12 +12,13 @@ const member_controller_1 = require("./member.controller");
 const member_service_1 = require("./member.service");
 const member_entity_1 = require("../../entity/member.entity");
 const typeorm_1 = require("@nestjs/typeorm");
+const typeorm_2 = require("typeorm");
 let MemberModule = class MemberModule {
 };
 exports.MemberModule = MemberModule;
 exports.MemberModule = MemberModule = __decorate([
     (0, common_1.Module)({
-        imports: [typeorm_1.TypeOrmModule.forFeature([member_entity_1.Member])],
+        imports: [typeorm_1.TypeOrmModule.forFeature([member_entity_1.Member, typeorm_2.Like])],
         controllers: [member_controller_1.MemberController],
         providers: [member_service_1.MemberService]
     })

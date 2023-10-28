@@ -15,20 +15,35 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.MemberService = void 0;
 const common_1 = require("@nestjs/common");
 const typeorm_1 = require("@nestjs/typeorm");
+const common_2 = require("../../common/config/common");
+const like_entity_1 = require("../../entity/like.entity");
 const member_entity_1 = require("../../entity/member.entity");
 const typeorm_2 = require("typeorm");
 let MemberService = class MemberService {
-    constructor(memberRepository) {
+    constructor(memberRepository, likeRepository) {
         this.memberRepository = memberRepository;
+        this.likeRepository = likeRepository;
     }
-    async findAll() {
-        return this.memberRepository.find();
+    async insertLike(memberId, questionId) {
+        const likeEntity = this.likeRepository.create({
+            memberId: memberId,
+            questionId: questionId
+        });
+        try {
+            await this.likeRepository.save(likeEntity);
+        }
+        catch (error) {
+            console.log('insertLIKE ERROR member.service 27 \n' + error);
+            throw new common_2.CustomError('좋아요 실패', 500);
+        }
     }
 };
 exports.MemberService = MemberService;
 exports.MemberService = MemberService = __decorate([
     (0, common_1.Injectable)(),
     __param(0, (0, typeorm_1.InjectRepository)(member_entity_1.Member)),
-    __metadata("design:paramtypes", [typeorm_2.Repository])
+    __param(1, (0, typeorm_1.InjectRepository)(like_entity_1.Like)),
+    __metadata("design:paramtypes", [typeorm_2.Repository,
+        typeorm_2.Repository])
 ], MemberService);
 //# sourceMappingURL=member.service.js.map
