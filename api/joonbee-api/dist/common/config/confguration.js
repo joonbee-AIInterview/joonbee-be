@@ -13,6 +13,8 @@ exports.TypeOrmConfigService = void 0;
 const config_1 = require("@nestjs/config");
 const common_1 = require("@nestjs/common");
 const member_entity_1 = require("../../entity/member.entity");
+const category_entity_1 = require("../../entity/category.entity");
+const question_entity_1 = require("../../entity/question.entity");
 let TypeOrmConfigService = class TypeOrmConfigService {
     constructor(configService) {
         this.configService = configService;
@@ -25,7 +27,7 @@ let TypeOrmConfigService = class TypeOrmConfigService {
             "username": this.configService.get('DATABASE_USERNAME'),
             "password": this.configService.get('DATABASE_PASSWORD'),
             "database": this.configService.get('DATABASE_DB'),
-            "entities": [member_entity_1.Member],
+            "entities": [member_entity_1.Member, category_entity_1.Category, question_entity_1.Question],
             "synchronize": false
         };
     }
