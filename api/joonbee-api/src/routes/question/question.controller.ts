@@ -29,6 +29,16 @@ export class QuestionController {
           });
      }
 
+     @Get(':questionId')
+     async findOneWithCategory(@Param('questionId') questionId: number): Promise<Question> {
+          const question = await this.questionService.findOneWithCategory(questionId);
+          return Object.assign({
+               data: question,
+               statusCode: 200,
+               statusMsg: `findOneWithCategory을 이용한 Question 데이터 조회가 성공적으로 완료되었습니다.`,
+          });
+     }
+
      @Delete('delete/:questionId')
      async deleteQuestion(@Param('questionId') questionId: number): Promise<number> {
           await this.questionService.deleteQuestion(questionId);
@@ -41,8 +51,9 @@ export class QuestionController {
      
      @Put('update/:questionId')
      async updateQuestion(@Param('questionId') questionId: number, @Body(new ValidationPipe()) updateQuestionDto: UpdateQuestionDto): Promise<void> {
-          await this.questionService.updateQuestion(questionId, updateQuestionDto);
+          const question =  await this.questionService.updateQuestion(questionId, updateQuestionDto);
           return Object.assign({
+               data: { question },
                statusCode: 201,
                statusMsg: `updateQuestion을 이용한 Question 데이터 수정이 성공적으로 완료되었습니다.`,
           });

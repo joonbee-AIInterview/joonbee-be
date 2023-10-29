@@ -37,6 +37,14 @@ let QuestionController = class QuestionController {
             statusMsg: `findAllWithCategory을 이용한 Question 데이터 조회가 성공적으로 완료되었습니다.`,
         });
     }
+    async findOneWithCategory(questionId) {
+        const question = await this.questionService.findOneWithCategory(questionId);
+        return Object.assign({
+            data: question,
+            statusCode: 200,
+            statusMsg: `findOneWithCategory을 이용한 Question 데이터 조회가 성공적으로 완료되었습니다.`,
+        });
+    }
     async deleteQuestion(questionId) {
         await this.questionService.deleteQuestion(questionId);
         return Object.assign({
@@ -46,8 +54,9 @@ let QuestionController = class QuestionController {
         });
     }
     async updateQuestion(questionId, updateQuestionDto) {
-        await this.questionService.updateQuestion(questionId, updateQuestionDto);
+        const question = await this.questionService.updateQuestion(questionId, updateQuestionDto);
         return Object.assign({
+            data: { question },
             statusCode: 201,
             statusMsg: `updateQuestion을 이용한 Question 데이터 수정이 성공적으로 완료되었습니다.`,
         });
@@ -67,6 +76,13 @@ __decorate([
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", Promise)
 ], QuestionController.prototype, "findAllWithCategory", null);
+__decorate([
+    (0, common_1.Get)(':questionId'),
+    __param(0, (0, common_1.Param)('questionId')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Number]),
+    __metadata("design:returntype", Promise)
+], QuestionController.prototype, "findOneWithCategory", null);
 __decorate([
     (0, common_1.Delete)('delete/:questionId'),
     __param(0, (0, common_1.Param)('questionId')),

@@ -1,4 +1,5 @@
 export declare class SaveQuestionDto {
+<<<<<<< HEAD
 <<<<<<< HEAD:api/joonbee-api/dist/dto/question/save-in-question.dto.d.ts
 <<<<<<< HEAD
     readonly main_category: string;
@@ -15,6 +16,12 @@ export declare class SaveQuestionDto {
 >>>>>>> d342bec (KAN-27 FEAT: findAllWithCategory, saveQuestion 구현)
 =======
 >>>>>>> 80c5793 (KAN-27 FEAT: Question 등록 삭제 전체조회 구현, 수정 미완성):api/joonbee-api/dist/routes/question/dto/save.request.dto.d.ts
+=======
+    readonly categoryName: string;
+    readonly categoryUpperId: number;
+    readonly gptFlag: number;
+    readonly questionLevel: number;
+>>>>>>> 9a165dc (KAN-27 FEAT: Question 수정, 특정 번호 조회 구현)
     readonly writer: string;
-    readonly question_content: string;
+    readonly questionContent: string;
 }

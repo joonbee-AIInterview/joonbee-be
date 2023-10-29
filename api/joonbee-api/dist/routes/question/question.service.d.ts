@@ -17,7 +17,12 @@ export declare class QuestionService {
 =======
     saveQuestion(saveQuestionDto: SaveQuestionDto): Promise<number>;
     findAllWithCategory(): Promise<Question[]>;
+    findOneWithCategory(questionId: number): Promise<Question>;
     deleteQuestion(questionId: number): Promise<void>;
+<<<<<<< HEAD
     updateQuestion(questionId: number, updateQuestionDto: UpdateQuestionDto): Promise<void>;
 >>>>>>> 80c5793 (KAN-27 FEAT: Question 등록 삭제 전체조회 구현, 수정 미완성)
+=======
+    updateQuestion(questionId: number, updateQuestionDto: UpdateQuestionDto): Promise<number>;
+>>>>>>> 9a165dc (KAN-27 FEAT: Question 수정, 특정 번호 조회 구현)
 }

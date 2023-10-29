@@ -17,8 +17,8 @@ export class QuestionService {
 
      async saveQuestion(saveQuestionDto: SaveQuestionDto): Promise<number> {
           // SELECT * FROM category WHERE category_name='category_name' and category_upper_id=category_upper_id;
-          const categoryPS = await this.categoryRepository.findOne({ where: { category_name: saveQuestionDto.category_name,
-                                                                              category_upper_id: saveQuestionDto.category_upper_id } });
+          const categoryPS = await this.categoryRepository.findOne({ where: { categoryName: saveQuestionDto.categoryName,
+                                                                              categoryUpperId: saveQuestionDto.categoryUpperId } });
           if (categoryPS == null) {
                console.log('잘못된 category_name 또는 category_upper_id을 입력했습니다.');
                return;
@@ -28,10 +28,10 @@ export class QuestionService {
           const questionPS = await this.questionRepository.createQueryBuilder('question')
                          .insert().values({
                               category: categoryPS,
-                              gpt_flag: saveQuestionDto.gpt_flag,
-                              question_level: saveQuestionDto.question_level,
+                              gptFlag: saveQuestionDto.gptFlag,
+                              questionLevel: saveQuestionDto.questionLevel,
                               writer: saveQuestionDto.writer,
-                              question_content: saveQuestionDto.question_content
+                              questionContent: saveQuestionDto.questionContent
                          }).execute();
           return questionPS.identifiers[0].id;
      }
@@ -43,18 +43,42 @@ export class QuestionService {
                          .getMany();
      }
 
+     async findOneWithCategory(questionId: number): Promise<Question> {
+          const questionPS = await this.questionRepository.findOne({ where: { id: questionId }});
+          if (!questionPS) {
+               throw new HttpException('NOT_FOUND', HttpStatus.NOT_FOUND);
+          }
+
+          return await this.questionRepository.createQueryBuilder('question')
+                         .where('question.id = :questionId', { questionId })
+                         .leftJoinAndSelect('question.category', 'category')
+                         .getOne();
+     }
+
      async deleteQuestion(questionId: number): Promise<void> {
           await this.questionRepository.delete(questionId);
      }
 
-     async updateQuestion(questionId: number, updateQuestionDto: UpdateQuestionDto): Promise<void> {
-          const questionPS = await this.questionRepository.findOne({ where: { id: questionId } });
+     async updateQuestion(questionId: number, updateQuestionDto: UpdateQuestionDto): Promise<number> {
+          const questionPS: Question = await this.questionRepository.findOne({ where: { id: questionId } });
           if (!questionPS) {
                throw new HttpException('NOT_FOUND', HttpStatus.NOT_FOUND);
           }
-          console.log('전 : ' + questionPS.question_content);
-          //questionPS.updateQuestion(updateQuestionDto);
-          console.log('후 : ' + questionPS);
 
+          console.log('전 : ' + questionPS.questionContent);
+          const category = await this.categoryRepository.findOne({ where: {categoryName: updateQuestionDto.categoryName}});
+          
+          const questionUP = await this.questionRepository.createQueryBuilder('question')
+                         .update().set({
+                              category: { id: category.id },
+                              gptFlag: updateQuestionDto.gptFlag,
+                              questionLevel: updateQuestionDto.questionLevel,
+                              writer: updateQuestionDto.writer,
+                              questionContent: updateQuestionDto.questionContent
+                         })
+                         .where("id = :id", {id: questionPS.id})
+                         .execute();
+
+          return questionPS.id;
      }
 }

@@ -15,6 +15,7 @@ export declare class QuestionController {
     constructor(questionService: QuestionService);
     saveQuestion(saveQuestionDto: SaveQuestionDto): Promise<number>;
     findAllWithCategory(): Promise<Question[]>;
+    findOneWithCategory(questionId: number): Promise<Question>;
     deleteQuestion(questionId: number): Promise<number>;
     updateQuestion(questionId: number, updateQuestionDto: UpdateQuestionDto): Promise<void>;
 }
