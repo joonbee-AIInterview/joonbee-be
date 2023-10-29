@@ -19,22 +19,50 @@ const common_2 = require("../../common/config/common");
 const like_entity_1 = require("../../entity/like.entity");
 const member_entity_1 = require("../../entity/member.entity");
 const typeorm_2 = require("typeorm");
+const interview_entity_1 = require("../../entity/interview.entity");
 let MemberService = class MemberService {
-    constructor(memberRepository, likeRepository) {
+    constructor(memberRepository, likeRepository, interviewRepository) {
         this.memberRepository = memberRepository;
         this.likeRepository = likeRepository;
+        this.interviewRepository = interviewRepository;
     }
-    async insertLike(memberId, questionId) {
-        const likeEntity = this.likeRepository.create({
-            memberId: memberId,
-            questionId: questionId
-        });
+    async insertLike(memberId, interviewId) {
         try {
+            const likeEntity = this.likeRepository.create({
+                memberId: memberId,
+                interviewId: interviewId
+            });
+            console.log(likeEntity);
             await this.likeRepository.save(likeEntity);
         }
         catch (error) {
             console.log('insertLIKE ERROR member.service 27 \n' + error);
             throw new common_2.CustomError('좋아요 실패', 500);
+        }
+    }
+    async insertInterview(memberId, questionInfo) {
+        try {
+            const result = await this.interviewRepository
+                .createQueryBuilder('i')
+                .select('MAX(i.count_flag)', 'countFlag')
+                .where('i.member_id = :memberId', { memberId })
+                .getRawOne();
+            const maxCount = result.countFlag + 1;
+            const interviews = [];
+            questionInfo.questions.forEach(el => {
+                const interviewEntity = this.interviewRepository.create({
+                    memberId: memberId,
+                    questionId: el.questionId,
+                    questionContent: el.questionContent,
+                    countFlag: maxCount
+                });
+                interviews.push(interviewEntity);
+            });
+            this.interviewRepository.save(interviews);
+        }
+        catch (error) {
+            console.log('insertInterview ERROR member.serivce 40 \n' + error);
+            throw new common_2.CustomError('면접 저장 실패', 500);
         }
     }
 };
@@ -43,7 +71,9 @@ exports.MemberService = MemberService = __decorate([
     (0, common_1.Injectable)(),
     __param(0, (0, typeorm_1.InjectRepository)(member_entity_1.Member)),
     __param(1, (0, typeorm_1.InjectRepository)(like_entity_1.Like)),
+    __param(2, (0, typeorm_1.InjectRepository)(interview_entity_1.Interview)),
     __metadata("design:paramtypes", [typeorm_2.Repository,
+        typeorm_2.Repository,
         typeorm_2.Repository])
 ], MemberService);
 //# sourceMappingURL=member.service.js.map

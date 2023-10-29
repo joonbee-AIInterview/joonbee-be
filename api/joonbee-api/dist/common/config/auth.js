@@ -15,13 +15,13 @@ let TokenAuthGuard = class TokenAuthGuard {
         const request = context.switchToHttp().getRequest();
         const response = context.switchToHttp().getResponse();
         const token = request.cookies?.['joonbee-token'];
-        console.log(request.cookies);
         if (!token) {
             throw new common_2.CustomError('TOKEN이 없습니다.', 401);
         }
         try {
             const decoded = (0, jsonwebtoken_1.verify)(token, 'test');
-            response.locals.memberId = decoded.id;
+            console.log(decoded.joonbee);
+            response.locals.memberId = decoded.joonbee;
             return true;
         }
         catch (err) {

@@ -1,6 +1,7 @@
 import { Entity, JoinColumn, ManyToOne, PrimaryColumn } from "typeorm";
 import { Member } from "./member.entity";
 import { Question } from "./question.entity";
+import { Interview } from "./interview.entity";
 
 
 @Entity('like')
@@ -8,15 +9,15 @@ export class Like{
     @PrimaryColumn({ name: 'member_id'})
     memberId: string;
 
-    @PrimaryColumn({ name: 'question_id'})
-    questionId: number;
+    @PrimaryColumn({ name: 'interview_id'})
+    interviewId: number;
 
     @ManyToOne(() => Member, member => member.id, { onDelete: 'CASCADE'})
-    @JoinColumn({ name: 'question_id'})
+    @JoinColumn({ name: 'member_id'})
     member: Member;
 
-    @ManyToOne(() => Question, question => question.id, { onDelete: 'CASCADE'})
-    @JoinColumn({ name: 'question_id' })
-    question: Question;
+    @ManyToOne(() => Interview, interview => interview.id, { onDelete: 'CASCADE'})
+    @JoinColumn({ name: 'interview_id' })
+    interview: Interview;
 
 }

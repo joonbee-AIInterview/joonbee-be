@@ -17,6 +17,7 @@ const common_1 = require("@nestjs/common");
 const member_service_1 = require("./member.service");
 const request_dto_1 = require("./dto/request.dto");
 const auth_1 = require("../../common/config/auth");
+const swagger_1 = require("@nestjs/swagger");
 let MemberController = class MemberController {
     constructor(memberService) {
         this.memberService = memberService;
@@ -26,7 +27,17 @@ let MemberController = class MemberController {
     }
     async insertLikeHandler(dto, response) {
         const memberId = response.locals.memberId;
-        this.memberService.insertLike(memberId, dto.questionId);
+        const interviewId = dto.interviewId;
+        this.memberService.insertLike(memberId, interviewId);
+        const apiResponse = {
+            status: 200,
+            data: '성공'
+        };
+        response.json(apiResponse);
+    }
+    async insertInterviewAndQuestion(data, response) {
+        const memberId = response.locals.memberId;
+        this.memberService.insertInterview(memberId, data);
         const apiResponse = {
             status: 200,
             data: '성공'
@@ -48,11 +59,21 @@ __decorate([
     (0, common_1.UseGuards)(auth_1.TokenAuthGuard),
     (0, common_1.Post)('like'),
     __param(0, (0, common_1.Body)(new common_1.ValidationPipe())),
-    __param(1, (0, common_1.Req)()),
+    __param(1, (0, common_1.Res)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [request_dto_1.RequestLikeDTO, Object]),
     __metadata("design:returntype", Promise)
 ], MemberController.prototype, "insertLikeHandler", null);
+__decorate([
+    (0, common_1.UseGuards)(auth_1.TokenAuthGuard),
+    (0, common_1.Post)('interview/save'),
+    (0, swagger_1.ApiBody)({ type: request_dto_1.RequestInterviewSaveDTO }),
+    __param(0, (0, common_1.Body)(new common_1.ValidationPipe())),
+    __param(1, (0, common_1.Res)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [request_dto_1.RequestInterviewSaveDTO, Object]),
+    __metadata("design:returntype", Promise)
+], MemberController.prototype, "insertInterviewAndQuestion", null);
 exports.MemberController = MemberController = __decorate([
     (0, common_1.Controller)('api/member'),
     __metadata("design:paramtypes", [member_service_1.MemberService])

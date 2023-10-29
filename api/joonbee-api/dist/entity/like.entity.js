@@ -12,7 +12,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.Like = void 0;
 const typeorm_1 = require("typeorm");
 const member_entity_1 = require("./member.entity");
-const question_entity_1 = require("./question.entity");
+const interview_entity_1 = require("./interview.entity");
 let Like = class Like {
 };
 exports.Like = Like;
@@ -21,19 +21,19 @@ __decorate([
     __metadata("design:type", String)
 ], Like.prototype, "memberId", void 0);
 __decorate([
-    (0, typeorm_1.PrimaryColumn)({ name: 'question_id' }),
+    (0, typeorm_1.PrimaryColumn)({ name: 'interview_id' }),
     __metadata("design:type", Number)
-], Like.prototype, "questionId", void 0);
+], Like.prototype, "interviewId", void 0);
 __decorate([
     (0, typeorm_1.ManyToOne)(() => member_entity_1.Member, member => member.id, { onDelete: 'CASCADE' }),
-    (0, typeorm_1.JoinColumn)({ name: 'question_id' }),
+    (0, typeorm_1.JoinColumn)({ name: 'member_id' }),
     __metadata("design:type", member_entity_1.Member)
 ], Like.prototype, "member", void 0);
 __decorate([
-    (0, typeorm_1.ManyToOne)(() => question_entity_1.Question, question => question.id, { onDelete: 'CASCADE' }),
-    (0, typeorm_1.JoinColumn)({ name: 'question_id' }),
-    __metadata("design:type", question_entity_1.Question)
-], Like.prototype, "question", void 0);
+    (0, typeorm_1.ManyToOne)(() => interview_entity_1.Interview, interview => interview.id, { onDelete: 'CASCADE' }),
+    (0, typeorm_1.JoinColumn)({ name: 'interview_id' }),
+    __metadata("design:type", interview_entity_1.Interview)
+], Like.prototype, "interview", void 0);
 exports.Like = Like = __decorate([
     (0, typeorm_1.Entity)('like')
 ], Like);

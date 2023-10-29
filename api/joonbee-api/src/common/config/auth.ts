@@ -1,16 +1,14 @@
 import { CanActivate, ExecutionContext, Injectable } from "@nestjs/common";
-import { ExecutionContextHost } from "@nestjs/core/helpers/execution-context-host";
 import { CustomError } from "./common";
 import { verify } from 'jsonwebtoken';
+import { Response, Request } from "express";
 
 @Injectable()
 export class TokenAuthGuard implements CanActivate {
     async canActivate(context: ExecutionContext): Promise<boolean> {
-        const request = context.switchToHttp().getRequest();
-        const response = context.switchToHttp().getResponse();
+        const request: Request = context.switchToHttp().getRequest();
+        const response: Response = context.switchToHttp().getResponse();
         const token = request.cookies?.['joonbee-token'];
-        
-        console.log(request.cookies);
 
         if (!token) {
             throw new CustomError('TOKEN이 없습니다.',401);
@@ -18,7 +16,8 @@ export class TokenAuthGuard implements CanActivate {
 
         try{
             const decoded = verify(token, 'test');
-            response.locals.memberId = decoded.id;
+            console.log(decoded.joonbee);
+            response.locals.memberId = decoded.joonbee;
             return true; 
         }catch(err){
             console.error(err);

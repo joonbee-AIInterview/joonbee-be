@@ -9,7 +9,8 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.RequestLikeDTO = void 0;
+exports.RequestInterviewSaveDTO = exports.RequestLikeDTO = void 0;
+const swagger_1 = require("@nestjs/swagger");
 const class_validator_1 = require("class-validator");
 class RequestLikeDTO {
 }
@@ -17,5 +18,13 @@ exports.RequestLikeDTO = RequestLikeDTO;
 __decorate([
     (0, class_validator_1.IsNotEmpty)(),
     __metadata("design:type", Number)
-], RequestLikeDTO.prototype, "questionId", void 0);
+], RequestLikeDTO.prototype, "interviewId", void 0);
+class RequestInterviewSaveDTO {
+}
+exports.RequestInterviewSaveDTO = RequestInterviewSaveDTO;
+__decorate([
+    (0, class_validator_1.IsNotEmpty)(),
+    (0, swagger_1.ApiProperty)({ description: 'questionId(number), questionContent(string), answerContent(string)' }),
+    __metadata("design:type", Array)
+], RequestInterviewSaveDTO.prototype, "questions", void 0);
 //# sourceMappingURL=request.dto.js.map

@@ -27,11 +27,30 @@ export const generateToken = async (payload: Payload): Promise<string> => {
     try{
         setAsync(accessToken, expire, refreshToken);
         const existMemberData: boolean = await userRepository.existMember(payload.id, payload.email);
-        
+
         if(!existMemberData){
             userRepository.insertMember(payload.id, payload.email, payload.password, payload.thumbnail, payload.loginType);
+            throw new CustomError(payload.id,410);
         }
 
+        return accessToken;
+
+    }catch(err){
+        console.error(err);
+        throw new CustomError("TOKEN ERROR", 500);
+    }
+}
+
+export const generateTokenForNickName = async (id: string): Promise<string> => { 
+    const expire: number = 7 * 24 * 60 * 60; // refreshToken 만료시간 ( 7 일 )
+    
+    if(!id) throw new CustomError("Error creating OAuth token", 401);
+    const userRepository: UserRepository = new UserRepository();
+    const accessToken: string = jwt.sign({joonbee : id}, TOKEN_KEY, { 'expiresIn' : '1h' } );
+    const refreshToken: string = jwt.sign({joonbee : id}, TOKEN_KEY, { 'expiresIn' : '7d' } );
+    
+    try{
+        setAsync(accessToken, expire, refreshToken);
         return accessToken;
 
     }catch(err){

@@ -4,7 +4,8 @@ import { TypeOrmModuleOptions, TypeOrmOptionsFactory } from '@nestjs/typeorm';
 import { Member } from 'src/entity/member.entity';
 import { Category } from 'src/entity/category.entity';
 import { Question } from 'src/entity/question.entity';
-import { Like } from 'typeorm';
+import { Like } from 'src/entity/like.entity';
+import { Interview } from 'src/entity/interview.entity';
 
 @Injectable()
 export class TypeOrmConfigService implements TypeOrmOptionsFactory {
@@ -19,8 +20,9 @@ export class TypeOrmConfigService implements TypeOrmOptionsFactory {
         "username": this.configService.get<string>('DATABASE_USERNAME'),
         "password": this.configService.get<string>('DATABASE_PASSWORD'),
         "database": this.configService.get<string>('DATABASE_DB'),
-        "entities": [Member, Category, Question, Like],
-        "synchronize": false
+        "entities": [Member, Category, Question, Like, Interview],
+        "synchronize": false,
+        "logging": true
         };
       }
 }

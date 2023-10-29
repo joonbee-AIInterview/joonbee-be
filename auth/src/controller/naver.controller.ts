@@ -26,9 +26,7 @@ export const naverAuthentication = async (code: string) => {
             'Content-type': 'application/x-www-form-urlencoded;charset=utf-8',
         }
     });
-    console.log(data);
     const accessToken = data.access_token;
-    console.log(accessToken);
 
     const userInfoRequest = await axios.get(NAVER_USERINFO_URL,{
         headers: {
@@ -45,7 +43,6 @@ export const naverAuthentication = async (code: string) => {
         thumbnail: userData.profile_image,
         loginType: 'NAVER'
     }
-    console.log(userInfoRequest.data.response);
 
     payload = handleNullCheck(payload);
     const token: string = await JWT.generateToken(payload);
