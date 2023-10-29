@@ -20,15 +20,9 @@ export class TypeOrmConfigService implements TypeOrmOptionsFactory {
         "username": this.configService.get<string>('DATABASE_USERNAME'),
         "password": this.configService.get<string>('DATABASE_PASSWORD'),
         "database": this.configService.get<string>('DATABASE_DB'),
-<<<<<<< HEAD
         "entities": [Member, Category, Question, Like, Interview],
         "synchronize": false,
         "logging": true
-=======
-        "entities": [Member, Category, Question, Like],
-        "synchronize": true,
-        "logging":true // Query log
->>>>>>> 80c5793 (KAN-27 FEAT: Question 등록 삭제 전체조회 구현, 수정 미완성)
         };
       }
 }

@@ -24,18 +24,8 @@ let QuestionService = class QuestionService {
         this.categoryRepository = categoryRepository;
     }
     async saveQuestion(saveQuestionDto) {
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
-=======
->>>>>>> 80c5793 (KAN-27 FEAT: Question 등록 삭제 전체조회 구현, 수정 미완성)
-        const categoryPS = await this.categoryRepository.findOne({ where: { category_name: saveQuestionDto.category_name,
-                category_upper_id: saveQuestionDto.category_upper_id } });
-=======
         const categoryPS = await this.categoryRepository.findOne({ where: { categoryName: saveQuestionDto.categoryName,
                 categoryUpperId: saveQuestionDto.categoryUpperId } });
->>>>>>> 9a165dc (KAN-27 FEAT: Question 수정, 특정 번호 조회 구현)
         if (categoryPS == null) {
             console.log('잘못된 category_name 또는 category_upper_id을 입력했습니다.');
             return;
@@ -54,9 +44,6 @@ let QuestionService = class QuestionService {
         return await this.questionRepository.createQueryBuilder('question')
             .leftJoinAndSelect('question.category', 'category')
             .getMany();
-<<<<<<< HEAD
->>>>>>> d342bec (KAN-27 FEAT: findAllWithCategory, saveQuestion 구현)
-=======
     }
     async findOneWithCategory(questionId) {
         const questionPS = await this.questionRepository.findOne({ where: { id: questionId } });
@@ -76,11 +63,6 @@ let QuestionService = class QuestionService {
         if (!questionPS) {
             throw new common_1.HttpException('NOT_FOUND', common_1.HttpStatus.NOT_FOUND);
         }
-<<<<<<< HEAD
-        console.log('전 : ' + questionPS.question_content);
-        console.log('후 : ' + questionPS);
->>>>>>> 80c5793 (KAN-27 FEAT: Question 등록 삭제 전체조회 구현, 수정 미완성)
-=======
         console.log('전 : ' + questionPS.questionContent);
         const category = await this.categoryRepository.findOne({ where: { categoryName: updateQuestionDto.categoryName } });
         const questionUP = await this.questionRepository.createQueryBuilder('question')
@@ -94,7 +76,6 @@ let QuestionService = class QuestionService {
             .where("id = :id", { id: questionPS.id })
             .execute();
         return questionPS.id;
->>>>>>> 9a165dc (KAN-27 FEAT: Question 수정, 특정 번호 조회 구현)
     }
 };
 exports.QuestionService = QuestionService;

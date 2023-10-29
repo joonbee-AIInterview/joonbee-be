@@ -29,13 +29,8 @@ let TypeOrmConfigService = class TypeOrmConfigService {
             "username": this.configService.get('DATABASE_USERNAME'),
             "password": this.configService.get('DATABASE_PASSWORD'),
             "database": this.configService.get('DATABASE_DB'),
-<<<<<<< HEAD
             "entities": [member_entity_1.Member, category_entity_1.Category, question_entity_1.Question, like_entity_1.Like, interview_entity_1.Interview],
             "synchronize": false,
-=======
-            "entities": [member_entity_1.Member, category_entity_1.Category, question_entity_1.Question, typeorm_1.Like],
-            "synchronize": true,
->>>>>>> 80c5793 (KAN-27 FEAT: Question 등록 삭제 전체조회 구현, 수정 미완성)
             "logging": true
         };
     }
