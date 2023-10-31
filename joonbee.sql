@@ -35,12 +35,18 @@ CREATE TABLE `interview` (
   `member_id` varchar(255) NOT NULL,
   `created_at` datetime DEFAULT CURRENT_TIMESTAMP,
   `updated_at` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  `question_id` bigint NOT NULL,
-  `question_content` text NOT NULL,
-  `count_flag` int not NULL,
   PRIMARY KEY (`id`),
   KEY `member_id` (`member_id`),
-  KEY `question_id` (`question_id`),
   CONSTRAINT `interview_ibfk_1` FOREIGN KEY (`member_id`) REFERENCES `member` (`id`) ON DELETE CASCADE,
-  CONSTRAINT `interview_ibfk_2` FOREIGN KEY (`question_id`) REFERENCES `question` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
+
+
+CREATE TABLE `interview_and_question` (
+  `interview_id` bigint NOT NULL,
+  `question_id` bigint NOT NULL,
+  `answer_content` text not null,
+  PRIMARY KEY (`interview_id`,`question_id`),
+  KEY `question_id` (`question_id`),
+  CONSTRAINT `interview_and_question_ibfk_1` FOREIGN KEY (`interview_id`) REFERENCES `interview` (`id`),
+  CONSTRAINT `interview_and_question_ibfk_2` FOREIGN KEY (`question_id`) REFERENCES `question` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci

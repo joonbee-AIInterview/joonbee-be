@@ -7,6 +7,7 @@ import { Member } from 'src/entity/member.entity';
 import { Repository } from 'typeorm';
 import { RequestInterviewSaveDTO } from './dto/request.dto';
 import { Interview } from 'src/entity/interview.entity';
+import { InterviewAndQuestion } from 'src/entity/and.question.entity';
 
 @Injectable()
 export class MemberService {
@@ -17,9 +18,14 @@ export class MemberService {
         @InjectRepository(Like)
         private readonly likeRepository: Repository<Like>,
         @InjectRepository(Interview)
-        private readonly interviewRepository: Repository<Interview> 
+        private readonly interviewRepository: Repository<Interview>,
+        @InjectRepository(InterviewAndQuestion)
+        private readonly andQuestionRepository: Repository<InterviewAndQuestion>
     ){}
-
+    /**
+     * @note 면접에 좋아요를 누르면 insert 되는 코드
+     * @TODO 아직 구현 안함
+     */
     async insertLike(memberId: string, interviewId: number): Promise<void>{
         try{
             const likeEntity = this.likeRepository.create({
@@ -35,30 +41,26 @@ export class MemberService {
         }
     }
 
-
+    /**
+     * @note interview 엔티티를 먼저 저장하고, interview_and_question 데이터를 저장한다.
+     */
     async insertInterview(memberId: string, questionInfo: RequestInterviewSaveDTO): Promise<void>{
         try{
-            const result = await this.interviewRepository
-                .createQueryBuilder('i')
-                .select('MAX(i.count_flag)','countFlag')
-                .where('i.member_id = :memberId',{ memberId })
-                .getRawOne();
+            const interviewObject = this.interviewRepository.create({ memberId });
+            const interviewEntity: Interview = await this.interviewRepository.save(interviewObject);
 
-            const maxCount:number = result.countFlag + 1;
-
-            const interviews: Interview[] = []; 
+            const entityArr: InterviewAndQuestion[] = [];
             questionInfo.questions.forEach(el => {
-                const interviewEntity = this.interviewRepository.create({
-                    memberId: memberId,
-                    questionId: el.questionId,
-                    questionContent: el.questionContent,
-                    countFlag: maxCount
+                const entity = this.andQuestionRepository.create({
+                    questionId : el.questionId,
+                    answerContent: el.answerContent,
+                    interviewId: interviewEntity.id
                 });
 
-                interviews.push(interviewEntity);
+                entityArr.push(entity);
             });
 
-            this.interviewRepository.save(interviews);
+            await this.andQuestionRepository.save(entityArr);
 
         }catch(error){
             console.log('insertInterview ERROR member.serivce 40 \n' + error);

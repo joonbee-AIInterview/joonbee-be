@@ -6,6 +6,7 @@ import { Category } from 'src/entity/category.entity';
 import { Question } from 'src/entity/question.entity';
 import { Like } from 'src/entity/like.entity';
 import { Interview } from 'src/entity/interview.entity';
+import { InterviewAndQuestion } from 'src/entity/and.question.entity';
 
 @Injectable()
 export class TypeOrmConfigService implements TypeOrmOptionsFactory {
@@ -20,7 +21,7 @@ export class TypeOrmConfigService implements TypeOrmOptionsFactory {
         "username": this.configService.get<string>('DATABASE_USERNAME'),
         "password": this.configService.get<string>('DATABASE_PASSWORD'),
         "database": this.configService.get<string>('DATABASE_DB'),
-        "entities": [Member, Category, Question, Like, Interview],
+        "entities": [Member, Category, Question, Like, Interview, InterviewAndQuestion],
         "synchronize": false,
         "logging": true
         };

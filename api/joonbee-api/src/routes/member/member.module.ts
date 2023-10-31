@@ -5,9 +5,10 @@ import { Member } from 'src/entity/member.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Interview } from 'src/entity/interview.entity';
 import { Like } from 'src/entity/like.entity';
+import { InterviewAndQuestion } from 'src/entity/and.question.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Member, Like, Interview])],
+  imports: [TypeOrmModule.forFeature([Member, Like, Interview, InterviewAndQuestion])],
   controllers: [MemberController],
   providers: [MemberService]
 })

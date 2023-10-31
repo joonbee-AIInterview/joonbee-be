@@ -2,6 +2,7 @@ import { Controller, Get, Res } from '@nestjs/common';
 import { AppService } from './app.service';
 import * as jwt from 'jsonwebtoken';
 import { Response } from 'express';
+import { CustomError } from './common/config/common';
 
 @Controller()
 export class AppController {
@@ -9,6 +10,7 @@ export class AppController {
 
   @Get()
   getHello(): string {
+    throw new CustomError('에러닷',401);
     return this.appService.getHello();
   }
 
@@ -22,4 +24,6 @@ export class AppController {
 
     res.send('쿠키발급함');
   }
+
+
 }
