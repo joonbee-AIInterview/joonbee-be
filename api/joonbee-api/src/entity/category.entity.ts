@@ -6,15 +6,18 @@ export class Category { // 1 Category : N Question
      @PrimaryGeneratedColumn()
      id: number;
 
-     @Column()
-     category_name: string;
+     @Column({ type: 'varchar', length: 255, name: 'category_name' })
+     categoryName: string;
 
-     @Column()
-     category_level: number; // 0 1
+     @Column({ type: 'tinyint', name: 'category_level' })
+     categoryLevel: number; // 0 1
 
-     @CreateDateColumn()
-     created_at: Date;
+     @Column({ type: 'int', name: 'category_upper_id' })
+     categoryUpperId: number;
 
-     @UpdateDateColumn()
-     updated_at: Date;
+     @CreateDateColumn({ name: 'created_at' })
+     createdAt: Date;
+
+     @UpdateDateColumn({ name: 'updated_at' })
+     updatedAt: Date;
 }

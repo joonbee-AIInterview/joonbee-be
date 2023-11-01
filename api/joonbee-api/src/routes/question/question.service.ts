@@ -1,6 +1,6 @@
-import { Injectable } from "@nestjs/common";
+import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { SaveQuestionDto } from "src/dto/question/save-in-question.dto";
+import { SaveQuestionDto } from "src/routes/question/dto/save.request.dto";
 import { Category } from "src/entity/category.entity";
 import { Question } from "src/entity/question.entity";
 import { Repository } from "typeorm";
@@ -13,16 +13,72 @@ export class QuestionService {
                private questionRepository: Repository<Question>,
                @InjectRepository(Category)
                private categoryRepository: Repository<Category>){}
-     
-     async saveQuestion(saveQuestionDto: SaveQuestionDto): Promise<void> {
-          // 기존에 있는 질문인지 유효성 검사
-          // 있으면 제거, 없으면 생성
-          // 없는 경우, 카테고리테이블과 일치하게만들고 카테고리 조회 후
-          // 카테고리(FK) 가져와서 질문에 같이 저장
-          
-          // const categoryPS =  this.categoryRepository.findOne({ where: {category_name: saveQuestionDto.main_category}  });
-          // const questionPS = await this.questionRepository.save(SaveQuestionDto);
-          // return 
+
+     async saveQuestion(saveQuestionDto: SaveQuestionDto): Promise<number> {
+          // SELECT * FROM category WHERE category_name='category_name' and category_upper_id=category_upper_id;
+          const categoryPS = await this.categoryRepository.findOne({ where: { categoryName: saveQuestionDto.categoryName,
+                                                                              categoryUpperId: saveQuestionDto.categoryUpperId } });
+          if (categoryPS == null) {
+               console.log('잘못된 category_name 또는 category_upper_id을 입력했습니다.');
+               return;
+          }
+
+          // INSERT INTO question(...) VALUES(...);
+          const questionPS = await this.questionRepository.createQueryBuilder('question')
+                         .insert().values({
+                              category: categoryPS,
+                              gptFlag: saveQuestionDto.gptFlag,
+                              questionLevel: saveQuestionDto.questionLevel,
+                              writer: saveQuestionDto.writer,
+                              questionContent: saveQuestionDto.questionContent
+                         }).execute();
+          return questionPS.identifiers[0].id;
      }
 
+     async findAllWithCategory(): Promise<Question[]> {
+          // SELECT * FROM question LEFT JOIN category ON question.category_id = category.id; 
+          return await this.questionRepository.createQueryBuilder('question')
+                         .leftJoinAndSelect('question.category', 'category')
+                         .getMany();
+     }
+
+     async findOneWithCategory(questionId: number): Promise<Question> {
+          const questionPS = await this.questionRepository.findOne({ where: { id: questionId }});
+          console.log(questionPS);
+          if (!questionPS) {
+               throw new HttpException('NOT_FOUND', HttpStatus.NOT_FOUND);
+          }
+
+          return await this.questionRepository.createQueryBuilder('question')
+                         .where('question.id = :questionId', { questionId })
+                         .leftJoinAndSelect('question.category', 'category')
+                         .getOne();
+     }
+
+     async deleteQuestion(questionId: number): Promise<void> {
+          await this.questionRepository.delete(questionId);
+     }
+
+     async updateQuestion(questionId: number, updateQuestionDto: SaveQuestionDto): Promise<number> {
+          const questionPS: Question = await this.questionRepository.findOne({ where: { id: questionId } });
+          if (!questionPS) {
+               throw new HttpException('NOT_FOUND', HttpStatus.NOT_FOUND);
+          }
+
+          console.log('전 : ' + questionPS.questionContent);
+          const category = await this.categoryRepository.findOne({ where: {categoryName: updateQuestionDto.categoryName}});
+          
+          const questionUP = await this.questionRepository.createQueryBuilder('question')
+                         .update().set({
+                              category: { id: category.id },
+                              gptFlag: updateQuestionDto.gptFlag,
+                              questionLevel: updateQuestionDto.questionLevel,
+                              writer: updateQuestionDto.writer,
+                              questionContent: updateQuestionDto.questionContent
+                         })
+                         .where("id = :id", {id: questionPS.id})
+                         .execute();
+
+          return questionPS.id;
+     }
 }
