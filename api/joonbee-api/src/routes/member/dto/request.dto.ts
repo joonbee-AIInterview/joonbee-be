@@ -16,8 +16,8 @@ export class RequestQuestion {
   }
 
 export class RequestLikeDTO{
-
     @IsNotEmpty()
+    @ApiProperty({ description: '면접 PK'})
     interviewId: number;
 }
 

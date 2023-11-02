@@ -12,6 +12,13 @@ export class MemberController {
     constructor(private readonly memberService: MemberService){}
 
     @UseGuards(TokenAuthGuard)
+    @Get('info')
+    async myInfoSelect(){
+
+    }
+
+
+    @UseGuards(TokenAuthGuard)
     @Get()
     async test(@Req() request: Request,
                 @Res() response: Response){
@@ -25,13 +32,13 @@ export class MemberController {
      */
 
     @UseGuards(TokenAuthGuard)
+    @ApiBody({ type: RequestLikeDTO })
     @Post('like')
-    async insertLikeHandler(@Body(new ValidationPipe()) dto: RequestLikeDTO,
-                            @Res() response: Response
-                            ): Promise<void>{
-        // TODO: 유효성검사 쿠키발행 Swagger 등록
-        // 좋아요는 질문이 아닌 면접이었다!
-        // 여기서 그냥 interview 데이터로만 수정하면 된다.
+    async insertLikeHandler(
+        @Body(new ValidationPipe()) dto: RequestLikeDTO,
+        @Res() response: Response
+        ): Promise<void>{
+
         const memberId = response.locals.memberId;
         const interviewId = dto.interviewId;
                             
@@ -47,8 +54,10 @@ export class MemberController {
     @UseGuards(TokenAuthGuard)
     @Post('interview/save')
     @ApiBody({ type: RequestInterviewSaveDTO})
-    async insertInterviewAndQuestion(@Body(new ValidationPipe()) data: RequestInterviewSaveDTO,
-                                    @Res() response: Response){
+    async insertInterviewAndQuestion(
+        @Body(new ValidationPipe()) data: RequestInterviewSaveDTO,
+        @Res() response: Response
+    ){
         const memberId = response.locals.memberId;
         this.memberService.insertInterview(memberId, data);
 

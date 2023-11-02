@@ -33,7 +33,6 @@ export class MemberService {
                 interviewId: interviewId
             });
 
-            console.log(likeEntity);
             await this.likeRepository.save(likeEntity);
         }catch(error){
             console.log('insertLIKE ERROR member.service 27 \n'+ error);
