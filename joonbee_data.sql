@@ -15,7 +15,7 @@ VALUES
 like -> joonbee.like
 */
 use joonbee;
-DROP TABLE IF EXISTS interview_and_question, question, joonbee.like, interview, member, category;
+DROP TABLE IF EXISTS interview_and_question, joonbee.like, interview, member, question, category;
 
 CREATE TABLE IF NOT EXISTS `category` (
     `id` INT AUTO_INCREMENT PRIMARY KEY,
@@ -24,6 +24,18 @@ CREATE TABLE IF NOT EXISTS `category` (
     `category_upper_id` INT NOT NULL,
     `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP,
     `updated_at` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS `question` (
+    `id` BIGINT AUTO_INCREMENT PRIMARY KEY,
+    `gpt_flag` tinyint(1) NOT NULL,
+    `question_level` INT NOT NULL,
+    `category_id` int not null,
+    `writer` VARCHAR(255) NOT NULL,
+    `question_content` TEXT NOT NULL,
+    `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP,
+    `updated_at` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    foreign key(`category_id`) REFERENCES `category`(`id`) on delete cascade
 ) ENGINE=InnoDB;
 
 CREATE TABLE IF NOT EXISTS `member` (
@@ -40,6 +52,7 @@ CREATE TABLE IF NOT EXISTS `member` (
 CREATE TABLE IF NOT EXISTS `interview` (
   `id` bigint AUTO_INCREMENT,
   `member_id` varchar(255) NOT NULL,
+  `count_flag` int NOT NULL,
   `created_at` datetime DEFAULT CURRENT_TIMESTAMP,
   `updated_at` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
@@ -54,18 +67,6 @@ CREATE TABLE IF NOT EXISTS `like` (
 	 foreign key (`member_id`) REFERENCES `member`(`id`) on delete cascade,
 	 foreign key (`interview_id`) REFERENCES `interview`(`id`) on delete CASCADE
 )ENGINE=InnoDB;
-
-CREATE TABLE IF NOT EXISTS `question` (
-    `id` BIGINT AUTO_INCREMENT PRIMARY KEY,
-    `gpt_flag` tinyint(1) NOT NULL,
-    `question_level` INT NOT NULL,
-    `category_id` int not null,
-    `writer` VARCHAR(255) NOT NULL,
-    `question_content` TEXT NOT NULL,
-    `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP,
-    `updated_at` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    foreign key(`category_id`) REFERENCES `category`(`id`) on delete cascade
-) ENGINE=InnoDB;
 
 CREATE TABLE IF NOT EXISTS `interview_and_question` (
   `interview_id` bigint NOT NULL,
@@ -131,77 +132,6 @@ INSERT INTO category (category_name, category_level, category_upper_id, created_
 INSERT INTO category (category_name, category_level, category_upper_id, created_at, updated_at)VALUES ('computer architecture', 1, 6, NOW(), NOW());
 
 
--- MEMBER
-INSERT INTO member (id, email, password, thumbnail, login_type, del_flag, created_at, updated_at)
-		VALUES ( '1', '권범준@gmail.com', 'qwe123', '권범준 썸네일.png', 'KAKAO', false, NOW(), NOW());
-INSERT INTO member (id, email, password, thumbnail, login_type, del_flag, created_at, updated_at)
-		VALUES ( '2', '이찬영@gmail.com', 'qwe123', '권범준 썸네일.png', 'GOOGLE', false, NOW(), NOW());
-INSERT INTO member (id, email, password, thumbnail, login_type, del_flag, created_at, updated_at)
-		VALUES ( '3', '송재근@gmail.com', 'qwe123', '권범준 썸네일.png', 'NAVER', false, NOW(), NOW());
-INSERT INTO member (id, email, password, thumbnail, login_type, del_flag, created_at, updated_at)
-		VALUES ( '4', '김재우@gmail.com', 'qwe123', '권범준 썸네일.png', 'KAKAO', false, NOW(), NOW());
-INSERT INTO member (id, email, password, thumbnail, login_type, del_flag, created_at, updated_at)
-		VALUES ( '5', '최주호@gmail.com', 'qwe123', '권범준 썸네일.png', 'GOOGLE', false, NOW(), NOW());
-
--- INTERVIEW
--- 1 ~ 5
-INSERT INTO interview (member_id, created_at, updated_at) VALUES ( '1', NOW(), NOW());
-INSERT INTO interview (member_id, created_at, updated_at) VALUES ( '1', NOW(), NOW());
-INSERT INTO interview (member_id, created_at, updated_at) VALUES ( '1', NOW(), NOW());
-INSERT INTO interview (member_id, created_at, updated_at) VALUES ( '1', NOW(), NOW());
-INSERT INTO interview (member_id, created_at, updated_at) VALUES ( '1', NOW(), NOW());
--- 6 ~ 9
-INSERT INTO interview (member_id, created_at, updated_at) VALUES ( '2', NOW(), NOW());
-INSERT INTO interview (member_id, created_at, updated_at) VALUES ( '2', NOW(), NOW());
-INSERT INTO interview (member_id, created_at, updated_at) VALUES ( '2', NOW(), NOW());
-INSERT INTO interview (member_id, created_at, updated_at) VALUES ( '2', NOW(), NOW());
--- 10 ~ 12
-INSERT INTO interview (member_id, created_at, updated_at) VALUES ( '3', NOW(), NOW());
-INSERT INTO interview (member_id, created_at, updated_at) VALUES ( '3', NOW(), NOW());
-INSERT INTO interview (member_id, created_at, updated_at) VALUES ( '3', NOW(), NOW());
--- 13 ~ 22
-INSERT INTO interview (member_id, created_at, updated_at) VALUES ( '4', NOW(), NOW());
-INSERT INTO interview (member_id, created_at, updated_at) VALUES ( '4', NOW(), NOW());
-INSERT INTO interview (member_id, created_at, updated_at) VALUES ( '4', NOW(), NOW());
-INSERT INTO interview (member_id, created_at, updated_at) VALUES ( '4', NOW(), NOW());
-INSERT INTO interview (member_id, created_at, updated_at) VALUES ( '4', NOW(), NOW());
-INSERT INTO interview (member_id, created_at, updated_at) VALUES ( '4', NOW(), NOW());
-INSERT INTO interview (member_id, created_at, updated_at) VALUES ( '4', NOW(), NOW());
-INSERT INTO interview (member_id, created_at, updated_at) VALUES ( '4', NOW(), NOW());
-INSERT INTO interview (member_id, created_at, updated_at) VALUES ( '4', NOW(), NOW());
-INSERT INTO interview (member_id, created_at, updated_at) VALUES ( '4', NOW(), NOW());
--- 23 ~ 26
-INSERT INTO interview (member_id, created_at, updated_at) VALUES ( '5', NOW(), NOW());
-INSERT INTO interview (member_id, created_at, updated_at) VALUES ( '5', NOW(), NOW());
-INSERT INTO interview (member_id, created_at, updated_at) VALUES ( '5', NOW(), NOW());
-INSERT INTO interview (member_id, created_at, updated_at) VALUES ( '5', NOW(), NOW());
-
-
--- LIKE
--- 1 ~ 3
-INSERT INTO joonbee.like (member_id, interview_id) VALUES ( '1', 6);
-INSERT INTO joonbee.like (member_id, interview_id) VALUES ( '1', 10);
-INSERT INTO joonbee.like (member_id, interview_id) VALUES ( '1', 25);
--- 4 ~ 5
-INSERT INTO joonbee.like (member_id, interview_id) VALUES ( '2', 25);
-INSERT INTO joonbee.like (member_id, interview_id) VALUES ( '2', 14);
--- 6 ~ 10
-INSERT INTO joonbee.like (member_id, interview_id) VALUES ( '3', 1);
-INSERT INTO joonbee.like (member_id, interview_id) VALUES ( '3', 3);
-INSERT INTO joonbee.like (member_id, interview_id) VALUES ( '3', 7);
-INSERT INTO joonbee.like (member_id, interview_id) VALUES ( '3', 25);
-INSERT INTO joonbee.like (member_id, interview_id) VALUES ( '3', 20);
--- 11 ~ 13
-INSERT INTO joonbee.like (member_id, interview_id) VALUES ( '4', 1);
-INSERT INTO joonbee.like (member_id, interview_id) VALUES ( '4', 25);
-INSERT INTO joonbee.like (member_id, interview_id) VALUES ( '4', 16);
--- 14 ~ 17
-INSERT INTO joonbee.like (member_id, interview_id) VALUES ( '5', 2);
-INSERT INTO joonbee.like (member_id, interview_id) VALUES ( '5', 9);
-INSERT INTO joonbee.like (member_id, interview_id) VALUES ( '5', 16);
-INSERT INTO joonbee.like (member_id, interview_id) VALUES ( '5', 22);
-
-
 -- QUESTION
 -- Gpt 1
 INSERT INTO question (category_id, gpt_flag, question_level, writer, question_content, created_at, updated_at)
@@ -216,6 +146,8 @@ INSERT INTO question (category_id, gpt_flag, question_level, writer, question_co
 		VALUES ( 37, 1, 5, 'gpt', '팀프로젝트 시 가장 먼저 팀장이 해야할일이 무엇인지 설명해보세요.', NOW(), NOW());
 INSERT INTO question (category_id, gpt_flag, question_level, writer, question_content, created_at, updated_at)
 		VALUES ( 42, 1, 5, 'gpt', 'docker 컨테이너가 올라가는 원리에 대해서 설명해보세요.', NOW(), NOW());
+INSERT INTO question (category_id, gpt_flag, question_level, writer, question_content, created_at, updated_at)
+		VALUES ( 42, 1, 5, 'gpt', 'docker-compose에 관해서 설명해보세요.', NOW(), NOW());
 -- 사람 0
 INSERT INTO question (category_id, gpt_flag, question_level, writer, question_content, created_at, updated_at)
 		VALUES ( 18, 0, 5, '송재근', 'msa 트랜젝션 과정에 대해 설명해보세요.', NOW(), NOW());
@@ -233,6 +165,103 @@ INSERT INTO question (category_id, gpt_flag, question_level, writer, question_co
 		VALUES ( 12, 0, 5, '권범준', 'vue 컴포넌트에 대해서 설명해보세요.', NOW(), NOW());
 INSERT INTO question (category_id, gpt_flag, question_level, writer, question_content, created_at, updated_at)
 		VALUES ( 14, 0, 5, '김재우', 'index의 동작원리를 설명하세요.', NOW(), NOW());
+        
+        
+-- MEMBER
+INSERT INTO member (id, email, password, thumbnail, login_type, del_flag, created_at, updated_at)
+		VALUES ( '1', '권범준@gmail.com', 'qwe123', '권범준 썸네일.png', 'KAKAO', false, NOW(), NOW());
+INSERT INTO member (id, email, password, thumbnail, login_type, del_flag, created_at, updated_at)
+		VALUES ( '2', '이찬영@gmail.com', 'qwe123', '권범준 썸네일.png', 'GOOGLE', false, NOW(), NOW());
+INSERT INTO member (id, email, password, thumbnail, login_type, del_flag, created_at, updated_at)
+		VALUES ( '3', '송재근@gmail.com', 'qwe123', '권범준 썸네일.png', 'NAVER', false, NOW(), NOW());
+INSERT INTO member (id, email, password, thumbnail, login_type, del_flag, created_at, updated_at)
+		VALUES ( '4', '김재우@gmail.com', 'qwe123', '권범준 썸네일.png', 'KAKAO', false, NOW(), NOW());
+INSERT INTO member (id, email, password, thumbnail, login_type, del_flag, created_at, updated_at)
+		VALUES ( '5', '최주호@gmail.com', 'qwe123', '권범준 썸네일.png', 'GOOGLE', false, NOW(), NOW());
+
+
+-- INTERVIEW
+-- 1 ~ 5
+INSERT INTO interview (member_id, count_flag, created_at, updated_at) 
+	VALUES ( '1', 5, NOW(), NOW());
+INSERT INTO interview (member_id,  count_flag, created_at, updated_at) 
+	VALUES ( '1', 3, NOW(), NOW());
+INSERT INTO interview (member_id, count_flag, created_at, updated_at) 
+	VALUES ( '1', 2, NOW(), NOW());
+INSERT INTO interview (member_id, count_flag, created_at, updated_at) 
+	VALUES ( '1', 1, NOW(), NOW());
+INSERT INTO interview (member_id, count_flag, created_at, updated_at) 
+	VALUES ( '1', 0, NOW(), NOW());
+-- 6 ~ 9
+INSERT INTO interview (member_id, count_flag, created_at, updated_at) 
+	VALUES ( '2', 1, NOW(), NOW());
+INSERT INTO interview (member_id, count_flag, created_at, updated_at) 
+	VALUES ( '2', 4, NOW(), NOW());
+INSERT INTO interview (member_id, count_flag, created_at, updated_at) 
+	VALUES ( '2', 4, NOW(), NOW());
+INSERT INTO interview (member_id, count_flag, created_at, updated_at) 
+	VALUES ( '2', 3, NOW(), NOW());
+-- 10 ~ 12
+INSERT INTO interview (member_id, count_flag, created_at, updated_at) 
+	VALUES ( '3', 5, NOW(), NOW());
+INSERT INTO interview (member_id, count_flag, created_at, updated_at) 
+	VALUES ( '3', 5, NOW(), NOW());
+INSERT INTO interview (member_id, count_flag, created_at, updated_at) 
+	VALUES ( '3', 4, NOW(), NOW());
+-- 13 ~ 22
+INSERT INTO interview (member_id, count_flag, created_at, updated_at) 
+	VALUES ( '4', 3, NOW(), NOW());
+INSERT INTO interview (member_id, count_flag, created_at, updated_at) 
+	VALUES ( '4', 5, NOW(), NOW());
+INSERT INTO interview (member_id, count_flag, created_at, updated_at) 
+	VALUES ( '4', 5, NOW(), NOW());
+INSERT INTO interview (member_id, count_flag, created_at, updated_at) 
+	VALUES ( '4', 1, NOW(), NOW());
+INSERT INTO interview (member_id, count_flag, created_at, updated_at) 
+	VALUES ( '4', 1, NOW(), NOW());
+INSERT INTO interview (member_id, count_flag, created_at, updated_at) 
+	VALUES ( '4', 0, NOW(), NOW());
+INSERT INTO interview (member_id, count_flag, created_at, updated_at) 
+	VALUES ( '4', 4, NOW(), NOW());
+INSERT INTO interview (member_id, count_flag, created_at, updated_at) 
+	VALUES ( '4', 5, NOW(), NOW());
+INSERT INTO interview (member_id, count_flag, created_at, updated_at) 
+	VALUES ( '4', 3, NOW(), NOW());
+INSERT INTO interview (member_id, count_flag, created_at, updated_at) 
+	VALUES ( '4', 2, NOW(), NOW());
+-- 23 ~ 26
+INSERT INTO interview (member_id, count_flag, created_at, updated_at) 
+	VALUES ( '5', 5, NOW(), NOW());
+INSERT INTO interview (member_id, count_flag, created_at, updated_at) 
+	VALUES ( '5', 5, NOW(), NOW());
+INSERT INTO interview (member_id, count_flag, created_at, updated_at) 
+	VALUES ( '5', 4, NOW(), NOW());
+INSERT INTO interview (member_id, count_flag, created_at, updated_at) 
+	VALUES ( '5', 2, NOW(), NOW());
+
+
+-- LIKE 3 2 5 3 4
+INSERT INTO joonbee.like (member_id, interview_id) VALUES ( '1', 6);
+INSERT INTO joonbee.like (member_id, interview_id) VALUES ( '1', 10);
+INSERT INTO joonbee.like (member_id, interview_id) VALUES ( '1', 25);
+
+INSERT INTO joonbee.like (member_id, interview_id) VALUES ( '2', 25);
+INSERT INTO joonbee.like (member_id, interview_id) VALUES ( '2', 14);
+
+INSERT INTO joonbee.like (member_id, interview_id) VALUES ( '3', 1);
+INSERT INTO joonbee.like (member_id, interview_id) VALUES ( '3', 3);
+INSERT INTO joonbee.like (member_id, interview_id) VALUES ( '3', 7);
+INSERT INTO joonbee.like (member_id, interview_id) VALUES ( '3', 25);
+INSERT INTO joonbee.like (member_id, interview_id) VALUES ( '3', 20);
+
+INSERT INTO joonbee.like (member_id, interview_id) VALUES ( '4', 1);
+INSERT INTO joonbee.like (member_id, interview_id) VALUES ( '4', 25);
+INSERT INTO joonbee.like (member_id, interview_id) VALUES ( '4', 16);
+
+INSERT INTO joonbee.like (member_id, interview_id) VALUES ( '5', 2);
+INSERT INTO joonbee.like (member_id, interview_id) VALUES ( '5', 9);
+INSERT INTO joonbee.like (member_id, interview_id) VALUES ( '5', 16);
+INSERT INTO joonbee.like (member_id, interview_id) VALUES ( '5', 22);
 
 
 -- interview_and_question
