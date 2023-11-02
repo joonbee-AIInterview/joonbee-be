@@ -8,8 +8,7 @@ export class Question {
      @PrimaryGeneratedColumn()
      id: number;
 
-     // 연관관계
-     @ManyToOne(() => Category)
+     @ManyToOne(() => Category, category => category.id, { onDelete: 'CASCADE' })
      @JoinColumn({ name: 'category_id' })
      category: Category;
 
