@@ -40,9 +40,15 @@ let QuestionService = class QuestionService {
         }).execute();
         return questionPS.identifiers[0].id;
     }
-    async findAllWithCategory() {
+    async findQuestionWithCategory() {
         return await this.questionRepository.createQueryBuilder('question')
             .leftJoinAndSelect('question.category', 'category')
+            .select([
+            'question.id',
+            'question.questionContent',
+            'category.id',
+            'category.categoryName'
+        ])
             .getMany();
     }
     async findOneWithCategory(questionId) {

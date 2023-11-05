@@ -35,10 +35,15 @@ export class QuestionService {
           return questionPS.identifiers[0].id;
      }
 
-     async findAllWithCategory(): Promise<Question[]> {
-          // SELECT * FROM question LEFT JOIN category ON question.category_id = category.id; 
+     async findQuestionWithCategory(): Promise<Question[]> {
           return await this.questionRepository.createQueryBuilder('question')
                          .leftJoinAndSelect('question.category', 'category')
+                         .select([
+                              'question.id',
+                              'question.questionContent',
+                              'category.id',
+                              'category.categoryName'
+                         ])
                          .getMany();
      }
 

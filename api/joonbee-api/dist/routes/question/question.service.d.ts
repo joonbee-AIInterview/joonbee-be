@@ -7,7 +7,7 @@ export declare class QuestionService {
     private categoryRepository;
     constructor(questionRepository: Repository<Question>, categoryRepository: Repository<Category>);
     saveQuestion(saveQuestionDto: SaveQuestionDto): Promise<number>;
-    findAllWithCategory(): Promise<Question[]>;
+    findQuestionWithCategory(): Promise<Question[]>;
     findOneWithCategory(questionId: number): Promise<Question>;
     deleteQuestion(questionId: number): Promise<void>;
     updateQuestion(questionId: number, updateQuestionDto: SaveQuestionDto): Promise<number>;

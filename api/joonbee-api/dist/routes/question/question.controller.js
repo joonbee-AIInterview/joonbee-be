@@ -29,11 +29,11 @@ let QuestionController = class QuestionController {
         });
     }
     async findAllWithCategory() {
-        const questionList = await this.questionService.findAllWithCategory();
+        const questionList = await this.questionService.findQuestionWithCategory();
         return Object.assign({
             data: questionList,
             statusCode: 200,
-            statusMsg: `findAllWithCategory을 이용한 Question 데이터 조회가 성공적으로 완료되었습니다.`,
+            statusMsg: `findQuestionWithCategory을 이용한 Question 데이터 조회가 성공적으로 완료되었습니다.`,
         });
     }
     async findOneWithCategory(questionId) {

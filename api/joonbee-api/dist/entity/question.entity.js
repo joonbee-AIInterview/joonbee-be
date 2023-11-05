@@ -27,7 +27,7 @@ __decorate([
     __metadata("design:type", Number)
 ], Question.prototype, "id", void 0);
 __decorate([
-    (0, index_1.ManyToOne)(() => category_entity_1.Category),
+    (0, index_1.ManyToOne)(() => category_entity_1.Category, category => category.id, { onDelete: 'CASCADE' }),
     (0, index_1.JoinColumn)({ name: 'category_id' }),
     __metadata("design:type", category_entity_1.Category)
 ], Question.prototype, "category", void 0);

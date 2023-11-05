@@ -6,6 +6,7 @@ import { ConfigModule } from '@nestjs/config';
 import { MemberModule } from './routes/member/member.module';
 import { QuestionModule } from './routes/question/question.module';
 import { CategoryModule } from './routes/category/category.module';
+import { InterviewModule } from './routes/interview/interview.module';
 
 @Module({
   imports: [
@@ -16,7 +17,8 @@ import { CategoryModule } from './routes/category/category.module';
     }),
     MemberModule,
     QuestionModule,
-    CategoryModule
+    CategoryModule,
+    InterviewModule,
   ],
   controllers: [AppController],
   providers: [AppService],

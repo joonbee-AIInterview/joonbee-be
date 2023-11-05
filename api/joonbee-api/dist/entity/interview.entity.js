@@ -29,6 +29,10 @@ __decorate([
     __metadata("design:type", member_entity_1.Member)
 ], Interview.prototype, "member", void 0);
 __decorate([
+    (0, typeorm_1.Column)({ name: 'count_flag' }),
+    __metadata("design:type", Number)
+], Interview.prototype, "countFlag", void 0);
+__decorate([
     (0, typeorm_1.CreateDateColumn)({ name: 'created_at' }),
     __metadata("design:type", Date)
 ], Interview.prototype, "createdAt", void 0);
