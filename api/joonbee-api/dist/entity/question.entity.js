@@ -12,7 +12,15 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.Question = void 0;
 const index_1 = require("typeorm/index");
 const category_entity_1 = require("./category.entity");
+const and_question_entity_1 = require("./and.question.entity");
 let Question = class Question {
+    updateQuestion(updateQuestionDto) {
+        this.category.categoryName = updateQuestionDto.categoryName;
+        this.gptFlag = updateQuestionDto.gptFlag;
+        this.questionLevel = updateQuestionDto.questionLevel;
+        this.writer = updateQuestionDto.writer;
+        this.questionContent = updateQuestionDto.questionContent;
+    }
 };
 exports.Question = Question;
 __decorate([
@@ -20,34 +28,38 @@ __decorate([
     __metadata("design:type", Number)
 ], Question.prototype, "id", void 0);
 __decorate([
-    (0, index_1.ManyToOne)(() => category_entity_1.Category),
+    (0, index_1.ManyToOne)(() => category_entity_1.Category, category => category.id, { onDelete: 'CASCADE' }),
     (0, index_1.JoinColumn)({ name: 'category_id' }),
     __metadata("design:type", category_entity_1.Category)
 ], Question.prototype, "category", void 0);
 __decorate([
-    (0, index_1.Column)('tinyint', { nullable: false }),
-    __metadata("design:type", Number)
-], Question.prototype, "gpt_flag", void 0);
+    (0, index_1.OneToMany)(() => and_question_entity_1.InterviewAndQuestion, (imq) => imq.question),
+    __metadata("design:type", Array)
+], Question.prototype, "interviewAndQuestions", void 0);
 __decorate([
-    (0, index_1.Column)('int', { nullable: false }),
+    (0, index_1.Column)({ type: 'tinyint', name: 'gpt_flag' }),
     __metadata("design:type", Number)
-], Question.prototype, "question_level", void 0);
+], Question.prototype, "gptFlag", void 0);
 __decorate([
-    (0, index_1.Column)('varchar', { nullable: false }),
+    (0, index_1.Column)({ type: 'int', name: 'question_level' }),
+    __metadata("design:type", Number)
+], Question.prototype, "questionLevel", void 0);
+__decorate([
+    (0, index_1.Column)({ type: 'varchar', length: 255, nullable: false }),
     __metadata("design:type", String)
 ], Question.prototype, "writer", void 0);
 __decorate([
-    (0, index_1.Column)('text', { nullable: false }),
+    (0, index_1.Column)({ type: 'text', name: 'question_content' }),
     __metadata("design:type", String)
-], Question.prototype, "question_content", void 0);
+], Question.prototype, "questionContent", void 0);
 __decorate([
-    (0, index_1.CreateDateColumn)({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' }),
+    (0, index_1.CreateDateColumn)({ name: 'created_at', type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' }),
     __metadata("design:type", Date)
-], Question.prototype, "created_at", void 0);
+], Question.prototype, "createdAt", void 0);
 __decorate([
-    (0, index_1.UpdateDateColumn)({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP', onUpdate: 'CURRENT_TIMESTAMP' }),
+    (0, index_1.UpdateDateColumn)({ name: 'updated_at', type: 'timestamp', default: () => 'CURRENT_TIMESTAMP', onUpdate: 'CURRENT_TIMESTAMP' }),
     __metadata("design:type", Date)
-], Question.prototype, "updated_at", void 0);
+], Question.prototype, "updatedAt", void 0);
 exports.Question = Question = __decorate([
     (0, index_1.Entity)('question')
 ], Question);

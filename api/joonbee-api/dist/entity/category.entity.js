@@ -11,6 +11,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Category = void 0;
 const index_1 = require("typeorm/index");
+const question_entity_1 = require("./question.entity");
 let Category = class Category {
 };
 exports.Category = Category;
@@ -19,21 +20,29 @@ __decorate([
     __metadata("design:type", Number)
 ], Category.prototype, "id", void 0);
 __decorate([
-    (0, index_1.Column)(),
+    (0, index_1.Column)({ type: 'varchar', length: 255, name: 'category_name' }),
     __metadata("design:type", String)
-], Category.prototype, "category_name", void 0);
+], Category.prototype, "categoryName", void 0);
 __decorate([
-    (0, index_1.Column)(),
+    (0, index_1.Column)({ type: 'tinyint', name: 'category_level' }),
     __metadata("design:type", Number)
-], Category.prototype, "category_level", void 0);
+], Category.prototype, "categoryLevel", void 0);
 __decorate([
-    (0, index_1.CreateDateColumn)(),
-    __metadata("design:type", Date)
-], Category.prototype, "created_at", void 0);
+    (0, index_1.Column)({ type: 'int', name: 'category_upper_id' }),
+    __metadata("design:type", Number)
+], Category.prototype, "categoryUpperId", void 0);
 __decorate([
-    (0, index_1.UpdateDateColumn)(),
+    (0, index_1.OneToMany)(() => question_entity_1.Question, question => question.category),
+    __metadata("design:type", Array)
+], Category.prototype, "questions", void 0);
+__decorate([
+    (0, index_1.CreateDateColumn)({ name: 'created_at' }),
     __metadata("design:type", Date)
-], Category.prototype, "updated_at", void 0);
+], Category.prototype, "createdAt", void 0);
+__decorate([
+    (0, index_1.UpdateDateColumn)({ name: 'updated_at' }),
+    __metadata("design:type", Date)
+], Category.prototype, "updatedAt", void 0);
 exports.Category = Category = __decorate([
     (0, index_1.Entity)('category')
 ], Category);

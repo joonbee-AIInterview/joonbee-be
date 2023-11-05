@@ -1,7 +1,10 @@
+import { Question } from './question.entity';
 export declare class Category {
     id: number;
-    category_name: string;
-    category_level: number;
-    created_at: Date;
-    updated_at: Date;
+    categoryName: string;
+    categoryLevel: number;
+    categoryUpperId: number;
+    questions: Question[];
+    createdAt: Date;
+    updatedAt: Date;
 }

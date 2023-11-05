@@ -15,6 +15,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.MemberController = void 0;
 const common_1 = require("@nestjs/common");
 const member_service_1 = require("./member.service");
+const common_2 = require("../../common/config/common");
 const request_dto_1 = require("./dto/request.dto");
 const auth_1 = require("../../common/config/auth");
 const swagger_1 = require("@nestjs/swagger");
@@ -22,10 +23,42 @@ let MemberController = class MemberController {
     constructor(memberService) {
         this.memberService = memberService;
     }
-    async myInfoSelect() {
+    async myInfoSelect(response) {
+        const memberId = response.locals.memberId;
+        const dto = await this.memberService.myInfoData(memberId);
+        const apiResponse = {
+            status: 200,
+            data: dto
+        };
+        response.json(apiResponse);
     }
-    async test(request, response) {
-        return response.locals.memberId;
+    async myCategoryInfo(page = "1", response) {
+        try {
+            const memberId = response.locals.memberId;
+            const data = await this.memberService.myCategoryInfoService(memberId, Number(page));
+            const apiResponse = {
+                status: 200,
+                data
+            };
+            response.json(apiResponse);
+        }
+        catch (error) {
+            throw new common_2.CustomError('알 수 없는 에러', 500);
+        }
+    }
+    async myCategoryLikeInfo(page = "1", response) {
+        try {
+            const memberId = response.locals.memberId;
+            const data = await this.memberService.myCategoryLikeInfoService(memberId, Number(page));
+            const apiResponse = {
+                status: 200,
+                data
+            };
+            response.json(apiResponse);
+        }
+        catch (error) {
+            throw new common_2.CustomError('알 수 없는 에러', 500);
+        }
     }
     async insertLikeHandler(dto, response) {
         const memberId = response.locals.memberId;
@@ -37,36 +70,59 @@ let MemberController = class MemberController {
         };
         response.json(apiResponse);
     }
-    async insertInterviewAndQuestion(data, response) {
-        const memberId = response.locals.memberId;
-        this.memberService.insertInterview(memberId, data);
-        const apiResponse = {
-            status: 200,
-            data: '성공'
-        };
-        response.json(apiResponse);
+    async insertInterviewAndQuestion(request, response) {
+        const { categoryName, questions } = request.body;
+        if (!categoryName || !questions || !Array.isArray(questions) || questions.length === 0) {
+            const apiResponse = {
+                status: 200,
+                data: '성공'
+            };
+            response.json(apiResponse);
+        }
+        else {
+            const memberId = response.locals.memberId;
+            const data = {
+                categoryName,
+                questions
+            };
+            this.memberService.insertInterview(memberId, data);
+            const apiResponse = {
+                status: 200,
+                data: '성공'
+            };
+            response.json(apiResponse);
+        }
     }
 };
 exports.MemberController = MemberController;
 __decorate([
     (0, common_1.UseGuards)(auth_1.TokenAuthGuard),
-    (0, common_1.Get)(),
+    (0, common_1.Get)('info'),
+    __param(0, (0, common_1.Res)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
+    __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", Promise)
 ], MemberController.prototype, "myInfoSelect", null);
 __decorate([
     (0, common_1.UseGuards)(auth_1.TokenAuthGuard),
-    (0, common_1.Get)(),
-    __param(0, (0, common_1.Req)()),
+    (0, common_1.Get)('category'),
+    __param(0, (0, common_1.Query)('page')),
     __param(1, (0, common_1.Res)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object, Object]),
+    __metadata("design:paramtypes", [String, Object]),
     __metadata("design:returntype", Promise)
-], MemberController.prototype, "test", null);
+], MemberController.prototype, "myCategoryInfo", null);
 __decorate([
     (0, common_1.UseGuards)(auth_1.TokenAuthGuard),
-    (0, swagger_1.ApiBody)({ type: request_dto_1.RequestLikeDTO }),
+    (0, common_1.Get)('category/like'),
+    __param(0, (0, common_1.Query)('page')),
+    __param(1, (0, common_1.Res)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, Object]),
+    __metadata("design:returntype", Promise)
+], MemberController.prototype, "myCategoryLikeInfo", null);
+__decorate([
+    (0, common_1.UseGuards)(auth_1.TokenAuthGuard),
     (0, common_1.Post)('like'),
     __param(0, (0, common_1.Body)(new common_1.ValidationPipe())),
     __param(1, (0, common_1.Res)()),
@@ -78,10 +134,10 @@ __decorate([
     (0, common_1.UseGuards)(auth_1.TokenAuthGuard),
     (0, common_1.Post)('interview/save'),
     (0, swagger_1.ApiBody)({ type: request_dto_1.RequestInterviewSaveDTO }),
-    __param(0, (0, common_1.Body)(new common_1.ValidationPipe())),
+    __param(0, (0, common_1.Req)()),
     __param(1, (0, common_1.Res)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [request_dto_1.RequestInterviewSaveDTO, Object]),
+    __metadata("design:paramtypes", [Object, Object]),
     __metadata("design:returntype", Promise)
 ], MemberController.prototype, "insertInterviewAndQuestion", null);
 exports.MemberController = MemberController = __decorate([

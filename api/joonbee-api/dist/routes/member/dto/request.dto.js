@@ -42,7 +42,10 @@ class RequestInterviewSaveDTO {
 }
 exports.RequestInterviewSaveDTO = RequestInterviewSaveDTO;
 __decorate([
-    (0, class_validator_1.IsNotEmpty)(),
+    (0, swagger_1.ApiProperty)({ description: '카테고리 이름' }),
+    __metadata("design:type", String)
+], RequestInterviewSaveDTO.prototype, "categoryName", void 0);
+__decorate([
     (0, swagger_1.ApiProperty)({
         description: 'questionId(number), questionContent(string), answerContent(string)',
         type: RequestQuestion,

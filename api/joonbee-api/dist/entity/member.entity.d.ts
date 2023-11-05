@@ -1,3 +1,4 @@
+import { Interview } from "./interview.entity";
 export declare class Member {
     id: string;
     email: string;
@@ -5,6 +6,8 @@ export declare class Member {
     thumbnail: string | null;
     loginType: string | null;
     delFlag: boolean;
+    nickName: string;
     createdAt: Date;
     updatedAt: Date;
+    interviews: Interview[];
 }

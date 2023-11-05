@@ -4,4 +4,4 @@ exports.SaveQuestionDto = void 0;
 class SaveQuestionDto {
 }
 exports.SaveQuestionDto = SaveQuestionDto;
-//# sourceMappingURL=save-in-question.dto.js.map
+//# sourceMappingURL=save.request.dto.js.map

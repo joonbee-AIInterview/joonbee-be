@@ -1,11 +1,15 @@
 import { Category } from './category.entity';
+import { UpdateQuestionDto } from 'src/routes/question/dto/update.request.dto';
+import { InterviewAndQuestion } from './and.question.entity';
 export declare class Question {
     id: number;
     category: Category;
-    gpt_flag: number;
-    question_level: number;
+    interviewAndQuestions: InterviewAndQuestion[];
+    gptFlag: number;
+    questionLevel: number;
     writer: string;
-    question_content: string;
-    created_at: Date;
-    updated_at: Date;
+    questionContent: string;
+    createdAt: Date;
+    updatedAt: Date;
+    updateQuestion(updateQuestionDto: UpdateQuestionDto): void;
 }

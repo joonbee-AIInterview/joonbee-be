@@ -11,6 +11,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Member = void 0;
 const typeorm_1 = require("typeorm");
+const interview_entity_1 = require("./interview.entity");
 let Member = class Member {
 };
 exports.Member = Member;
@@ -39,6 +40,10 @@ __decorate([
     __metadata("design:type", Boolean)
 ], Member.prototype, "delFlag", void 0);
 __decorate([
+    (0, typeorm_1.Column)({ name: 'nick_name' }),
+    __metadata("design:type", String)
+], Member.prototype, "nickName", void 0);
+__decorate([
     (0, typeorm_1.CreateDateColumn)({ name: 'created_at' }),
     __metadata("design:type", Date)
 ], Member.prototype, "createdAt", void 0);
@@ -46,6 +51,10 @@ __decorate([
     (0, typeorm_1.UpdateDateColumn)({ name: 'updated_at' }),
     __metadata("design:type", Date)
 ], Member.prototype, "updatedAt", void 0);
+__decorate([
+    (0, typeorm_1.OneToMany)(() => interview_entity_1.Interview, (interview) => interview.member),
+    __metadata("design:type", Array)
+], Member.prototype, "interviews", void 0);
 exports.Member = Member = __decorate([
     (0, typeorm_1.Entity)('member')
 ], Member);

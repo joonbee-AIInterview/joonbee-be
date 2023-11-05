@@ -22,7 +22,10 @@ export class RequestLikeDTO{
 }
 
 export class RequestInterviewSaveDTO{
-    @IsNotEmpty()
+
+    @ApiProperty({ description : '카테고리 이름'})
+    categoryName: string;
+
     @ApiProperty({ 
         description: 'questionId(number), questionContent(string), answerContent(string)',
         type: RequestQuestion,

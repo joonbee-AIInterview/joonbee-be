@@ -1,5 +1,7 @@
-import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm/index';
+import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm/index';
 import { Category } from './category.entity';
+import { UpdateQuestionDto } from 'src/routes/question/dto/update.request.dto';
+import { InterviewAndQuestion } from './and.question.entity';
 
 @Entity('question')
 export class Question {
@@ -7,26 +9,39 @@ export class Question {
      @PrimaryGeneratedColumn()
      id: number;
 
-     // 연관관계
-     @ManyToOne(() => Category)
+     @ManyToOne(() => Category, category => category.id, { onDelete: 'CASCADE' })
      @JoinColumn({ name: 'category_id' })
      category: Category;
 
-     @Column('tinyint', { nullable: false })
-     gpt_flag: number;
+     @OneToMany(() => InterviewAndQuestion, (imq) => imq.question )
+     interviewAndQuestions: InterviewAndQuestion[];
 
-     @Column('int', { nullable: false })
-     question_level: number;
+     @Column({ type: 'tinyint', name: 'gpt_flag' })
+     gptFlag: number; // 0 1
 
-     @Column('varchar', { nullable: false } )
+     @Column({ type: 'int', name: 'question_level' })
+     questionLevel: number;
+
+     @Column({ type: 'varchar', length: 255, nullable: false } )
      writer: string;
 
-     @Column('text', { nullable: false })
-     question_content: string;
+     @Column({ type: 'text', name: 'question_content'})
+     questionContent: string;
 
-     @CreateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
-     created_at: Date;
+     @CreateDateColumn({ name: 'created_at', type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+     createdAt: Date;
 
-     @UpdateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP', onUpdate: 'CURRENT_TIMESTAMP'  })
-     updated_at: Date;
+     @UpdateDateColumn({ name: 'updated_at', type: 'timestamp', default: () => 'CURRENT_TIMESTAMP', onUpdate: 'CURRENT_TIMESTAMP'  })
+     updatedAt: Date;
+
+     /**
+      * 의미있는 메소드
+      */
+     updateQuestion(updateQuestionDto: UpdateQuestionDto) {
+          this.category.categoryName = updateQuestionDto.categoryName;
+          this.gptFlag = updateQuestionDto.gptFlag;
+          this.questionLevel = updateQuestionDto.questionLevel;
+          this.writer = updateQuestionDto.writer;
+          this.questionContent = updateQuestionDto.questionContent;
+     }
 }

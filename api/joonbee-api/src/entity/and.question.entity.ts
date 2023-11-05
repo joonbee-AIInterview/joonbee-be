@@ -1,4 +1,4 @@
-import { Collection, Column, Entity, JoinColumn, ManyToOne, PrimaryColumn } from "typeorm";
+import { Column, Entity, JoinColumn, ManyToOne, PrimaryColumn } from "typeorm";
 import { Interview } from "./interview.entity";
 import { Question } from "./question.entity";
 

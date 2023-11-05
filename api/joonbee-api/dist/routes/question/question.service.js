@@ -24,6 +24,59 @@ let QuestionService = class QuestionService {
         this.categoryRepository = categoryRepository;
     }
     async saveQuestion(saveQuestionDto) {
+        const categoryPS = await this.categoryRepository.findOne({ where: { categoryName: saveQuestionDto.categoryName,
+                categoryUpperId: saveQuestionDto.categoryUpperId } });
+        if (categoryPS == null) {
+            console.log('잘못된 category_name 또는 category_upper_id을 입력했습니다.');
+            return;
+        }
+        const questionPS = await this.questionRepository.createQueryBuilder('question')
+            .insert().values({
+            category: categoryPS,
+            gptFlag: saveQuestionDto.gptFlag,
+            questionLevel: saveQuestionDto.questionLevel,
+            writer: saveQuestionDto.writer,
+            questionContent: saveQuestionDto.questionContent
+        }).execute();
+        return questionPS.identifiers[0].id;
+    }
+    async findAllWithCategory() {
+        return await this.questionRepository.createQueryBuilder('question')
+            .leftJoinAndSelect('question.category', 'category')
+            .getMany();
+    }
+    async findOneWithCategory(questionId) {
+        const questionPS = await this.questionRepository.findOne({ where: { id: questionId } });
+        console.log(questionPS);
+        if (!questionPS) {
+            throw new common_1.HttpException('NOT_FOUND', common_1.HttpStatus.NOT_FOUND);
+        }
+        return await this.questionRepository.createQueryBuilder('question')
+            .where('question.id = :questionId', { questionId })
+            .leftJoinAndSelect('question.category', 'category')
+            .getOne();
+    }
+    async deleteQuestion(questionId) {
+        await this.questionRepository.delete(questionId);
+    }
+    async updateQuestion(questionId, updateQuestionDto) {
+        const questionPS = await this.questionRepository.findOne({ where: { id: questionId } });
+        if (!questionPS) {
+            throw new common_1.HttpException('NOT_FOUND', common_1.HttpStatus.NOT_FOUND);
+        }
+        console.log('전 : ' + questionPS.questionContent);
+        const category = await this.categoryRepository.findOne({ where: { categoryName: updateQuestionDto.categoryName } });
+        const questionUP = await this.questionRepository.createQueryBuilder('question')
+            .update().set({
+            category: { id: category.id },
+            gptFlag: updateQuestionDto.gptFlag,
+            questionLevel: updateQuestionDto.questionLevel,
+            writer: updateQuestionDto.writer,
+            questionContent: updateQuestionDto.questionContent
+        })
+            .where("id = :id", { id: questionPS.id })
+            .execute();
+        return questionPS.id;
     }
 };
 exports.QuestionService = QuestionService;

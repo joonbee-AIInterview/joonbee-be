@@ -1,4 +1,5 @@
-import { Column, CreateDateColumn, Entity, PrimaryColumn, UpdateDateColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, OneToMany, PrimaryColumn, UpdateDateColumn } from "typeorm";
+import { Interview } from "./interview.entity";
 
 
 @Entity('member')
@@ -22,10 +23,16 @@ export class Member{
     @Column({ name: 'del_flag' ,type: 'boolean', default: false })
     delFlag: boolean;
    
+    @Column({ name: 'nick_name'})
+    nickName: string;
+
     @CreateDateColumn({ name: 'created_at' })
     createdAt: Date;
 
     @UpdateDateColumn({ name: 'updated_at' })
     updatedAt: Date;
+
+    @OneToMany(() => Interview, (interview) => interview.member)
+    interviews: Interview[];
   
 }
