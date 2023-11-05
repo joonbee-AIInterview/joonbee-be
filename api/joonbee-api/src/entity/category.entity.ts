@@ -1,4 +1,5 @@
-import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm/index';
+import { Column, CreateDateColumn, Entity, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm/index';
+import { Question } from './question.entity';
 
 @Entity('category')
 export class Category { // 1 Category : N Question
@@ -14,6 +15,9 @@ export class Category { // 1 Category : N Question
 
      @Column({ type: 'int', name: 'category_upper_id' })
      categoryUpperId: number;
+
+     @OneToMany(() => Question, question => question.category)
+     questions: Question[];
 
      @CreateDateColumn({ name: 'created_at' })
      createdAt: Date;

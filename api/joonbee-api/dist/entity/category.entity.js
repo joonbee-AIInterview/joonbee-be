@@ -11,6 +11,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Category = void 0;
 const index_1 = require("typeorm/index");
+const question_entity_1 = require("./question.entity");
 let Category = class Category {
 };
 exports.Category = Category;
@@ -30,6 +31,10 @@ __decorate([
     (0, index_1.Column)({ type: 'int', name: 'category_upper_id' }),
     __metadata("design:type", Number)
 ], Category.prototype, "categoryUpperId", void 0);
+__decorate([
+    (0, index_1.OneToMany)(() => question_entity_1.Question, question => question.category),
+    __metadata("design:type", Array)
+], Category.prototype, "questions", void 0);
 __decorate([
     (0, index_1.CreateDateColumn)({ name: 'created_at' }),
     __metadata("design:type", Date)

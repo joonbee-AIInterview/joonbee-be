@@ -10,6 +10,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Interview = void 0;
+const and_question_entity_1 = require("./and.question.entity");
 const typeorm_1 = require("typeorm");
 const member_entity_1 = require("./member.entity");
 let Interview = class Interview {
@@ -24,20 +25,32 @@ __decorate([
     __metadata("design:type", String)
 ], Interview.prototype, "memberId", void 0);
 __decorate([
+    (0, typeorm_1.Column)({ name: 'category_name' }),
+    __metadata("design:type", String)
+], Interview.prototype, "categoryName", void 0);
+__decorate([
     (0, typeorm_1.ManyToOne)(() => member_entity_1.Member, member => member.id, { onDelete: 'CASCADE' }),
     (0, typeorm_1.JoinColumn)({ name: 'member_id' }),
     __metadata("design:type", member_entity_1.Member)
 ], Interview.prototype, "member", void 0);
 __decorate([
+<<<<<<< HEAD
     (0, typeorm_1.Column)({ name: 'count_flag' }),
     __metadata("design:type", Number)
 ], Interview.prototype, "countFlag", void 0);
 __decorate([
     (0, typeorm_1.CreateDateColumn)({ name: 'created_at' }),
+=======
+    (0, typeorm_1.OneToMany)(() => and_question_entity_1.InterviewAndQuestion, (iaq) => iaq.interview),
+    __metadata("design:type", Array)
+], Interview.prototype, "interviewAndQuestions", void 0);
+__decorate([
+    (0, typeorm_1.CreateDateColumn)({ name: 'created_at', type: 'datetime', default: () => 'CURRENT_TIMESTAMP' }),
+>>>>>>> 2fb82bc3c7f456db7b9aea52bdb968b2e3a93b44
     __metadata("design:type", Date)
 ], Interview.prototype, "createdAt", void 0);
 __decorate([
-    (0, typeorm_1.UpdateDateColumn)({ name: 'updated_at' }),
+    (0, typeorm_1.UpdateDateColumn)({ name: 'updated_at', type: 'datetime', default: () => 'CURRENT_TIMESTAMP', onUpdate: 'CURRENT_TIMESTAMP' }),
     __metadata("design:type", Date)
 ], Interview.prototype, "updatedAt", void 0);
 exports.Interview = Interview = __decorate([

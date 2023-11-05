@@ -18,15 +18,16 @@ CREATE TABLE IF NOT EXISTS `member` (
     updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
-CREATE TABLE IF NOT EXISTS `interview` (
-  `id` bigint AUTO_INCREMENT,
+CREATE TABLE `interview` (
+  `id` bigint NOT NULL AUTO_INCREMENT,
   `member_id` varchar(255) NOT NULL,
   `created_at` datetime DEFAULT CURRENT_TIMESTAMP,
   `updated_at` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `category_name` varchar(255) NOT NULL,
   PRIMARY KEY (`id`),
   KEY `member_id` (`member_id`),
   CONSTRAINT `interview_ibfk_1` FOREIGN KEY (`member_id`) REFERENCES `member` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
 
 CREATE TABLE IF NOT EXISTS `like` (
 	`member_id` varchar(255) not null,

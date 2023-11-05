@@ -16,13 +16,16 @@ export class RequestQuestion {
   }
 
 export class RequestLikeDTO{
-
     @IsNotEmpty()
+    @ApiProperty({ description: '면접 PK'})
     interviewId: number;
 }
 
 export class RequestInterviewSaveDTO{
-    @IsNotEmpty()
+
+    @ApiProperty({ description : '카테고리 이름'})
+    categoryName: string;
+
     @ApiProperty({ 
         description: 'questionId(number), questionContent(string), answerContent(string)',
         type: RequestQuestion,

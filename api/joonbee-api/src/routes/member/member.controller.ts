@@ -1,37 +1,93 @@
-import { Body, Controller, Get, Post, Req, Res, UseGuards, ValidationPipe } from '@nestjs/common';
+import { Body, Controller, Get, ParseIntPipe, Post, Query, Req, Res, UseGuards, ValidationPipe } from '@nestjs/common';
 import { MemberService } from './member.service';
-import { ApiResponse } from 'src/common/config/common';
+import { ApiResponse, CustomError } from 'src/common/config/common';
 import { RequestInterviewSaveDTO, RequestLikeDTO } from './dto/request.dto';
 import { TokenAuthGuard } from 'src/common/config/auth';
 import { Request, Response } from 'express';
 import { ApiBody } from '@nestjs/swagger';
+import { Member } from 'src/entity/member.entity';
+import { ResponseInterviewCategoryDTO, ResponseMyInfoDTO } from './dto/response.dto';
  
 @Controller('api/member')
 export class MemberController {
-
-    constructor(private readonly memberService: MemberService){}
-
-    @UseGuards(TokenAuthGuard)
-    @Get()
-    async test(@Req() request: Request,
-                @Res() response: Response){
-                
-        return response.locals.memberId;
-    }
-    /**
+   /**
      * Nest.js에서 @Res() 데커레이터를 사용하면 Express.js의 원시 Response객체에
      * 접근하기 때문에 return (Next.js 내장 응답처리 메커니즘)을 무시하고,
      * 원시 Express형식으로 응답을 보내야한다.
      */
 
+    constructor(private readonly memberService: MemberService){}
+
+    /**
+     * @api token의 memberId로 사용자 PK, 썸네일, 닉네임, 인터뷰개수를 얻을 수 있다.
+     */
+    @UseGuards(TokenAuthGuard)
+    @Get('info')
+    async myInfoSelect(
+        @Res() response: Response
+    ){
+        const memberId = response.locals.memberId;
+        const dto: ResponseMyInfoDTO =  await this.memberService.myInfoData(memberId);
+        
+        const apiResponse: ApiResponse<ResponseMyInfoDTO> = {
+            status: 200,
+            data: dto
+        }
+
+        response.json(apiResponse);
+    }
+
+    /**
+     * @api token을 통해 사용자가 풀었던 카테고리별 질문 개수를 가져온다. 
+     */
+    @UseGuards(TokenAuthGuard)
+    @Get('category')
+    async myCategoryInfo(
+        @Query('page') page: string = "1",
+        @Res() response: Response
+    ){
+        try{
+            const memberId: string = response.locals.memberId;
+            const data = await this.memberService.myCategoryInfoService(memberId,Number(page));
+            const apiResponse: ApiResponse<ResponseInterviewCategoryDTO> = {
+                status: 200,
+                data
+            }
+        response.json(apiResponse);
+        }catch(error){
+            throw new CustomError('알 수 없는 에러',500);
+        }
+    }
+
+    /**
+     * @api token을 통해 사용자가 추천을 눌렀던 카테고리별 질문 개수를 가져온다. 
+    */
+    @UseGuards(TokenAuthGuard)
+    @Get('category/like')
+    async myCategoryLikeInfo(
+        @Query('page') page: string = "1",
+        @Res() response: Response
+    ){
+        try{
+            const memberId: string = response.locals.memberId;
+            const data = await this.memberService.myCategoryLikeInfoService(memberId,Number(page));
+            const apiResponse: ApiResponse<ResponseInterviewCategoryDTO> = {
+                status: 200,
+                data
+            }
+        response.json(apiResponse);
+        }catch(error){
+            throw new CustomError('알 수 없는 에러',500);
+        }
+    }
+
     @UseGuards(TokenAuthGuard)
     @Post('like')
-    async insertLikeHandler(@Body(new ValidationPipe()) dto: RequestLikeDTO,
-                            @Res() response: Response
-                            ): Promise<void>{
-        // TODO: 유효성검사 쿠키발행 Swagger 등록
-        // 좋아요는 질문이 아닌 면접이었다!
-        // 여기서 그냥 interview 데이터로만 수정하면 된다.
+    async insertLikeHandler(
+        @Body(new ValidationPipe()) dto: RequestLikeDTO,
+        @Res() response: Response
+        ): Promise<void>{
+
         const memberId = response.locals.memberId;
         const interviewId = dto.interviewId;
                             
@@ -47,16 +103,35 @@ export class MemberController {
     @UseGuards(TokenAuthGuard)
     @Post('interview/save')
     @ApiBody({ type: RequestInterviewSaveDTO})
-    async insertInterviewAndQuestion(@Body(new ValidationPipe()) data: RequestInterviewSaveDTO,
-                                    @Res() response: Response){
-        const memberId = response.locals.memberId;
-        this.memberService.insertInterview(memberId, data);
+    async insertInterviewAndQuestion(
+        @Req() request: Request,
+        @Res() response: Response
+    ){
+        const { categoryName, questions } = request.body;
+        
+        if (!categoryName || !questions || !Array.isArray(questions) || questions.length === 0) {
+            const apiResponse: ApiResponse<string> = {
+                status: 200,
+                data: '성공'
+            }
+            response.json(apiResponse);          
 
-        const apiResponse: ApiResponse<string> = {
-            status: 200,
-            data: '성공'
+        }else{
+            const memberId = response.locals.memberId;
+            
+            const data: RequestInterviewSaveDTO = {
+                categoryName,
+                questions
+            }
+            this.memberService.insertInterview(memberId, data);
+    
+            const apiResponse: ApiResponse<string> = {
+                status: 200,
+                data: '성공'
+            }
+            response.json(apiResponse);          
         }
-        response.json(apiResponse);          
+        
     }
 
 }

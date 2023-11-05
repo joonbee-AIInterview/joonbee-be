@@ -12,6 +12,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.Question = void 0;
 const index_1 = require("typeorm/index");
 const category_entity_1 = require("./category.entity");
+const and_question_entity_1 = require("./and.question.entity");
 let Question = class Question {
     updateQuestion(updateQuestionDto) {
         this.category.categoryName = updateQuestionDto.categoryName;
@@ -31,6 +32,10 @@ __decorate([
     (0, index_1.JoinColumn)({ name: 'category_id' }),
     __metadata("design:type", category_entity_1.Category)
 ], Question.prototype, "category", void 0);
+__decorate([
+    (0, index_1.OneToMany)(() => and_question_entity_1.InterviewAndQuestion, (imq) => imq.question),
+    __metadata("design:type", Array)
+], Question.prototype, "interviewAndQuestions", void 0);
 __decorate([
     (0, index_1.Column)({ type: 'tinyint', name: 'gpt_flag' }),
     __metadata("design:type", Number)
