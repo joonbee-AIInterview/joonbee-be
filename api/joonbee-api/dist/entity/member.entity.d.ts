@@ -1,4 +1,5 @@
 import { Interview } from "./interview.entity";
+import { Cart } from "./cart.entity";
 export declare class Member {
     id: string;
     email: string;
@@ -10,4 +11,5 @@ export declare class Member {
     createdAt: Date;
     updatedAt: Date;
     interviews: Interview[];
+    carts: Cart;
 }

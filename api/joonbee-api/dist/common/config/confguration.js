@@ -18,6 +18,7 @@ const question_entity_1 = require("../../entity/question.entity");
 const like_entity_1 = require("../../entity/like.entity");
 const interview_entity_1 = require("../../entity/interview.entity");
 const and_question_entity_1 = require("../../entity/and.question.entity");
+const cart_entity_1 = require("../../entity/cart.entity");
 let TypeOrmConfigService = class TypeOrmConfigService {
     constructor(configService) {
         this.configService = configService;
@@ -30,7 +31,7 @@ let TypeOrmConfigService = class TypeOrmConfigService {
             "username": this.configService.get('DATABASE_USERNAME'),
             "password": this.configService.get('DATABASE_PASSWORD'),
             "database": this.configService.get('DATABASE_DB'),
-            "entities": [member_entity_1.Member, category_entity_1.Category, question_entity_1.Question, like_entity_1.Like, interview_entity_1.Interview, and_question_entity_1.InterviewAndQuestion],
+            "entities": [member_entity_1.Member, category_entity_1.Category, question_entity_1.Question, like_entity_1.Like, interview_entity_1.Interview, and_question_entity_1.InterviewAndQuestion, cart_entity_1.Cart],
             "synchronize": false,
             "logging": true
         };

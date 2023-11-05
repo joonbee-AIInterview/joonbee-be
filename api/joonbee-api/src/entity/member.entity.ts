@@ -1,5 +1,6 @@
 import { Column, CreateDateColumn, Entity, OneToMany, PrimaryColumn, UpdateDateColumn } from "typeorm";
 import { Interview } from "./interview.entity";
+import { Cart } from "./cart.entity";
 
 
 @Entity('member')
@@ -34,5 +35,8 @@ export class Member{
 
     @OneToMany(() => Interview, (interview) => interview.member)
     interviews: Interview[];
+
+    @OneToMany(() => Cart, (cart) => cart.member)
+    carts: Cart;
   
 }

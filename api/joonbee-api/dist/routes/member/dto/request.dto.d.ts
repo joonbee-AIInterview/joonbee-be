@@ -10,3 +10,7 @@ export declare class RequestInterviewSaveDTO {
     categoryName: string;
     questions: RequestQuestion[];
 }
+export declare class RequestCartInsertDTO {
+    questionId: number;
+    categoryName: string;
+}

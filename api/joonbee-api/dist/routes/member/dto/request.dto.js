@@ -9,7 +9,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.RequestInterviewSaveDTO = exports.RequestLikeDTO = exports.RequestQuestion = void 0;
+exports.RequestCartInsertDTO = exports.RequestInterviewSaveDTO = exports.RequestLikeDTO = exports.RequestQuestion = void 0;
 const swagger_1 = require("@nestjs/swagger");
 const class_validator_1 = require("class-validator");
 class RequestQuestion {
@@ -53,4 +53,15 @@ __decorate([
     }),
     __metadata("design:type", Array)
 ], RequestInterviewSaveDTO.prototype, "questions", void 0);
+class RequestCartInsertDTO {
+}
+exports.RequestCartInsertDTO = RequestCartInsertDTO;
+__decorate([
+    (0, class_validator_1.IsNotEmpty)({ message: 'question 번호' }),
+    __metadata("design:type", Number)
+], RequestCartInsertDTO.prototype, "questionId", void 0);
+__decorate([
+    (0, class_validator_1.IsNotEmpty)({ message: 'category 이름' }),
+    __metadata("design:type", String)
+], RequestCartInsertDTO.prototype, "categoryName", void 0);
 //# sourceMappingURL=request.dto.js.map

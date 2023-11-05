@@ -46,3 +46,10 @@ export class ResponseInterviewCategoryData{
 
     interviewId: number;
 }
+
+
+export class ResponseCartDTO{
+    questionContent: string;
+
+    questionId: number;
+}

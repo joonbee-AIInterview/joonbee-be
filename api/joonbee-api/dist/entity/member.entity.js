@@ -12,6 +12,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.Member = void 0;
 const typeorm_1 = require("typeorm");
 const interview_entity_1 = require("./interview.entity");
+const cart_entity_1 = require("./cart.entity");
 let Member = class Member {
 };
 exports.Member = Member;
@@ -55,6 +56,10 @@ __decorate([
     (0, typeorm_1.OneToMany)(() => interview_entity_1.Interview, (interview) => interview.member),
     __metadata("design:type", Array)
 ], Member.prototype, "interviews", void 0);
+__decorate([
+    (0, typeorm_1.OneToMany)(() => cart_entity_1.Cart, (cart) => cart.member),
+    __metadata("design:type", cart_entity_1.Cart)
+], Member.prototype, "carts", void 0);
 exports.Member = Member = __decorate([
     (0, typeorm_1.Entity)('member')
 ], Member);
