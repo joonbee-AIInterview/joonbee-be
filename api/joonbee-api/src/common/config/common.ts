@@ -11,4 +11,9 @@ export class CustomError extends Error{
       this.statusCode = statusCode;
   }
 }
+
+export class PageResponseDTO<T>{
+   total: number;
+   data: T;
+}
   

@@ -1,7 +1,7 @@
 import { RowDataPacket } from 'mysql2';
 import { HttpException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { CustomError } from 'src/common/config/common';
+import { CustomError, PageResponseDTO } from 'src/common/config/common';
 import { Category } from 'src/entity/category.entity';
 import { Like } from 'src/entity/like.entity';
 import { Member } from 'src/entity/member.entity';
@@ -10,7 +10,8 @@ import { RequestInterviewSaveDTO } from './dto/request.dto';
 import { Interview } from 'src/entity/interview.entity';
 import { InterviewAndQuestion } from 'src/entity/and.question.entity';
 import { plainToClass } from 'class-transformer';
-import { ResponseCategoryInfoDTO, ResponseInterviewCategoryDTO, ResponseInterviewCategoryData, ResponseMyInfoDTO } from './dto/response.dto';
+import { ResponseCartDTO, ResponseCategoryInfoDTO, ResponseInterviewCategoryDTO, ResponseInterviewCategoryData, ResponseMyInfoDTO } from './dto/response.dto';
+import { Cart } from 'src/entity/cart.entity';
 
 @Injectable()
 export class MemberService {
@@ -26,7 +27,9 @@ export class MemberService {
         @InjectRepository(InterviewAndQuestion)
         private readonly andQuestionRepository: Repository<InterviewAndQuestion>,
         @InjectRepository(Category)
-        private readonly categoryRepository: Repository<Category>
+        private readonly categoryRepository: Repository<Category>,
+        @InjectRepository(Cart)
+        private readonly cartRepository: Repository<Cart>
     ){
         this.PAGE_SIZE = 6;
     }
@@ -203,4 +206,76 @@ export class MemberService {
             throw new CustomError('사용자 면접 정보 불러오기 실패',500);
         }
     }
+
+    /**
+     * @note 장바구니에 추가하는 서비스 로직
+    */
+   async insertCartService(memberId: string, questionId: number, categoryName: string): Promise<void>{
+        try{
+            const cartObj = this.cartRepository.create({
+                memberId,
+                questionId,
+                categoryName
+            });
+            
+            this.cartRepository.save(cartObj);
+        }catch(error){
+            console.log('insertInterview ERROR member.serivce 222\n' + error);
+            throw new CustomError('사용자 장바구니 저장실패',500);
+        }
+   }
+
+   /**
+    * @note 장바구니 데이터 조회
+    */
+   async myCartReadService(memberId: string, page: number): Promise<PageResponseDTO<ResponseCartDTO[]>>{
+        try{
+            const skipNumber = (page - 1) * this.PAGE_SIZE;
+            const countQuery = await this.cartRepository.count();
+
+            const cart: RowDataPacket[] = await this.cartRepository
+                .createQueryBuilder('cart')
+                .select(['q.questionContent AS questionContent','q.id AS questionId'])
+                .innerJoin('cart.question','q')
+                .where('cart.memberId = :memberId',{ memberId })
+                .offset(skipNumber)
+                .limit(this.PAGE_SIZE)
+                .getRawMany();
+
+            
+            const data: ResponseCartDTO[] = cart.map((packet) => ({
+                questionId: +packet.questionId,
+                questionContent: packet.questionContent
+            }));
+
+            const result: PageResponseDTO<ResponseCartDTO[]> = {
+                total : countQuery,
+                data
+            }
+            
+            return result;
+
+        }catch(error){
+            console.log('insertInterview ERROR member.serivce 241\n' + error);
+            throw new CustomError('사용자 장바구니 조회실패',500);
+        }
+   }
+
+   /**
+    * @note 장바구니 데이터 삭제
+    */
+   async deleteCartService(memberId: string, questionId: number): Promise<boolean>{
+        const data = await this.cartRepository.findOne({
+            where: {
+                memberId,
+                questionId
+            }
+        });
+
+        if (data) {
+            await this.cartRepository.remove(data);
+            return true;
+        }
+        return false;
+   }
 }

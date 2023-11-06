@@ -22,13 +22,15 @@ const member_entity_1 = require("../../entity/member.entity");
 const typeorm_2 = require("typeorm");
 const interview_entity_1 = require("../../entity/interview.entity");
 const and_question_entity_1 = require("../../entity/and.question.entity");
+const cart_entity_1 = require("../../entity/cart.entity");
 let MemberService = class MemberService {
-    constructor(memberRepository, likeRepository, interviewRepository, andQuestionRepository, categoryRepository) {
+    constructor(memberRepository, likeRepository, interviewRepository, andQuestionRepository, categoryRepository, cartRepository) {
         this.memberRepository = memberRepository;
         this.likeRepository = likeRepository;
         this.interviewRepository = interviewRepository;
         this.andQuestionRepository = andQuestionRepository;
         this.categoryRepository = categoryRepository;
+        this.cartRepository = cartRepository;
         this.PAGE_SIZE = 6;
     }
     async insertLike(memberId, interviewId) {
@@ -170,6 +172,60 @@ let MemberService = class MemberService {
             throw new common_2.CustomError('사용자 면접 정보 불러오기 실패', 500);
         }
     }
+    async insertCartService(memberId, questionId, categoryName) {
+        try {
+            const cartObj = this.cartRepository.create({
+                memberId,
+                questionId,
+                categoryName
+            });
+            this.cartRepository.save(cartObj);
+        }
+        catch (error) {
+            console.log('insertInterview ERROR member.serivce 222\n' + error);
+            throw new common_2.CustomError('사용자 장바구니 저장실패', 500);
+        }
+    }
+    async myCartReadService(memberId, page) {
+        try {
+            const skipNumber = (page - 1) * this.PAGE_SIZE;
+            const countQuery = await this.cartRepository.count();
+            const cart = await this.cartRepository
+                .createQueryBuilder('cart')
+                .select(['q.questionContent AS questionContent', 'q.id AS questionId'])
+                .innerJoin('cart.question', 'q')
+                .where('cart.memberId = :memberId', { memberId })
+                .offset(skipNumber)
+                .limit(this.PAGE_SIZE)
+                .getRawMany();
+            const data = cart.map((packet) => ({
+                questionId: +packet.questionId,
+                questionContent: packet.questionContent
+            }));
+            const result = {
+                total: countQuery,
+                data
+            };
+            return result;
+        }
+        catch (error) {
+            console.log('insertInterview ERROR member.serivce 241\n' + error);
+            throw new common_2.CustomError('사용자 장바구니 조회실패', 500);
+        }
+    }
+    async deleteCartService(memberId, questionId) {
+        const data = await this.cartRepository.findOne({
+            where: {
+                memberId,
+                questionId
+            }
+        });
+        if (data) {
+            await this.cartRepository.remove(data);
+            return true;
+        }
+        return false;
+    }
 };
 exports.MemberService = MemberService;
 exports.MemberService = MemberService = __decorate([
@@ -179,7 +235,9 @@ exports.MemberService = MemberService = __decorate([
     __param(2, (0, typeorm_1.InjectRepository)(interview_entity_1.Interview)),
     __param(3, (0, typeorm_1.InjectRepository)(and_question_entity_1.InterviewAndQuestion)),
     __param(4, (0, typeorm_1.InjectRepository)(category_entity_1.Category)),
+    __param(5, (0, typeorm_1.InjectRepository)(cart_entity_1.Cart)),
     __metadata("design:paramtypes", [typeorm_2.Repository,
+        typeorm_2.Repository,
         typeorm_2.Repository,
         typeorm_2.Repository,
         typeorm_2.Repository,

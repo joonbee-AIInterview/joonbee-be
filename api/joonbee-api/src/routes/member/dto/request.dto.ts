@@ -34,3 +34,12 @@ export class RequestInterviewSaveDTO{
     questions: RequestQuestion[];
 
 }
+
+export class RequestCartInsertDTO{
+
+    @IsNotEmpty({message: 'question 번호'})
+    questionId: number;
+
+    @IsNotEmpty({message: 'category 이름'})
+    categoryName: string;
+}

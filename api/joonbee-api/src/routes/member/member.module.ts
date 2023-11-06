@@ -7,9 +7,17 @@ import { Interview } from 'src/entity/interview.entity';
 import { Like } from 'src/entity/like.entity';
 import { InterviewAndQuestion } from 'src/entity/and.question.entity';
 import { Category } from 'src/entity/category.entity';
+import { Cart } from 'src/entity/cart.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Member, Like, Interview, InterviewAndQuestion, Category])],
+  imports: [TypeOrmModule.forFeature([
+      Member,
+      Like,
+      Interview,
+      InterviewAndQuestion,
+      Category,
+      Cart
+    ])],
   controllers: [MemberController],
   providers: [MemberService]
 })

@@ -20,6 +20,20 @@ let CustomExceptionFilter = class CustomExceptionFilter {
                 message: exception.message,
             });
         }
+        else if (exception instanceof common_1.HttpException) {
+            console.error(exception);
+            return response.status(exception.getStatus()).json({
+                statusCode: exception.getStatus(),
+                message: exception.getResponse(),
+            });
+        }
+        else {
+            console.error(exception);
+            return response.status(500).json({
+                statusCode: 500,
+                message: 'SERVER ERROR',
+            });
+        }
     }
 };
 exports.CustomExceptionFilter = CustomExceptionFilter;
