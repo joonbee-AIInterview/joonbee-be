@@ -21,7 +21,7 @@ let InterviewService = class InterviewService {
     constructor(interviewRepository) {
         this.interviewRepository = interviewRepository;
     }
-    async getAllInterviewWithMemberQuestionCategory() {
+    async interviewsWithQuestionCategoryMember() {
         throw new Error('Method not implemented.');
     }
 };

@@ -8,6 +8,9 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
+var __param = (this && this.__param) || function (paramIndex, decorator) {
+    return function (target, key) { decorator(target, key, paramIndex); }
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.InterviewController = void 0;
 const common_1 = require("@nestjs/common");
@@ -16,22 +19,17 @@ let InterviewController = class InterviewController {
     constructor(interviewService) {
         this.interviewService = interviewService;
     }
-    async findAllInterviewWithMemberQuestionCategory() {
-        const interviewList = await this.interviewService.getAllInterviewWithMemberQuestionCategory();
-        return Object.assign({
-            data: interviewList,
-            statusCode: 200,
-            statusMsg: `findAllWithCategory을 이용한 Question 데이터 조회가 성공적으로 완료되었습니다.`,
-        });
+    async interviewsWithQuestionCategoryMember(response) {
     }
 };
 exports.InterviewController = InterviewController;
 __decorate([
-    (0, common_1.Get)(),
+    (0, common_1.Get)('all'),
+    __param(0, (0, common_1.Res)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
+    __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", Promise)
-], InterviewController.prototype, "findAllInterviewWithMemberQuestionCategory", null);
+], InterviewController.prototype, "interviewsWithQuestionCategoryMember", null);
 exports.InterviewController = InterviewController = __decorate([
     (0, common_1.Controller)('api/interview'),
     __metadata("design:paramtypes", [interview_service_1.InterviewService])

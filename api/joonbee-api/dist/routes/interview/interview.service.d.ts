@@ -3,5 +3,5 @@ import { Repository } from "typeorm";
 export declare class InterviewService {
     private interviewRepository;
     constructor(interviewRepository: Repository<Interview>);
-    getAllInterviewWithMemberQuestionCategory(): Promise<Interview[]>;
+    interviewsWithQuestionCategoryMember(): Promise<void>;
 }

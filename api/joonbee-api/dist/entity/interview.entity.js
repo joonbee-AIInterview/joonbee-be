@@ -34,19 +34,11 @@ __decorate([
     __metadata("design:type", member_entity_1.Member)
 ], Interview.prototype, "member", void 0);
 __decorate([
-<<<<<<< HEAD
-    (0, typeorm_1.Column)({ name: 'count_flag' }),
-    __metadata("design:type", Number)
-], Interview.prototype, "countFlag", void 0);
-__decorate([
-    (0, typeorm_1.CreateDateColumn)({ name: 'created_at' }),
-=======
     (0, typeorm_1.OneToMany)(() => and_question_entity_1.InterviewAndQuestion, (iaq) => iaq.interview),
     __metadata("design:type", Array)
 ], Interview.prototype, "interviewAndQuestions", void 0);
 __decorate([
     (0, typeorm_1.CreateDateColumn)({ name: 'created_at', type: 'datetime', default: () => 'CURRENT_TIMESTAMP' }),
->>>>>>> 2fb82bc3c7f456db7b9aea52bdb968b2e3a93b44
     __metadata("design:type", Date)
 ], Interview.prototype, "createdAt", void 0);
 __decorate([
