@@ -5,6 +5,11 @@ export interface ApiResponse<T>{
     data: T;
 }
 
+export interface ResponseToken{
+    accessToken: string;
+    refreshToken: string;
+}
+
 export class CustomError extends Error{
     statusCode: number;
     
@@ -16,6 +21,7 @@ export class CustomError extends Error{
 
 export const asyncErrorHandler = (fn: Function) =>
         (req: Request, res: Response, next: NextFunction) => 
-            Promise.resolve(fn(req, res, next)).catch(next);   
+            Promise.resolve(fn(req, res, next)).catch(next);
+            
 
 

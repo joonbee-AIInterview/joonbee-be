@@ -1,7 +1,7 @@
 import { UserRepository } from './../repository/member.repository';
 import jwt from 'jsonwebtoken';
-import { CustomError } from './api.utils';
-import { client as redisClient, setAsync, getAsync, delAsync }  from './redis.utils';
+import { CustomError, ResponseToken } from './api.utils';
+import { client as redisClient }  from './redis.utils';
 
 const TOKEN_KEY = 'test';
 
@@ -13,27 +13,27 @@ export interface Payload { // 구현 다 되면 사용예쩡
     loginType: string
 }
 
-/**
- * TODO: payload를 PayLoad 타입으로 지정예정
- */
-export const generateToken = async (payload: Payload): Promise<string> => { 
+export const generateToken = async (payload: Payload): Promise<ResponseToken> => { 
     const expire: number = 7 * 24 * 60 * 60; // refreshToken 만료시간 ( 7 일 )
     
     if(!payload) throw new CustomError("Error creating OAuth token", 401);
     const userRepository: UserRepository = new UserRepository();
     const accessToken: string = jwt.sign({joonbee : payload.id}, TOKEN_KEY, { 'expiresIn' : '1h' } );
-    const refreshToken: string = jwt.sign({joonbee : payload.id}, TOKEN_KEY, { 'expiresIn' : '7d' } );
+    const refreshToken: string = jwt.sign({joonbee : payload.id}, TOKEN_KEY, { 'expiresIn' : '1d' } );
     
     try{
-        setAsync(accessToken, expire, refreshToken);
         const existMemberData: boolean = await userRepository.existMember(payload.id, payload.email);
 
+        // 사용자 데이터가 존재하지 않을시 예외 발생시킴
         if(!existMemberData){
             userRepository.insertMember(payload.id, payload.email, payload.password, payload.thumbnail, payload.loginType);
             throw new CustomError(payload.id,410);
         }
 
-        return accessToken;
+        const responseToken: ResponseToken = {
+            accessToken, refreshToken
+        }
+        return responseToken;
 
     }catch(err){
         console.error(err);
@@ -41,17 +41,18 @@ export const generateToken = async (payload: Payload): Promise<string> => {
     }
 }
 
-export const generateTokenForNickName = async (id: string): Promise<string> => { 
+export const generateTokenForNickName = async (id: string): Promise<ResponseToken> => { 
     const expire: number = 7 * 24 * 60 * 60; // refreshToken 만료시간 ( 7 일 )
     
     if(!id) throw new CustomError("Error creating OAuth token", 401);
-    const userRepository: UserRepository = new UserRepository();
     const accessToken: string = jwt.sign({joonbee : id}, TOKEN_KEY, { 'expiresIn' : '1h' } );
     const refreshToken: string = jwt.sign({joonbee : id}, TOKEN_KEY, { 'expiresIn' : '7d' } );
     
     try{
-        setAsync(accessToken, expire, refreshToken);
-        return accessToken;
+        const responseToken: ResponseToken = {
+            accessToken, refreshToken
+        }
+        return responseToken;
 
     }catch(err){
         console.error(err);

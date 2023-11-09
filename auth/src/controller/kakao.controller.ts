@@ -2,10 +2,11 @@ import axios from 'axios';
 import * as JWT from '../utils/jwt.utils';
 import dotenv from 'dotenv';
 import * as crypto from 'crypto';
+import { ResponseToken } from '../utils/api.utils';
 
 dotenv.config();
 
-export const kakaoAuthentication = async (code: string) => {
+export const kakaoAuthentication = async (code: string): Promise<ResponseToken> => {
     const clientId: string = process.env.KAKAO_CLIENTID as string;
     const clientSecret: string = process.env.KAKAO_CLIENTSECRET as string;
     const KAKAO_TOKEN_URL: string = process.env.KAKAO_TOKEN_URL as string;

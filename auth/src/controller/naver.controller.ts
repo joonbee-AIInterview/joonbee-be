@@ -3,15 +3,14 @@ import axios from 'axios';
 import * as JWT from '../utils/jwt.utils';
 import { userInfo } from 'os';
 import * as crypto from 'crypto';
+import { ResponseToken } from '../utils/api.utils';
 
 
-export const naverAuthentication = async (code: string) => {
+export const naverAuthentication = async (code: string) : Promise<ResponseToken> => {
     const NAVER_CLIENTID: string = process.env.NAVER_CLIENTID as string;
     const NAVER_CLIENTSECRET: string = process.env.NAVER_CLIENTSECRET as string;
     const NAVER_TOKEN_URL: string = process.env.NAVER_TOKEN_URL as string;
     const NAVER_USERINFO_URL: string = process.env.NAVER_USERINFO_URL as string;
-    console.log(NAVER_CLIENTID);
-    console.log(NAVER_CLIENTSECRET);
     const sha256Hash = crypto.createHash('sha256');
     const tempPwd = "1234";
 
@@ -45,7 +44,7 @@ export const naverAuthentication = async (code: string) => {
     }
 
     payload = handleNullCheck(payload);
-    const token: string = await JWT.generateToken(payload);
+    const token: ResponseToken = await JWT.generateToken(payload);
     return token;
 
 }

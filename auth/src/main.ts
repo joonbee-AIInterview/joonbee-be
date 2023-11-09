@@ -59,7 +59,7 @@ app.use((err: any, req: any, res: any, next: any) => { // Exception 비들웨어
   const kakaoAuthURL = `https://kauth.kakao.com/oauth/authorize?client_id=${clientID}&redirect_uri=${redirectURI}&response_type=code`;
  */
 app.listen(PORT, () => {
-    console.log(`Server is running on http://localhost:${PORT}`);
+    console.log(`Auth Server is running on PORT:${PORT}`);
 });
 
   

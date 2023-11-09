@@ -1,9 +1,9 @@
 import axios from "axios";
 import * as JWT from '../utils/jwt.utils';
 import * as crypto from 'crypto';
-import { CustomError } from "../utils/api.utils";
+import { CustomError, ResponseToken } from "../utils/api.utils";
 
-export const googleAuthentication = async (code: string): Promise<string> => {
+export const googleAuthentication = async (code: string): Promise<ResponseToken> => {
      const clientId: string = process.env.GOOGLE_CLIENTID as string;
      const clientSecret: string = process.env.GOOGLE_CLIENTSECRET as string;
      const GOOGLE_TOKEN_URL: string = process.env.GOOGLE_TOKEN_URL as string;
@@ -37,7 +37,7 @@ export const googleAuthentication = async (code: string): Promise<string> => {
      }
      payLoad = handleNullCheck(payLoad);
 
-     const token: string = await JWT.generateToken(payLoad);
+     const token: ResponseToken = await JWT.generateToken(payLoad);
      return token;
 }
 
