@@ -15,6 +15,7 @@ const config_1 = require("@nestjs/config");
 const member_module_1 = require("./routes/member/member.module");
 const question_module_1 = require("./routes/question/question.module");
 const category_module_1 = require("./routes/category/category.module");
+const interview_module_1 = require("./routes/interview/interview.module");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -28,7 +29,8 @@ exports.AppModule = AppModule = __decorate([
             }),
             member_module_1.MemberModule,
             question_module_1.QuestionModule,
-            category_module_1.CategoryModule
+            category_module_1.CategoryModule,
+            interview_module_1.InterviewModule,
         ],
         controllers: [app_controller_1.AppController],
         providers: [app_service_1.AppService],

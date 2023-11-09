@@ -14,89 +14,37 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.QuestionController = void 0;
 const common_1 = require("@nestjs/common");
-const save_request_dto_1 = require("./dto/save.request.dto");
 const question_service_1 = require("./question.service");
+const common_2 = require("../../common/config/common");
 let QuestionController = class QuestionController {
     constructor(questionService) {
         this.questionService = questionService;
     }
-    async saveQuestion(saveQuestionDto) {
-        const questionId = await this.questionService.saveQuestion(saveQuestionDto);
-        return Object.assign({
-            data: { questionId: questionId },
-            statusCode: 201,
-            statusMsg: `saveQuestion을 이용한 Question 데이터 추가가 성공적으로 완료되었습니다.`,
-        });
-    }
-    async findAllWithCategory() {
-        const questionList = await this.questionService.findAllWithCategory();
-        return Object.assign({
-            data: questionList,
-            statusCode: 200,
-            statusMsg: `findAllWithCategory을 이용한 Question 데이터 조회가 성공적으로 완료되었습니다.`,
-        });
-    }
-    async findOneWithCategory(questionId) {
-        const question = await this.questionService.findOneWithCategory(questionId);
-        return Object.assign({
-            data: question,
-            statusCode: 200,
-            statusMsg: `findOneWithCategory을 이용한 Question 데이터 조회가 성공적으로 완료되었습니다.`,
-        });
-    }
-    async deleteQuestion(questionId) {
-        await this.questionService.deleteQuestion(questionId);
-        return Object.assign({
-            data: { questionId: questionId },
-            statusCode: 201,
-            statusMsg: `deleteQuestion을 이용한 Question 데이터 삭제가 성공적으로 완료되었습니다.`,
-        });
-    }
-    async updateQuestion(questionId, updateQuestionDto) {
-        const question = await this.questionService.updateQuestion(questionId, updateQuestionDto);
-        return Object.assign({
-            data: { question },
-            statusCode: 201,
-            statusMsg: `updateQuestion을 이용한 Question 데이터 수정이 성공적으로 완료되었습니다.`,
-        });
+    async questionsWithCategory(page = "1", category, subCategory, response) {
+        try {
+            const data = await this.questionService.questionsWithCategory(Number(page), category, subCategory);
+            const apiResponse = {
+                status: 200,
+                data
+            };
+            response.json(apiResponse);
+        }
+        catch (error) {
+            throw new common_2.CustomError('알 수 없는 에러', 500);
+        }
     }
 };
 exports.QuestionController = QuestionController;
 __decorate([
-    (0, common_1.Post)('save'),
-    __param(0, (0, common_1.Body)()),
+    (0, common_1.Get)('random'),
+    __param(0, (0, common_1.Query)('page')),
+    __param(1, (0, common_1.Query)('category')),
+    __param(2, (0, common_1.Query)('subCategory')),
+    __param(3, (0, common_1.Res)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [save_request_dto_1.SaveQuestionDto]),
+    __metadata("design:paramtypes", [String, String, String, Object]),
     __metadata("design:returntype", Promise)
-], QuestionController.prototype, "saveQuestion", null);
-__decorate([
-    (0, common_1.Get)('all'),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
-    __metadata("design:returntype", Promise)
-], QuestionController.prototype, "findAllWithCategory", null);
-__decorate([
-    (0, common_1.Get)(':questionId'),
-    __param(0, (0, common_1.Param)('questionId')),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Number]),
-    __metadata("design:returntype", Promise)
-], QuestionController.prototype, "findOneWithCategory", null);
-__decorate([
-    (0, common_1.Delete)('delete/:questionId'),
-    __param(0, (0, common_1.Param)('questionId')),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Number]),
-    __metadata("design:returntype", Promise)
-], QuestionController.prototype, "deleteQuestion", null);
-__decorate([
-    (0, common_1.Put)('update/:questionId'),
-    __param(0, (0, common_1.Param)('questionId')),
-    __param(1, (0, common_1.Body)(new common_1.ValidationPipe())),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Number, save_request_dto_1.SaveQuestionDto]),
-    __metadata("design:returntype", Promise)
-], QuestionController.prototype, "updateQuestion", null);
+], QuestionController.prototype, "questionsWithCategory", null);
 exports.QuestionController = QuestionController = __decorate([
     (0, common_1.Controller)('api/question'),
     __metadata("design:paramtypes", [question_service_1.QuestionService])
