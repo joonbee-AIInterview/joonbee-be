@@ -12,8 +12,18 @@ import { CustomError, ApiResponse } from './utils/api.utils';
 const app = express();
 const PORT = 3000;
 
+const logRequestDetails = (req: Request, res: Response, next: NextFunction) => {
+    const currentTime = new Date();
+    const requestURL = req.originalUrl;
+
+    console.log(`REQUEST TIME => ${currentTime}, REQUEST URL => ${requestURL}`);
+    next();
+}
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+app.use(logRequestDetails);
 
 app.use('/auth/kakao',kakaoRouter);
 app.use('/auth/naver', naverRouter);
@@ -54,10 +64,7 @@ app.use((err: any, req: any, res: any, next: any) => { // Exception 비들웨어
         
     }
 });
-/**
- * const clientID = 'YOUR_KAKAO_REST_API_KEY';
-  const kakaoAuthURL = `https://kauth.kakao.com/oauth/authorize?client_id=${clientID}&redirect_uri=${redirectURI}&response_type=code`;
- */
+
 app.listen(PORT, () => {
     console.log(`Auth Server is running on PORT:${PORT}`);
 });

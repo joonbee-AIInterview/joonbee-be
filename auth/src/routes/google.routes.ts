@@ -13,7 +13,8 @@ router.get('/callback', asyncErrorHandler(
                status: 200,
                data: '성공'
           }
-          res.cookie('joonbee-token', authToken, {httpOnly : false});
+          res.cookie('joonbee-token', authToken.accessToken, { httpOnly: false, sameSite: 'none', secure: true });
+          res.cookie('joonbee-token-refresh', authToken.refreshToken, { httpOnly: false, sameSite: 'none', secure: true });
           res.json(respones);
      }
 ));

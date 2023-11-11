@@ -1,8 +1,8 @@
 import { UserRepository } from "../repository/member.repository"
-import { CustomError } from "../utils/api.utils";
+import { CustomError, ResponseToken } from "../utils/api.utils";
 import { generateTokenForNickName } from "../utils/jwt.utils";
 
-export const loginAuthentication = async (id: string, nickName: string) => {
+export const loginAuthentication = async (id: string, nickName: string): Promise<ResponseToken> => {
     const userRepository = new UserRepository();
     const existData = await userRepository.existMemberByNickName(nickName);
 

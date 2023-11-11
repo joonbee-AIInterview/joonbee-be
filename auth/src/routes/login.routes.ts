@@ -12,14 +12,15 @@ const router = Router();
 router.post('/nick',asyncErrorHandler(
     async (req: Request, res: Response) => {
         const data: RequestBody = req.body;
-        const authToken = await loginAuthentication(data.id, data.nickName);
+        const authToken =await loginAuthentication(data.id, data.nickName);
 
         const response: ApiResponse<string> = {
             status: 200,
             data: '성공'
         }
         console.log(authToken);
-        res.cookie('joonbee-token', authToken, { httpOnly: false, sameSite: 'none', secure: true });
+        res.cookie('joonbee-token', authToken.accessToken, { httpOnly: false, sameSite: 'none', secure: true });
+        res.cookie('joonbee-token-refresh', authToken.refreshToken, { httpOnly: false, sameSite: 'none', secure: true });
         res.json(response);
 }));
 

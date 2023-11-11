@@ -3,7 +3,7 @@ import axios from 'axios';
 import * as JWT from '../utils/jwt.utils';
 import { userInfo } from 'os';
 import * as crypto from 'crypto';
-import { ResponseToken } from '../utils/api.utils';
+import { CustomError, ResponseToken } from '../utils/api.utils';
 
 
 export const naverAuthentication = async (code: string) : Promise<ResponseToken> => {
@@ -50,6 +50,8 @@ export const naverAuthentication = async (code: string) : Promise<ResponseToken>
 }
 
 const handleNullCheck = (payLoad: JWT.Payload): JWT.Payload => {
+    if(payLoad.id == null ) throw new CustomError('id 존재하지 않음', 401);
+    
     return {
         id : payLoad.id !== null ? payLoad.id : 'NONE',
         email : payLoad.email !== null ? payLoad.email : 'NONE',

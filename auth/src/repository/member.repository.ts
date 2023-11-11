@@ -36,17 +36,19 @@ export class UserRepository {
         const client = await pool.getConnection();
 
        try{
-            const query = `SELECT count(*) as cnt FROM member WHERE id = ? AND email = ?`;
+            const query = `SELECT count(*) as cnt, nick_name as nickName FROM member WHERE id = ? AND email = ?`;
             const [rows] = await client.query(query, [id, email]) as RowDataPacket[];
+            
             const count = rows[0].cnt;
-
-            return count;
+            const nickName = rows[0].nickName;
+            console.log(rows);
+            return count && nickName;
             
         }catch(err){
             console.error(err);
             throw new CustomError("existMember ERROR member.repository 31", 500);
        } finally {
-        client.release(); // 연결 반환
+            client.release(); // 연결 반환
        }
     }
 
