@@ -13,6 +13,7 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.MemberService = void 0;
+const redis_config_1 = require("./../../common/config/redis.config");
 const common_1 = require("@nestjs/common");
 const typeorm_1 = require("@nestjs/typeorm");
 const common_2 = require("../../common/config/common");
@@ -24,22 +25,32 @@ const interview_entity_1 = require("../../entity/interview.entity");
 const and_question_entity_1 = require("../../entity/and.question.entity");
 const cart_entity_1 = require("../../entity/cart.entity");
 let MemberService = class MemberService {
-    constructor(memberRepository, likeRepository, interviewRepository, andQuestionRepository, categoryRepository, cartRepository) {
+    constructor(memberRepository, likeRepository, interviewRepository, andQuestionRepository, categoryRepository, cartRepository, redisService) {
         this.memberRepository = memberRepository;
         this.likeRepository = likeRepository;
         this.interviewRepository = interviewRepository;
         this.andQuestionRepository = andQuestionRepository;
         this.categoryRepository = categoryRepository;
         this.cartRepository = cartRepository;
+        this.redisService = redisService;
         this.PAGE_SIZE = 6;
     }
     async insertLike(memberId, interviewId) {
         try {
-            const likeEntity = this.likeRepository.create({
+            const likeObj = this.likeRepository.create({
                 memberId: memberId,
                 interviewId: interviewId
             });
-            await this.likeRepository.save(likeEntity);
+            const likeEntity = await this.likeRepository.save(likeObj);
+            const interviewEntityId = likeEntity.interviewId;
+            const interviewEntityForMemberId = await this.interviewRepository
+                .createQueryBuilder('i')
+                .select('i.memberId', 'memberId')
+                .where('i.id = :id', { id: interviewId })
+                .getRawOne();
+            console.log(interviewEntityForMemberId);
+            const publishWithMemberId = interviewEntityForMemberId.memberId;
+            await this.redisService.publish(publishWithMemberId);
         }
         catch (error) {
             console.log('insertLIKE ERROR member.service 27 \n' + error);
@@ -241,6 +252,7 @@ exports.MemberService = MemberService = __decorate([
         typeorm_2.Repository,
         typeorm_2.Repository,
         typeorm_2.Repository,
-        typeorm_2.Repository])
+        typeorm_2.Repository,
+        redis_config_1.RedisService])
 ], MemberService);
 //# sourceMappingURL=member.service.js.map

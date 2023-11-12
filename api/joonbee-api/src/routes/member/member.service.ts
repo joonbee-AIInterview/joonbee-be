@@ -1,3 +1,4 @@
+import { RedisService } from './../../common/config/redis.config';
 import { RowDataPacket } from 'mysql2';
 import { HttpException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -29,7 +30,8 @@ export class MemberService {
         @InjectRepository(Category)
         private readonly categoryRepository: Repository<Category>,
         @InjectRepository(Cart)
-        private readonly cartRepository: Repository<Cart>
+        private readonly cartRepository: Repository<Cart>,
+        private readonly redisService: RedisService
     ){
         this.PAGE_SIZE = 6;
     }
@@ -39,12 +41,24 @@ export class MemberService {
      */
     async insertLike(memberId: string, interviewId: number): Promise<void>{
         try{
-            const likeEntity = this.likeRepository.create({
+            const likeObj = this.likeRepository.create({
                 memberId: memberId,
                 interviewId: interviewId
             });
+            
+            const likeEntity = await this.likeRepository.save(likeObj);
+            const interviewEntityId: number = likeEntity.interviewId;
 
-            await this.likeRepository.save(likeEntity);
+            const interviewEntityForMemberId: RowDataPacket = await this.interviewRepository
+                                .createQueryBuilder('i')
+                                .select('i.memberId','memberId')
+                                .where('i.id = :id', { id : interviewId })
+                                .getRawOne() as RowDataPacket;
+
+            console.log(interviewEntityForMemberId);
+            const publishWithMemberId = interviewEntityForMemberId.memberId;
+            await this.redisService.publish(publishWithMemberId);
+
         }catch(error){
             console.log('insertLIKE ERROR member.service 27 \n'+ error);
             throw new CustomError('좋아요 실패',500);

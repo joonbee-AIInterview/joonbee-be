@@ -6,11 +6,18 @@ import kakaoRouter from './routes/kakao.routes';
 import naverRouter from './routes/naver.routes';
 import googleRouter from './routes/google.routes';
 import loginRouter from './routes/login.routes';
+import SseService from './utils/sub.utils';
+import { client } from './utils/redis.utils';
 
 import { CustomError, ApiResponse } from './utils/api.utils';
 
 const app = express();
 const PORT = 3000;
+const redisChannel: string = process.env.SUBSCRIBE_CHANNEL as string;
+
+client.subscribe(redisChannel, (memberId) => {
+    SseService.sendNotificationToAuthor(memberId);
+});
 
 const logRequestDetails = (req: Request, res: Response, next: NextFunction) => {
     const currentTime = new Date();
