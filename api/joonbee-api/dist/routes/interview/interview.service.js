@@ -20,9 +20,7 @@ const typeorm_2 = require("typeorm");
 let InterviewService = class InterviewService {
     constructor(interviewRepository) {
         this.interviewRepository = interviewRepository;
-    }
-    async interviewsWithQuestionCategoryMember() {
-        throw new Error('Method not implemented.');
+        this.PAGE_SIZE = 9;
     }
 };
 exports.InterviewService = InterviewService;

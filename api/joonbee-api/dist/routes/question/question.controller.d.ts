@@ -3,5 +3,7 @@ import { Response } from 'express';
 export declare class QuestionController {
     private readonly questionService;
     constructor(questionService: QuestionService);
-    questionsWithCategory(page: string, category: string, subCategory: string, response: Response): Promise<void>;
+    getQuestions(page: string, response: Response): Promise<void>;
+    getQuestionsWithCategory(page: string, category: string, response: Response): Promise<void>;
+    getQuestionsWithSubcategory(page: string, category: string, subCategory: string, response: Response): Promise<void>;
 }

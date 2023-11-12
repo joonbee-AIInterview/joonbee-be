@@ -1,9 +1,8 @@
 export class ResponseInterviewsQuestionCategoryMemberDTO {
-     interviewId: number;
+     //total: number,
      result: ResponseInterviewsQuestionCategoryMemberData[]
 }
 
 export class ResponseInterviewsQuestionCategoryMemberData {
      questionId: string;
-     
 }

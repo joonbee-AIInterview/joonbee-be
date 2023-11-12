@@ -1,7 +1,7 @@
 import { Controller,Get, Query, Res } from "@nestjs/common";
 import { QuestionService } from "src/routes/question/question.service";
 import { ApiResponse, CustomError } from "src/common/config/common";
-import { ResponseQuestionsWithCategoryDTO } from "./dto/response.dto";
+import { ResponseQuestionsDTO, ResponseQuestionsWithCategoryDTO, ResponseQuestionsWithSubcategoryDTO } from "./dto/response.dto";
 import { Response } from 'express';
 
 @Controller('api/question')
@@ -15,64 +15,77 @@ export class QuestionController {
      constructor(private readonly questionService: QuestionService){}
 
      /**
-      * @api 메인 페이지 하단부분 API, 16개의 랜덤질문을 가져온다.
+      * @api 메인 페이지 하단부분 API, 디폴트로 16개의 랜덤질문을 가져온다.
       */
      @Get('random')
-     async questionsWithCategory(
-          @Query('page') page: string = "1",
-          @Query('category') category: string,
-          @Query('subCategory') subCategory: string,
+     async getQuestions(
+          @Query('page') page: string,
           @Res() response: Response,
-     ) {
-        try {
-               const data = await this.questionService.questionsWithCategory(Number(page), category, subCategory);
+     ) {  
+          // 유효성 검사
+          if (page === "") throw new CustomError('페이지가 비었습니다. ', 400);
+
+          try {
+               const data = await this.questionService.getQuestions(Number(page));
+               const apiResponse: ApiResponse<ResponseQuestionsDTO> = {
+                    status: 200,
+                    data
+               }
+               response.json(apiResponse);
+          } catch(error) {
+               throw new CustomError('알 수 없는 에러 : ' + error,500);
+          }
+     }
+
+     /**
+      * @api 메인 페이지 하단부분 API, 카테고리로 분류한 16개의 랜덤질문을 가져온다.
+      */
+     @Get('random/category')
+     async getQuestionsWithCategory(
+          @Query('page') page: string,
+          @Query('category') category: string,
+          @Res() response: Response,
+     ) {  
+          // 유효성 검사
+          if (page === "") throw new CustomError('페이지가 비었습니다. ', 400);
+          if (category === "") throw new CustomError('카테고리가 비었습니다. ', 400);
+
+          try {
+               const data = await this.questionService.getQuestionsWithCategory(Number(page), category);
                const apiResponse: ApiResponse<ResponseQuestionsWithCategoryDTO> = {
                     status: 200,
                     data
                }
                response.json(apiResponse);
           } catch(error) {
-               throw new CustomError('알 수 없는 에러',500);
+               throw new CustomError('알 수 없는 에러 : ' + error,500);
           }
      }
 
-     // @Post('save')
-     // async saveQuestion(@Body() saveQuestionDto: SaveQuestionDto): Promise<number> {
-     //      const questionId = await this.questionService.saveQuestion(saveQuestionDto);
-     //      return Object.assign({
-     //           data: { questionId: questionId },
-     //           statusCode: 201,
-     //           statusMsg: `saveQuestion을 이용한 Question 데이터 추가가 성공적으로 완료되었습니다.`,
-     //      });
-     // }
+     /**
+      * @api 메인 페이지 하단부분 API, 서비카테코리로 분류한 16개의 랜덤질문을 가져온다.
+      */
+     @Get('random/subcategory')
+     async getQuestionsWithSubcategory(
+          @Query('page') page: string = "1",
+          @Query('category') category: string,
+          @Query('subcategory') subCategory: string,
+          @Res() response: Response,
+     ) {
+          // 유효성 검사
+          if (page === "") throw new CustomError('페이지가 비었습니다. ', 400);
+          if (category === "") throw new CustomError('카테고리가 비었습니다. ', 400);
+          if (subCategory === "") throw new CustomError('서브카테고리가 비었습니다. ', 400);
 
-     // @Get(':questionId')
-     // async findOneWithCategory(@Param('questionId') questionId: number): Promise<Question> {
-     //      const question = await this.questionService.findOneWithCategory(questionId);
-     //      return Object.assign({
-     //           data: question,
-     //           statusCode: 200,
-     //           statusMsg: `findOneWithCategory을 이용한 Question 데이터 조회가 성공적으로 완료되었습니다.`,
-     //      });
-     // }
-
-     // @Delete('delete/:questionId')
-     // async deleteQuestion(@Param('questionId') questionId: number): Promise<number> {
-     //      await this.questionService.deleteQuestion(questionId);
-     //      return Object.assign({
-     //           data: { questionId: questionId },
-     //           statusCode: 201,
-     //           statusMsg: `deleteQuestion을 이용한 Question 데이터 삭제가 성공적으로 완료되었습니다.`,
-     //      });
-     // }
-     
-     // @Put('update/:questionId')
-     // async updateQuestion(@Param('questionId') questionId: number, @Body(new ValidationPipe()) updateQuestionDto: SaveQuestionDto): Promise<void> {
-     //      const question =  await this.questionService.updateQuestion(questionId, updateQuestionDto);
-     //      return Object.assign({
-     //           data: { question },
-     //           statusCode: 201,
-     //           statusMsg: `updateQuestion을 이용한 Question 데이터 수정이 성공적으로 완료되었습니다.`,
-     //      });
-     // }
+          try {
+               const data = await this.questionService.getQuestionsWithSubcategory(Number(page), category, subCategory);
+               const apiResponse: ApiResponse<ResponseQuestionsWithSubcategoryDTO> = {
+                    status: 200,
+                    data
+               }
+               response.json(apiResponse);
+          } catch(error) {
+               throw new CustomError('알 수 없는 에러 : ' + error,500);
+          }
+     }
 }

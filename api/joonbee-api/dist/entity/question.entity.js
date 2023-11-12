@@ -14,13 +14,6 @@ const index_1 = require("typeorm/index");
 const category_entity_1 = require("./category.entity");
 const and_question_entity_1 = require("./and.question.entity");
 let Question = class Question {
-    updateQuestion(updateQuestionDto) {
-        this.category.categoryName = updateQuestionDto.categoryName;
-        this.gptFlag = updateQuestionDto.gptFlag;
-        this.questionLevel = updateQuestionDto.questionLevel;
-        this.writer = updateQuestionDto.writer;
-        this.questionContent = updateQuestionDto.questionContent;
-    }
 };
 exports.Question = Question;
 __decorate([

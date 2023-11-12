@@ -1,4 +1,4 @@
-import { Controller, Get, Res } from '@nestjs/common';
+import { Controller, Get, Query, Res } from '@nestjs/common';
 import { InterviewService } from './interview.service';
 import { Response } from 'express';
 import { ApiResponse, CustomError } from 'src/common/config/common';
@@ -19,19 +19,21 @@ export class InterviewController {
      /**
       * @api 메인 페이지 상단부분 API, 9개씩 페이징 랜덤으로 모두 가져온다.
       */
-     @Get('all')
-     async interviewsWithQuestionCategoryMember(
-          @Res() response: Response,
-     ) {
-          // try {
-          //      const data = await this.interviewService.interviewsWithQuestionCategoryMember();
-          //      const apiResponse: ApiResponse<ResponseInterviewsQuestionCategoryMemberDTO> = {
-          //           status: 200,
-          //           data,
-          //      }
-          //      response.json(apiResponse);
-          // } catch(error) {
-          //      throw new CustomError('알 수 없는 에러',500);
-          // }
-     }
+     // @Get('all')
+     // async interviewsWithQuestionCategoryMember(
+     //      @Query('page') page: string = "1",
+     //      @Query('category') category: string,
+     //      @Res() response: Response,
+     // ) {
+     //      try {
+     //           const data = await this.interviewService.interviewsWithQuestionCategoryMember(Number(page), category);
+     //           const apiResponse: ApiResponse<ResponseInterviewsQuestionCategoryMemberDTO> = {
+     //                status: 200,
+     //                data,
+     //           }
+     //           response.json(apiResponse);
+     //      } catch(error) {
+     //           throw new CustomError('알 수 없는 에러',500);
+     //      }
+     // }
 }

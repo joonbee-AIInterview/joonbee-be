@@ -20,9 +20,11 @@ let QuestionController = class QuestionController {
     constructor(questionService) {
         this.questionService = questionService;
     }
-    async questionsWithCategory(page = "1", category, subCategory, response) {
+    async getQuestions(page, response) {
+        if (page === "")
+            throw new common_2.CustomError('페이지가 비었습니다. ', 400);
         try {
-            const data = await this.questionService.questionsWithCategory(Number(page), category, subCategory);
+            const data = await this.questionService.getQuestions(Number(page));
             const apiResponse = {
                 status: 200,
                 data
@@ -30,7 +32,43 @@ let QuestionController = class QuestionController {
             response.json(apiResponse);
         }
         catch (error) {
-            throw new common_2.CustomError('알 수 없는 에러', 500);
+            throw new common_2.CustomError('알 수 없는 에러 : ' + error, 500);
+        }
+    }
+    async getQuestionsWithCategory(page, category, response) {
+        if (page === "")
+            throw new common_2.CustomError('페이지가 비었습니다. ', 400);
+        if (category === "")
+            throw new common_2.CustomError('카테고리가 비었습니다. ', 400);
+        try {
+            const data = await this.questionService.getQuestionsWithCategory(Number(page), category);
+            const apiResponse = {
+                status: 200,
+                data
+            };
+            response.json(apiResponse);
+        }
+        catch (error) {
+            throw new common_2.CustomError('알 수 없는 에러 : ' + error, 500);
+        }
+    }
+    async getQuestionsWithSubcategory(page = "1", category, subCategory, response) {
+        if (page === "")
+            throw new common_2.CustomError('페이지가 비었습니다. ', 400);
+        if (category === "")
+            throw new common_2.CustomError('카테고리가 비었습니다. ', 400);
+        if (subCategory === "")
+            throw new common_2.CustomError('서브카테고리가 비었습니다. ', 400);
+        try {
+            const data = await this.questionService.getQuestionsWithSubcategory(Number(page), category, subCategory);
+            const apiResponse = {
+                status: 200,
+                data
+            };
+            response.json(apiResponse);
+        }
+        catch (error) {
+            throw new common_2.CustomError('알 수 없는 에러 : ' + error, 500);
         }
     }
 };
@@ -38,13 +76,30 @@ exports.QuestionController = QuestionController;
 __decorate([
     (0, common_1.Get)('random'),
     __param(0, (0, common_1.Query)('page')),
+    __param(1, (0, common_1.Res)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, Object]),
+    __metadata("design:returntype", Promise)
+], QuestionController.prototype, "getQuestions", null);
+__decorate([
+    (0, common_1.Get)('random/category'),
+    __param(0, (0, common_1.Query)('page')),
     __param(1, (0, common_1.Query)('category')),
-    __param(2, (0, common_1.Query)('subCategory')),
+    __param(2, (0, common_1.Res)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, String, Object]),
+    __metadata("design:returntype", Promise)
+], QuestionController.prototype, "getQuestionsWithCategory", null);
+__decorate([
+    (0, common_1.Get)('random/subcategory'),
+    __param(0, (0, common_1.Query)('page')),
+    __param(1, (0, common_1.Query)('category')),
+    __param(2, (0, common_1.Query)('subcategory')),
     __param(3, (0, common_1.Res)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String, String, String, Object]),
     __metadata("design:returntype", Promise)
-], QuestionController.prototype, "questionsWithCategory", null);
+], QuestionController.prototype, "getQuestionsWithSubcategory", null);
 exports.QuestionController = QuestionController = __decorate([
     (0, common_1.Controller)('api/question'),
     __metadata("design:paramtypes", [question_service_1.QuestionService])
