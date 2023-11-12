@@ -8,6 +8,7 @@ import { Like } from 'src/entity/like.entity';
 import { InterviewAndQuestion } from 'src/entity/and.question.entity';
 import { Category } from 'src/entity/category.entity';
 import { Cart } from 'src/entity/cart.entity';
+import { RedisService } from 'src/common/config/redis.config';
 
 @Module({
   imports: [TypeOrmModule.forFeature([
@@ -19,6 +20,9 @@ import { Cart } from 'src/entity/cart.entity';
       Cart
     ])],
   controllers: [MemberController],
-  providers: [MemberService]
+  providers: [
+    MemberService,
+    RedisService
+  ]
 })
 export class MemberModule {}

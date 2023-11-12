@@ -1,3 +1,4 @@
+import { RedisService } from './../../common/config/redis.config';
 import { PageResponseDTO } from 'src/common/config/common';
 import { Category } from 'src/entity/category.entity';
 import { Like } from 'src/entity/like.entity';
@@ -15,8 +16,9 @@ export declare class MemberService {
     private readonly andQuestionRepository;
     private readonly categoryRepository;
     private readonly cartRepository;
+    private readonly redisService;
     private PAGE_SIZE;
-    constructor(memberRepository: Repository<Member>, likeRepository: Repository<Like>, interviewRepository: Repository<Interview>, andQuestionRepository: Repository<InterviewAndQuestion>, categoryRepository: Repository<Category>, cartRepository: Repository<Cart>);
+    constructor(memberRepository: Repository<Member>, likeRepository: Repository<Like>, interviewRepository: Repository<Interview>, andQuestionRepository: Repository<InterviewAndQuestion>, categoryRepository: Repository<Category>, cartRepository: Repository<Cart>, redisService: RedisService);
     insertLike(memberId: string, interviewId: number): Promise<void>;
     insertInterview(memberId: string, questionInfo: RequestInterviewSaveDTO): Promise<void>;
     myInfoData(memberId: number): Promise<ResponseMyInfoDTO>;

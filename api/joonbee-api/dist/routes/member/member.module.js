@@ -17,6 +17,7 @@ const like_entity_1 = require("../../entity/like.entity");
 const and_question_entity_1 = require("../../entity/and.question.entity");
 const category_entity_1 = require("../../entity/category.entity");
 const cart_entity_1 = require("../../entity/cart.entity");
+const redis_config_1 = require("../../common/config/redis.config");
 let MemberModule = class MemberModule {
 };
 exports.MemberModule = MemberModule;
@@ -31,7 +32,10 @@ exports.MemberModule = MemberModule = __decorate([
                 cart_entity_1.Cart
             ])],
         controllers: [member_controller_1.MemberController],
-        providers: [member_service_1.MemberService]
+        providers: [
+            member_service_1.MemberService,
+            redis_config_1.RedisService
+        ]
     })
 ], MemberModule);
 //# sourceMappingURL=member.module.js.map
