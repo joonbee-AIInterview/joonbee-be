@@ -26,22 +26,15 @@ let QuestionService = class QuestionService {
         this.PAGE_SIZE = 16;
     }
     async getQuestions(page) {
-        let rowPacket;
-        let countQuery;
         const skipNumber = (page - 1) * this.PAGE_SIZE;
         try {
-            countQuery = await this.questionRepository.createQueryBuilder('question')
+            const countQuery = await this.questionRepository.createQueryBuilder('question')
                 .select('COUNT(question.id)', 'count')
                 .getRawOne();
-            rowPacket = await this.questionRepository.createQueryBuilder('question')
-                .select([
-                'question.id AS questionId',
-                'category.id AS categoryId',
-                'question.question_content AS questionContent',
-                'category.category_name AS categoryName'
-            ])
+            const rowPacket = await this.questionRepository.createQueryBuilder('question')
+                .select(['question.id AS questionId', 'category.id AS categoryId', 'question.question_content AS questionContent', 'category.category_name AS categoryName'])
                 .leftJoinAndSelect('question.category', 'category')
-                .orderBy('RAND()')
+                .orderBy('questionId')
                 .offset(skipNumber)
                 .limit(this.PAGE_SIZE)
                 .getRawMany();
@@ -53,8 +46,6 @@ let QuestionService = class QuestionService {
         }
     }
     async getQuestionsWithCategory(page, categoryName) {
-        let rowPacket;
-        let countQuery;
         const skipNumber = (page - 1) * this.PAGE_SIZE;
         try {
             const category = await this.categoryRepository
@@ -62,26 +53,21 @@ let QuestionService = class QuestionService {
                 .select('category.id')
                 .where('category.category_name = :categoryName', { categoryName })
                 .getOne();
-            countQuery = await this.questionRepository.createQueryBuilder('question')
+            const countQuery = await this.questionRepository.createQueryBuilder('question')
                 .innerJoin(subQuery => subQuery.from(category_entity_1.Category, 'category')
                 .select('*')
                 .where('category.category_upper_id = :categoryId', { categoryId: category.id }), 'category', 'question.category_id = category.id')
                 .select('COUNT(question.id)', 'count')
                 .getRawOne();
-            rowPacket = await this.questionRepository.createQueryBuilder('question')
-                .select([
-                'question.id AS questionId',
-                'category.id AS categoryId',
-                'question.question_content AS questionContent',
-                'category.category_name AS categoryName'
-            ])
+            const rowPacket = await this.questionRepository.createQueryBuilder('question')
+                .select(['question.id AS questionId', 'category.id AS categoryId', 'question.question_content AS questionContent', 'category.category_name AS categoryName'])
                 .innerJoin(subQuery => {
                 return subQuery
                     .select('*')
                     .from(category_entity_1.Category, 'category')
                     .where('category.category_upper_id = :categoryId', { categoryId: category.id });
             }, 'category', 'question.category_id = category.id')
-                .orderBy('RAND()')
+                .orderBy('questionId')
                 .offset(skipNumber)
                 .limit(this.PAGE_SIZE)
                 .getRawMany();
@@ -93,30 +79,23 @@ let QuestionService = class QuestionService {
         }
     }
     async getQuestionsWithSubcategory(page, categoryName, subCategoryName) {
-        let rowPacket;
-        let countQuery;
         const skipNumber = (page - 1) * this.PAGE_SIZE;
         try {
-            countQuery = await this.questionRepository.createQueryBuilder('question')
+            const countQuery = await this.questionRepository.createQueryBuilder('question')
                 .innerJoin(subQuery => subQuery.from(category_entity_1.Category, 'category')
                 .select('*')
                 .where('category.category_name = :subCategoryName', { subCategoryName }), 'category', 'question.category_id = category.id')
                 .select('COUNT(question.id)', 'count')
                 .getRawOne();
-            rowPacket = await this.questionRepository.createQueryBuilder('question')
-                .select([
-                'question.id AS questionId',
-                'category.id AS categoryId',
-                'question.question_content AS questionContent',
-                'category.category_name AS categoryName'
-            ])
+            const rowPacket = await this.questionRepository.createQueryBuilder('question')
+                .select(['question.id AS questionId', 'category.id AS categoryId', 'question.question_content AS questionContent', 'category.category_name AS categoryName'])
                 .innerJoin(subQuery => {
                 return subQuery
                     .select('*')
                     .from(category_entity_1.Category, 'category')
                     .where('category.category_name = :subCategoryName', { subCategoryName });
             }, 'category', 'question.category_id = category.id')
-                .orderBy('RAND()')
+                .orderBy('questionId')
                 .offset(skipNumber)
                 .limit(this.PAGE_SIZE)
                 .getRawMany();
@@ -132,7 +111,7 @@ let QuestionService = class QuestionService {
             questionId: packet.questionId,
             categoryId: packet.categoryId,
             questionContent: packet.questionContent,
-            categoryName: packet.categoryName,
+            subcategoryName: packet.categoryName,
         }));
         const result = {
             total: Number(countQuery.count),

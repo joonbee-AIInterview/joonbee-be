@@ -1,7 +1,7 @@
 import { Controller,Get, Query, Res } from "@nestjs/common";
 import { QuestionService } from "src/routes/question/question.service";
 import { ApiResponse, CustomError } from "src/common/config/common";
-import { ResponseQuestionsDTO, ResponseQuestionsWithCategoryDTO, ResponseQuestionsWithSubcategoryDTO } from "./dto/response.dto";
+import { ResponseQuestionsDTO } from "./dto/response.dto";
 import { Response } from 'express';
 
 @Controller('api/question')
@@ -52,7 +52,7 @@ export class QuestionController {
 
           try {
                const data = await this.questionService.getQuestionsWithCategory(Number(page), category);
-               const apiResponse: ApiResponse<ResponseQuestionsWithCategoryDTO> = {
+               const apiResponse: ApiResponse<ResponseQuestionsDTO> = {
                     status: 200,
                     data
                }
@@ -79,7 +79,7 @@ export class QuestionController {
 
           try {
                const data = await this.questionService.getQuestionsWithSubcategory(Number(page), category, subCategory);
-               const apiResponse: ApiResponse<ResponseQuestionsWithSubcategoryDTO> = {
+               const apiResponse: ApiResponse<ResponseQuestionsDTO> = {
                     status: 200,
                     data
                }

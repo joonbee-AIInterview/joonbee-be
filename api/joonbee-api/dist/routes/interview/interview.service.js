@@ -15,18 +15,109 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.InterviewService = void 0;
 const common_1 = require("@nestjs/common");
 const typeorm_1 = require("@nestjs/typeorm");
+const common_2 = require("../../common/config/common");
 const interview_entity_1 = require("../../entity/interview.entity");
 const typeorm_2 = require("typeorm");
+const member_entity_1 = require("../../entity/member.entity");
+const like_entity_1 = require("../../entity/like.entity");
+const and_question_entity_1 = require("../../entity/and.question.entity");
+const question_entity_1 = require("../../entity/question.entity");
+const category_entity_1 = require("../../entity/category.entity");
 let InterviewService = class InterviewService {
-    constructor(interviewRepository) {
+    constructor(interviewRepository, interviewAndQuestionRepository, categoryRepository) {
         this.interviewRepository = interviewRepository;
+        this.interviewAndQuestionRepository = interviewAndQuestionRepository;
+        this.categoryRepository = categoryRepository;
         this.PAGE_SIZE = 9;
+    }
+    async getInterviews(page) {
+        try {
+            const countQuery = await this.interviewRepository
+                .createQueryBuilder('interview')
+                .select('COUNT(interview.id)', 'count')
+                .getRawOne();
+            const rowPacket = await this.interviewRepository
+                .createQueryBuilder('interview')
+                .select(['interview.id as interviewId', 'interview.member_id as memberId', 'm.thumbnail as thumbnail', 'interview.category_name as categoryName', 'COUNT(l.member_id) as likeCount',])
+                .innerJoin(member_entity_1.Member, 'm', 'interview.member_id = m.id')
+                .leftJoin(like_entity_1.Like, 'l', 'interview.id = l.interview_id')
+                .groupBy('interview.id, interview.member_id, m.thumbnail, interview.category_name')
+                .orderBy('likeCount', 'DESC')
+                .offset((page - 1) * this.PAGE_SIZE)
+                .limit(this.PAGE_SIZE)
+                .getRawMany();
+            const interviewsWithQuestionCategoryMemberDTOs = await Promise.all(rowPacket.map(async (packet) => {
+                const { interviewId, memberId, thumbnail, categoryName, likeCount } = packet;
+                const questionsQuery = await this.interviewAndQuestionRepository
+                    .createQueryBuilder('iaq')
+                    .select(['q.id as questionId', 'q.question_content as questionContent',])
+                    .innerJoin(question_entity_1.Question, 'q', 'iaq.question_id = q.id')
+                    .where('iaq.interview_id = :interviewId', { interviewId })
+                    .getRawMany();
+                const questions = questionsQuery.map(({ questionId, questionContent }) => ({ questionId, questionContent, }));
+                return { interviewId, memberId, thumbnail, categoryName, likeCount, questions, };
+            }));
+            const result = {
+                total: Number(countQuery.count),
+                result: interviewsWithQuestionCategoryMemberDTOs,
+            };
+            return result;
+        }
+        catch (error) {
+            console.log(`getInterviews ERROR interview.service: ${error}`);
+            throw new common_2.CustomError('메인 페이지 상단 디폴트 랜덤 인터뷰 정보 불러오기 실패', 500);
+        }
+    }
+    async getInterviewsWithLikeMemberQuestion(page, categoryName) {
+        try {
+            const countQuery = await this.interviewRepository
+                .createQueryBuilder('interview')
+                .select('COUNT(interview.id)', 'count')
+                .where('interview.categoryName = :categoryName', { categoryName: categoryName })
+                .getRawOne();
+            console.log(countQuery);
+            const rowPacket = await this.interviewRepository
+                .createQueryBuilder('interview')
+                .select(['interview.id as interviewId', 'interview.member_id as memberId', 'm.thumbnail as thumbnail', 'interview.category_name as categoryName', 'COUNT(l.member_id) as likeCount',])
+                .innerJoin(member_entity_1.Member, 'm', 'interview.member_id = m.id')
+                .leftJoin(like_entity_1.Like, 'l', 'interview.id = l.interview_id')
+                .where('interview.categoryName = :categoryName', { categoryName: categoryName })
+                .groupBy('interview.id, interview.member_id, m.thumbnail, interview.category_name')
+                .orderBy('likeCount', 'DESC')
+                .offset((page - 1) * this.PAGE_SIZE)
+                .limit(this.PAGE_SIZE)
+                .getRawMany();
+            const interviewsWithQuestionCategoryMemberDTOs = await Promise.all(rowPacket.map(async (packet) => {
+                const { interviewId, memberId, thumbnail, categoryName, likeCount } = packet;
+                const questionsQuery = await this.interviewAndQuestionRepository
+                    .createQueryBuilder('iaq')
+                    .select(['q.id as questionId', 'q.question_content as questionContent',])
+                    .innerJoin(question_entity_1.Question, 'q', 'iaq.question_id = q.id')
+                    .where('iaq.interview_id = :interviewId', { interviewId })
+                    .getRawMany();
+                const questions = questionsQuery.map(({ questionId, questionContent }) => ({ questionId, questionContent, }));
+                return { interviewId, memberId, thumbnail, categoryName, likeCount, questions, };
+            }));
+            const result = {
+                total: Number(countQuery.count),
+                result: interviewsWithQuestionCategoryMemberDTOs,
+            };
+            return result;
+        }
+        catch (error) {
+            console.log('getInterviewsWithLikeMemberQuestion ERROR interview.service 148\n' + error);
+            throw new common_2.CustomError('메인 페이지 상단 상위 카테고리 랜덤 인터뷰 정보 불러오기 실패', 500);
+        }
     }
 };
 exports.InterviewService = InterviewService;
 exports.InterviewService = InterviewService = __decorate([
     (0, common_1.Injectable)(),
     __param(0, (0, typeorm_1.InjectRepository)(interview_entity_1.Interview)),
-    __metadata("design:paramtypes", [typeorm_2.Repository])
+    __param(1, (0, typeorm_1.InjectRepository)(and_question_entity_1.InterviewAndQuestion)),
+    __param(2, (0, typeorm_1.InjectRepository)(category_entity_1.Category)),
+    __metadata("design:paramtypes", [typeorm_2.Repository,
+        typeorm_2.Repository,
+        typeorm_2.Repository])
 ], InterviewService);
 //# sourceMappingURL=interview.service.js.map

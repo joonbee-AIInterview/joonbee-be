@@ -2,7 +2,7 @@ import { Controller, Get, Query, Res } from '@nestjs/common';
 import { InterviewService } from './interview.service';
 import { Response } from 'express';
 import { ApiResponse, CustomError } from 'src/common/config/common';
-import { ResponseInterviewsQuestionCategoryMemberDTO } from './dto/response.dto';
+import { ResponseInterviewsDTO } from './dto/response.dto';
 
 @Controller('api/interview')
 export class InterviewController {
@@ -17,23 +17,50 @@ export class InterviewController {
      ) {}
 
      /**
-      * @api 메인 페이지 상단부분 API, 9개씩 페이징 랜덤으로 모두 가져온다.
+      * @api 메인 페이지 상단부분 API, 디폴트로 9개의 랜덤인터뷰를 가져온다.
       */
-     // @Get('all')
-     // async interviewsWithQuestionCategoryMember(
-     //      @Query('page') page: string = "1",
-     //      @Query('category') category: string,
-     //      @Res() response: Response,
-     // ) {
-     //      try {
-     //           const data = await this.interviewService.interviewsWithQuestionCategoryMember(Number(page), category);
-     //           const apiResponse: ApiResponse<ResponseInterviewsQuestionCategoryMemberDTO> = {
-     //                status: 200,
-     //                data,
-     //           }
-     //           response.json(apiResponse);
-     //      } catch(error) {
-     //           throw new CustomError('알 수 없는 에러',500);
-     //      }
-     // }
+     @Get('random')
+     async getInterviews(
+          @Query('page') page: string,
+          @Res() response: Response,
+     ) {  
+          // 유효성 검사
+          if (page === "") throw new CustomError('페이지가 비었습니다. ', 400);
+
+          try {
+               const data = await this.interviewService.getInterviews(Number(page));
+               const apiResponse: ApiResponse<ResponseInterviewsDTO> = {
+                    status: 200,
+                    data
+               }
+               response.json(apiResponse);
+          } catch(error) {
+               throw new CustomError('알 수 없는 에러 : ' + error,500);
+          }
+     }
+
+     /**
+      * @api 메인 페이지 상단부분 API, 카테고리로 분류한 9개의 랜덤인터뷰를 가져온다.
+      */
+     @Get('random/category')
+     async getInterviewsWithLikeMemberQuestion(
+          @Query('page') page: string,
+          @Query('category') category: string,
+          @Res() response: Response,
+     ) {  
+          // 유효성 검사
+          if (page === "") throw new CustomError('페이지가 비었습니다. ', 400);
+          if (category === "") throw new CustomError('카테고리가 비었습니다. ', 400);
+
+          try {
+               const data = await this.interviewService.getInterviewsWithLikeMemberQuestion(Number(page), category);
+               const apiResponse: ApiResponse<ResponseInterviewsDTO> = {
+                    status: 200,
+                    data
+               }
+               response.json(apiResponse);
+          } catch(error) {
+               throw new CustomError('알 수 없는 에러 : ' + error,500);
+          }
+     }
 }

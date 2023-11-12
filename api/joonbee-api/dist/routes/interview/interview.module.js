@@ -12,6 +12,8 @@ const interview_controller_1 = require("./interview.controller");
 const interview_service_1 = require("./interview.service");
 const common_1 = require("@nestjs/common");
 const interview_entity_1 = require("../../entity/interview.entity");
+const and_question_entity_1 = require("../../entity/and.question.entity");
+const category_entity_1 = require("../../entity/category.entity");
 let InterviewModule = class InterviewModule {
 };
 exports.InterviewModule = InterviewModule;
@@ -19,6 +21,8 @@ exports.InterviewModule = InterviewModule = __decorate([
     (0, common_1.Module)({
         imports: [typeorm_1.TypeOrmModule.forFeature([
                 interview_entity_1.Interview,
+                and_question_entity_1.InterviewAndQuestion,
+                category_entity_1.Category
             ])],
         controllers: [interview_controller_1.InterviewController],
         providers: [interview_service_1.InterviewService]

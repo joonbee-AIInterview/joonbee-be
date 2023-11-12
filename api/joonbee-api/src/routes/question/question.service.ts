@@ -5,7 +5,7 @@ import { Category } from "src/entity/category.entity";
 import { Question } from "src/entity/question.entity";
 import { Repository } from "typeorm";
 import { CustomError } from "src/common/config/common";
-import { ResponseQuestionsDTO, ResponseQuestionsWithCategoryDTO, ResponseQuestionsWithCategoryData, ResponseQuestionsWithSubcategoryDTO } from "./dto/response.dto";
+import { ResponseQuestionsDTO, ResponseQuestionsWithCategoryData } from "./dto/response.dto";
 
 
 @Injectable()
@@ -26,27 +26,18 @@ export class QuestionService {
       * @note 디폴트로 16개의 랜덤질문을 가져온다.
       */
      async getQuestions(page: number): Promise<ResponseQuestionsDTO> {
-          let rowPacket: RowDataPacket[];
-          let countQuery: RowDataPacket;
           const skipNumber = (page - 1) * this.PAGE_SIZE;
           try {
-
-               countQuery = await this.questionRepository.createQueryBuilder('question')
+               const countQuery: RowDataPacket = await this.questionRepository.createQueryBuilder('question')
                     .select('COUNT(question.id)', 'count')
                     .getRawOne();
-               rowPacket = await this.questionRepository.createQueryBuilder('question')
-                    .select([
-                         'question.id AS questionId',
-                         'category.id AS categoryId',
-                         'question.question_content AS questionContent',
-                         'category.category_name AS categoryName'
-                    ])
+               const rowPacket: RowDataPacket[] = await this.questionRepository.createQueryBuilder('question')
+                    .select(['question.id AS questionId','category.id AS categoryId','question.question_content AS questionContent','category.category_name AS categoryName'])
                     .leftJoinAndSelect('question.category', 'category')
-                    .orderBy('RAND()')
+                    .orderBy('questionId')
                     .offset(skipNumber)
                     .limit(this.PAGE_SIZE)
                     .getRawMany();
-
                return this.makeResult(rowPacket, countQuery);
           } catch(error) {
                console.log('getQuestions ERROR question.service 148\n' + error);
@@ -57,38 +48,25 @@ export class QuestionService {
      /**
       * @note 상위카테고리로 분류한 16개의 랜덤질문을 가져온다.
       */
-     async getQuestionsWithCategory(page: number, categoryName: string): Promise<ResponseQuestionsWithCategoryDTO> {
-          let rowPacket: RowDataPacket[];
-          let countQuery: RowDataPacket;
+     async getQuestionsWithCategory(page: number, categoryName: string): Promise<ResponseQuestionsDTO> {
           const skipNumber = (page - 1) * this.PAGE_SIZE;
           try {
-               // 상위 카테고리 id 조회
                const category = await this.categoryRepository
                     .createQueryBuilder('category')
                     .select('category.id')
                     .where('category.category_name = :categoryName', { categoryName })
                     .getOne();
-
-               // 카테고리 id를 이용한 전체 조회
-               countQuery = await this.questionRepository.createQueryBuilder('question')
+               const countQuery: RowDataPacket = await this.questionRepository.createQueryBuilder('question')
                     .innerJoin(
                          subQuery => subQuery.from(Category, 'category')
                          .select('*')
                          .where('category.category_upper_id = :categoryId', { categoryId: category.id }),
-                    'category',
-                    'question.category_id = category.id'
-                    )
+                         'category',
+                         'question.category_id = category.id')
                     .select('COUNT(question.id)', 'count')
                     .getRawOne();
-
-               // 조회된 상위카테고리 id로 category_upper_id과 inner join
-               rowPacket = await this.questionRepository.createQueryBuilder('question')
-                    .select([
-                         'question.id AS questionId',
-                         'category.id AS categoryId',
-                         'question.question_content AS questionContent',
-                         'category.category_name AS categoryName'
-                    ])
+               const rowPacket: RowDataPacket[] = await this.questionRepository.createQueryBuilder('question')
+                    .select(['question.id AS questionId','category.id AS categoryId','question.question_content AS questionContent','category.category_name AS categoryName'])
                     .innerJoin(
                          subQuery => {
                               return subQuery
@@ -97,13 +75,11 @@ export class QuestionService {
                               .where('category.category_upper_id = :categoryId', { categoryId: category.id });
                          },
                          'category',
-                         'question.category_id = category.id'
-                    )
-                    .orderBy('RAND()')
+                         'question.category_id = category.id')
+                    .orderBy('questionId')
                     .offset(skipNumber)
                     .limit(this.PAGE_SIZE)
                     .getRawMany();
-
                return this.makeResult(rowPacket, countQuery);
           } catch(error) {
                console.log('getQuestionsWithCategory ERROR question.service 148\n' + error);
@@ -114,28 +90,20 @@ export class QuestionService {
      /**
       * @note 서브카테고리로 분류한 16개의 랜덤질문을 가져온다.
       */
-     async getQuestionsWithSubcategory(page: number, categoryName: string, subCategoryName: string): Promise<ResponseQuestionsWithSubcategoryDTO> {
-          let rowPacket: RowDataPacket[];
-          let countQuery: RowDataPacket;
+     async getQuestionsWithSubcategory(page: number, categoryName: string, subCategoryName: string): Promise<ResponseQuestionsDTO> {
           const skipNumber = (page - 1) * this.PAGE_SIZE;
           try {
-               countQuery = await this.questionRepository.createQueryBuilder('question')
+               const countQuery: RowDataPacket = await this.questionRepository.createQueryBuilder('question')
                     .innerJoin(
                          subQuery => subQuery.from(Category, 'category')
                               .select('*')
                               .where('category.category_name = :subCategoryName', { subCategoryName }),
                          'category',
-                         'question.category_id = category.id'
-                    )
+                         'question.category_id = category.id')
                     .select('COUNT(question.id)', 'count')
                     .getRawOne();
-               rowPacket = await this.questionRepository.createQueryBuilder('question')
-                    .select([
-                         'question.id AS questionId',
-                         'category.id AS categoryId',
-                         'question.question_content AS questionContent',
-                         'category.category_name AS categoryName'
-                    ])
+               const rowPacket: RowDataPacket[] = await this.questionRepository.createQueryBuilder('question')
+                    .select(['question.id AS questionId','category.id AS categoryId','question.question_content AS questionContent','category.category_name AS categoryName'])
                     .innerJoin(
                          subQuery => {
                               return subQuery
@@ -144,13 +112,11 @@ export class QuestionService {
                                    .where('category.category_name = :subCategoryName', { subCategoryName });
                               },
                               'category',
-                              'question.category_id = category.id'
-                    )
-                    .orderBy('RAND()')
+                              'question.category_id = category.id')
+                    .orderBy('questionId')
                     .offset(skipNumber)
                     .limit(this.PAGE_SIZE)
                     .getRawMany();
-
                return this.makeResult(rowPacket, countQuery);
           } catch(error) {
                console.log('getQuestionsWithSubcategory ERROR question.service 148\n' + error);
@@ -163,15 +129,15 @@ export class QuestionService {
      /**
       * questionsWithCategoryDTOs => result 공통메소드
       */
-     makeResult(rowPacket: RowDataPacket[], countQuery: RowDataPacket): ResponseQuestionsWithSubcategoryDTO {
+     makeResult(rowPacket: RowDataPacket[], countQuery: RowDataPacket): ResponseQuestionsDTO {
           const questionsWithCategoryDTOs: ResponseQuestionsWithCategoryData[] = rowPacket.map(packet => ({
                questionId: packet.questionId,
                categoryId: packet.categoryId,
                questionContent: packet.questionContent,
-               categoryName: packet.categoryName,
+               subcategoryName: packet.categoryName,
           }));
 
-          const result: ResponseQuestionsWithSubcategoryDTO = {
+          const result: ResponseQuestionsDTO = {
                total: Number(countQuery.count),
                result: questionsWithCategoryDTOs
           }
