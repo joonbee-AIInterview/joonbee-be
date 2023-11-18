@@ -42,6 +42,8 @@ export const googleAuthentication = async (code: string): Promise<ResponseToken>
 }
 
 const handleNullCheck = (payLoad: JWT.Payload): JWT.Payload => {
+     if(payLoad.id == null ) throw new CustomError('id 존재하지 않음', 401);
+     
      return {
          id : payLoad.id !== null ? payLoad.id : 'NONE',
          email : payLoad.email !== null ? payLoad.email : 'NONE',

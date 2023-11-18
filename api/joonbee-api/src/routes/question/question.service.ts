@@ -51,6 +51,7 @@ export class QuestionService {
      async getQuestionsWithCategory(page: number, categoryName: string): Promise<ResponseQuestionsDTO> {
           const skipNumber = (page - 1) * this.PAGE_SIZE;
           try {
+               // 레디스로 캐싱 고민해보기
                const category = await this.categoryRepository
                     .createQueryBuilder('category')
                     .select('category.id')
