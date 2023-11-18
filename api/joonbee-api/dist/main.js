@@ -18,7 +18,7 @@ async function bootstrap() {
         .addTag('joonbee')
         .build();
     const document = swagger_1.SwaggerModule.createDocument(app, config);
-    swagger_1.SwaggerModule.setup('api', app, document);
+    swagger_1.SwaggerModule.setup('api/swagger', app, document);
     await app.listen(3030);
 }
 bootstrap();
