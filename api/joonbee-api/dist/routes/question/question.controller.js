@@ -20,7 +20,7 @@ let QuestionController = class QuestionController {
     constructor(questionService) {
         this.questionService = questionService;
     }
-    async getQuestions(page = "1", response) {
+    async getQuestions(page, response) {
         if (page === "")
             throw new common_2.CustomError('페이지가 비었습니다. ', 400);
         if (page === "0")
@@ -37,11 +37,13 @@ let QuestionController = class QuestionController {
             throw new common_2.CustomError('알 수 없는 에러 : ' + error, 500);
         }
     }
-    async getQuestionsByCategory(page = "1", category, response) {
+    async getQuestionsByCategory(page, category, response) {
         if (page === "")
             throw new common_2.CustomError('페이지가 비었습니다. ', 400);
         if (category === "")
             throw new common_2.CustomError('카테고리가 비었습니다. ', 400);
+        if (page === "0")
+            page = "1";
         try {
             const data = await this.questionService.getQuestionsWithCategory(Number(page), category);
             const apiResponse = {
@@ -54,13 +56,15 @@ let QuestionController = class QuestionController {
             throw new common_2.CustomError('알 수 없는 에러 : ' + error, 500);
         }
     }
-    async getQuestionsBySubcategory(page = "1", category, subCategory, response) {
+    async getQuestionsBySubcategory(page, category, subCategory, response) {
         if (page === "")
             throw new common_2.CustomError('페이지가 비었습니다. ', 400);
         if (category === "")
             throw new common_2.CustomError('카테고리가 비었습니다. ', 400);
         if (subCategory === "")
             throw new common_2.CustomError('서브카테고리가 비었습니다. ', 400);
+        if (page === "0")
+            page = "1";
         try {
             const data = await this.questionService.getQuestionsWithSubcategory(Number(page), category, subCategory);
             const apiResponse = {
@@ -76,7 +80,7 @@ let QuestionController = class QuestionController {
 };
 exports.QuestionController = QuestionController;
 __decorate([
-    (0, common_1.Get)('random'),
+    (0, common_1.Get)('all'),
     __param(0, (0, common_1.Query)('page')),
     __param(1, (0, common_1.Res)()),
     __metadata("design:type", Function),
@@ -84,7 +88,7 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], QuestionController.prototype, "getQuestions", null);
 __decorate([
-    (0, common_1.Get)('random/category'),
+    (0, common_1.Get)('all/category'),
     __param(0, (0, common_1.Query)('page')),
     __param(1, (0, common_1.Query)('category')),
     __param(2, (0, common_1.Res)()),
@@ -93,7 +97,7 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], QuestionController.prototype, "getQuestionsByCategory", null);
 __decorate([
-    (0, common_1.Get)('random/subcategory'),
+    (0, common_1.Get)('all/subcategory'),
     __param(0, (0, common_1.Query)('page')),
     __param(1, (0, common_1.Query)('category')),
     __param(2, (0, common_1.Query)('subcategory')),
