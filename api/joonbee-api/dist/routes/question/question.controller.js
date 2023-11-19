@@ -20,9 +20,11 @@ let QuestionController = class QuestionController {
     constructor(questionService) {
         this.questionService = questionService;
     }
-    async getQuestions(page, response) {
+    async getQuestions(page = "1", response) {
         if (page === "")
             throw new common_2.CustomError('페이지가 비었습니다. ', 400);
+        if (page === "0")
+            page = "1";
         try {
             const data = await this.questionService.getQuestions(Number(page));
             const apiResponse = {
@@ -35,7 +37,7 @@ let QuestionController = class QuestionController {
             throw new common_2.CustomError('알 수 없는 에러 : ' + error, 500);
         }
     }
-    async getQuestionsWithCategory(page, category, response) {
+    async getQuestionsByCategory(page = "1", category, response) {
         if (page === "")
             throw new common_2.CustomError('페이지가 비었습니다. ', 400);
         if (category === "")
@@ -52,7 +54,7 @@ let QuestionController = class QuestionController {
             throw new common_2.CustomError('알 수 없는 에러 : ' + error, 500);
         }
     }
-    async getQuestionsWithSubcategory(page = "1", category, subCategory, response) {
+    async getQuestionsBySubcategory(page = "1", category, subCategory, response) {
         if (page === "")
             throw new common_2.CustomError('페이지가 비었습니다. ', 400);
         if (category === "")
@@ -89,7 +91,7 @@ __decorate([
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String, String, Object]),
     __metadata("design:returntype", Promise)
-], QuestionController.prototype, "getQuestionsWithCategory", null);
+], QuestionController.prototype, "getQuestionsByCategory", null);
 __decorate([
     (0, common_1.Get)('random/subcategory'),
     __param(0, (0, common_1.Query)('page')),
@@ -99,7 +101,7 @@ __decorate([
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String, String, String, Object]),
     __metadata("design:returntype", Promise)
-], QuestionController.prototype, "getQuestionsWithSubcategory", null);
+], QuestionController.prototype, "getQuestionsBySubcategory", null);
 exports.QuestionController = QuestionController = __decorate([
     (0, common_1.Controller)('api/question'),
     __metadata("design:paramtypes", [question_service_1.QuestionService])
