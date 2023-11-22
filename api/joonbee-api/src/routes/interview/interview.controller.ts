@@ -26,6 +26,8 @@ export class InterviewController {
      ) {  
           // 유효성 검사
           if (page === "") throw new CustomError('페이지가 비었습니다. ', 400);
+          // 0인 경우 1로 바꾸기
+          if (page === "0") page = "1";
 
           try {
                const data = await this.interviewService.getInterviews(Number(page));
@@ -51,6 +53,8 @@ export class InterviewController {
           // 유효성 검사
           if (page === "") throw new CustomError('페이지가 비었습니다. ', 400);
           if (category === "") throw new CustomError('카테고리가 비었습니다. ', 400);
+          // 0인 경우 1로 바꾸기
+          if (page === "0") page = "1";
 
           try {
                const data = await this.interviewService.getInterviewsWithLikeMemberQuestion(Number(page), category);
