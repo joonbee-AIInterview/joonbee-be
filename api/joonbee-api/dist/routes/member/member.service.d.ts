@@ -7,7 +7,7 @@ import { Repository } from 'typeorm';
 import { RequestInterviewSaveDTO } from './dto/request.dto';
 import { Interview } from 'src/entity/interview.entity';
 import { InterviewAndQuestion } from 'src/entity/and.question.entity';
-import { ResponseCartDTO, ResponseInterviewCategoryDTO, ResponseMyInfoDTO } from './dto/response.dto';
+import { ResponseCartDTO, ResponseCategoryInfoDTO, ResponseInterviewCategoryDTO, ResponseMyInfoDTO } from './dto/response.dto';
 import { Cart } from 'src/entity/cart.entity';
 export declare class MemberService {
     private readonly memberRepository;
@@ -27,4 +27,5 @@ export declare class MemberService {
     insertCartService(memberId: string, questionId: number, categoryName: string): Promise<void>;
     myCartReadService(memberId: string, page: number): Promise<PageResponseDTO<ResponseCartDTO[]>>;
     deleteCartService(memberId: string, questionId: number): Promise<boolean>;
+    getStatisticsForCart(memberId: string): Promise<ResponseCategoryInfoDTO[]>;
 }

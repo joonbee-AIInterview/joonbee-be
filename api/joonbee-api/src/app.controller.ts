@@ -14,14 +14,16 @@ export class AppController {
     return this.appService.getHello();
   }
 
-  @Get('token')
+  @Get('api/token')
   getToken(@Res() res: Response): void {
 
-    const testToken = jwt.sign({joonbee : '13b4a'}, 'test', { 'expiresIn' : '1h' } );
+    const testToken = jwt.sign({joonbee : '13b4a'}, 'test', { 'expiresIn' : '1m' } );
     res.cookie('joonbee-token',testToken,{
       maxAge: 1000 * 60 * 60,
     });
-
+    res.cookie('joonbee-token-refresh',testToken,{
+      maxAge: 1000 * 60 * 60 * 24,
+    });
     res.send('쿠키발급함');
   }
 

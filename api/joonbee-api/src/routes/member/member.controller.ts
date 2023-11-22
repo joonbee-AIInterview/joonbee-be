@@ -14,7 +14,6 @@ export class MemberController {
    
 
     constructor(private readonly memberService: MemberService){}
-
     /**
      * @api token의 memberId로 사용자 PK, 썸네일, 닉네임, 인터뷰개수를 얻을 수 있다.
      */
@@ -91,6 +90,26 @@ export class MemberController {
     }
 
     /**
+     * @api 장바구니 통계 메뉴
+     */
+    @UseGuards(TokenAuthGuard)
+    @Get('info/cart')
+    async myCartStatistics(
+        @Res() response: Response
+    ){
+        const memberId = response.locals.memberId;
+        const responseDTO = await this.memberService.getStatisticsForCart(memberId);
+        
+        const apiResponse: ApiResponse<any> = {
+            status: 200,
+            data: {
+                categoryInfo : responseDTO
+            }
+        }
+        response.json(apiResponse);
+    }
+
+    /**
      * @api 장바구니 기능
      */
     @UseGuards(TokenAuthGuard)
@@ -101,9 +120,9 @@ export class MemberController {
         @Res() response: Response
     ){
         const memberId: string = response.locals.memberId;
-        const {questionId, categoryName} = dto;
+        const {questionId, subcategoryName} = dto;
         
-        await this.memberService.insertCartService(memberId, questionId, categoryName);
+        await this.memberService.insertCartService(memberId, questionId, subcategoryName);
     
         const apiResponse: ApiResponse<string> = {
             status: 200,

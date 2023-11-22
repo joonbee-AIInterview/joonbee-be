@@ -41,5 +41,5 @@ export class RequestCartInsertDTO{
     questionId: number;
 
     @IsNotEmpty({message: 'category 이름'})
-    categoryName: string;
+    subcategoryName: string;
 }

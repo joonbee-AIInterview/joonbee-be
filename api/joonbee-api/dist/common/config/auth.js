@@ -20,13 +20,18 @@ let TokenAuthGuard = class TokenAuthGuard {
         }
         try {
             const decoded = (0, jsonwebtoken_1.verify)(token, 'test');
-            console.log(decoded.joonbee);
             response.locals.memberId = decoded.joonbee;
             return true;
         }
-        catch (err) {
-            console.error(err);
-            throw new common_2.CustomError('토큰 이상 에러', 401);
+        catch (error) {
+            if (error instanceof jsonwebtoken_1.TokenExpiredError) {
+                console.error(error);
+                throw new common_2.CustomError('토큰 이상 에러', 403);
+            }
+            else if (error instanceof jsonwebtoken_1.JsonWebTokenError) {
+                console.error(error);
+                throw new common_2.CustomError('토큰 이상 에러', 401);
+            }
         }
     }
 };

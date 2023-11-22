@@ -22,12 +22,10 @@ const member_entity_1 = require("../../entity/member.entity");
 const like_entity_1 = require("../../entity/like.entity");
 const and_question_entity_1 = require("../../entity/and.question.entity");
 const question_entity_1 = require("../../entity/question.entity");
-const category_entity_1 = require("../../entity/category.entity");
 let InterviewService = class InterviewService {
-    constructor(interviewRepository, interviewAndQuestionRepository, categoryRepository) {
+    constructor(interviewRepository, interviewAndQuestionRepository) {
         this.interviewRepository = interviewRepository;
         this.interviewAndQuestionRepository = interviewAndQuestionRepository;
-        this.categoryRepository = categoryRepository;
         this.PAGE_SIZE = 9;
     }
     async getInterviews(page) {
@@ -115,9 +113,7 @@ exports.InterviewService = InterviewService = __decorate([
     (0, common_1.Injectable)(),
     __param(0, (0, typeorm_1.InjectRepository)(interview_entity_1.Interview)),
     __param(1, (0, typeorm_1.InjectRepository)(and_question_entity_1.InterviewAndQuestion)),
-    __param(2, (0, typeorm_1.InjectRepository)(category_entity_1.Category)),
     __metadata("design:paramtypes", [typeorm_2.Repository,
-        typeorm_2.Repository,
         typeorm_2.Repository])
 ], InterviewService);
 //# sourceMappingURL=interview.service.js.map

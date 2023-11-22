@@ -1,6 +1,7 @@
 import { UserRepository } from "../repository/member.repository"
 import { CustomError, ResponseToken } from "../utils/api.utils";
 import { generateTokenForNickName } from "../utils/jwt.utils";
+import { verify } from "jsonwebtoken";
 
 export const loginAuthentication = async (id: string, nickName: string): Promise<ResponseToken> => {
     const userRepository = new UserRepository();
@@ -14,3 +15,8 @@ export const loginAuthentication = async (id: string, nickName: string): Promise
     const authToken = await generateTokenForNickName(id);
     return authToken;
 }
+
+export const refreshVerify = async (token: string): Promise<boolean> => {
+    
+    return true;
+} 

@@ -3,7 +3,7 @@ import jwt from 'jsonwebtoken';
 import { CustomError, ResponseToken } from './api.utils';
 import { client as redisClient }  from './redis.utils';
 
-const TOKEN_KEY = 'test';
+export const TOKEN_KEY = 'test';
 
 export interface Payload { // 구현 다 되면 사용예쩡
     id: string,
