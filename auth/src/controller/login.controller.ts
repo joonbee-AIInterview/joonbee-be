@@ -17,6 +17,6 @@ export const loginAuthentication = async (id: string, nickName: string): Promise
 }
 
 export const refreshVerify = async (token: string): Promise<boolean> => {
-    
+    verify    
     return true;
 } 
