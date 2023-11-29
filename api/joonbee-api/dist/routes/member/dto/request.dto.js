@@ -63,5 +63,5 @@ __decorate([
 __decorate([
     (0, class_validator_1.IsNotEmpty)({ message: 'category 이름' }),
     __metadata("design:type", String)
-], RequestCartInsertDTO.prototype, "categoryName", void 0);
+], RequestCartInsertDTO.prototype, "subcategoryName", void 0);
 //# sourceMappingURL=request.dto.js.map

@@ -20,7 +20,7 @@ export class UserRepository {
     async insertMember(id: string, email: string, password: string, thumbnail: string, type: string): Promise<void> {
         const client = await pool.getConnection();
         try{
-            const queryText = `INSERT INTO Member(id, email, password, thumbnail, login_type, nick_name) 
+            const queryText = `INSERT INTO member(id, email, password, thumbnail, login_type, nick_name) 
             VALUES(?, ?, ?, ?, ?, '')`;
 
             await client.query(queryText, [id, email, password, thumbnail, type]);

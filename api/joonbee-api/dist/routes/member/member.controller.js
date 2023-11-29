@@ -59,10 +59,21 @@ let MemberController = class MemberController {
         };
         response.json(apiResponse);
     }
+    async myCartStatistics(response) {
+        const memberId = response.locals.memberId;
+        const responseDTO = await this.memberService.getStatisticsForCart(memberId);
+        const apiResponse = {
+            status: 200,
+            data: {
+                categoryInfo: responseDTO
+            }
+        };
+        response.json(apiResponse);
+    }
     async insertCart(dto, response) {
         const memberId = response.locals.memberId;
-        const { questionId, categoryName } = dto;
-        await this.memberService.insertCartService(memberId, questionId, categoryName);
+        const { questionId, subcategoryName } = dto;
+        await this.memberService.insertCartService(memberId, questionId, subcategoryName);
         const apiResponse = {
             status: 200,
             data: '성공'
@@ -149,6 +160,14 @@ __decorate([
     __metadata("design:paramtypes", [String, Object]),
     __metadata("design:returntype", Promise)
 ], MemberController.prototype, "myCartRead", null);
+__decorate([
+    (0, common_2.UseGuards)(auth_1.TokenAuthGuard),
+    (0, common_2.Get)('info/cart'),
+    __param(0, (0, common_2.Res)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], MemberController.prototype, "myCartStatistics", null);
 __decorate([
     (0, common_2.UseGuards)(auth_1.TokenAuthGuard),
     (0, common_2.Post)('cart/save'),

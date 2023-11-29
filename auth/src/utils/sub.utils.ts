@@ -17,8 +17,8 @@ class SseService {
     }
 
     static async serverEventResponse(memberId: string, response: Response): Promise<void> {
-
         const responseData: boolean = this.clientMap.has(memberId);
+
         if(!responseData){
             this.clientMap.set(memberId, response);
             // Header Config
@@ -35,13 +35,11 @@ class SseService {
                 this.clientMap.delete(memberId);
             });
         }else{
-            response.json('NOT');
+            response.send('NOT');
         }
-       
     }
 
     static async sendNotificationToAuthor(memberId: string){
-
         const authorClients: Response = this.clientMap.get(memberId) as Response;
         if(authorClients){
             authorClients.write("LIKE");

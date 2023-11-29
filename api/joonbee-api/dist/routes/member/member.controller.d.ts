@@ -8,6 +8,7 @@ export declare class MemberController {
     myCategoryInfo(page: string, response: Response): Promise<void>;
     myCategoryLikeInfo(page: string, response: Response): Promise<void>;
     myCartRead(page: string, response: Response): Promise<void>;
+    myCartStatistics(response: Response): Promise<void>;
     insertCart(dto: RequestCartInsertDTO, response: Response): Promise<void>;
     insertLikeHandler(dto: RequestLikeDTO, response: Response): Promise<void>;
     insertInterviewAndQuestion(request: Request, response: Response): Promise<void>;

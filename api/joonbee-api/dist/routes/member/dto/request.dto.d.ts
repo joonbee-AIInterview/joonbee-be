@@ -12,5 +12,5 @@ export declare class RequestInterviewSaveDTO {
 }
 export declare class RequestCartInsertDTO {
     questionId: number;
-    categoryName: string;
+    subcategoryName: string;
 }

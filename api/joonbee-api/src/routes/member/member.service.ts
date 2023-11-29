@@ -292,4 +292,27 @@ export class MemberService {
         }
         return false;
    }
+
+   /**
+* @note 마이페이지 장바구니 통계 값 조회
+    */
+async getStatisticsForCart(memberId: string): Promise<ResponseCategoryInfoDTO[]>{
+            const data: RowDataPacket[] = await this.cartRepository
+                    .createQueryBuilder('c')
+                    .select('c.category_name', 'categoryName')
+                    .addSelect('COUNT(*)', 'categoryCount')
+                    .where('c.member_id = :memberId', {memberId})
+                    .groupBy('c.category_name')
+                    .orderBy('categoryCount', 'DESC')
+                    .getRawMany();
+
+            console.log(data);
+
+            const result: ResponseCategoryInfoDTO[] = data.map(packet => ({
+                    categoryName: packet.categoryName,
+                    categoryCount: +packet.categoryCount
+            }));
+
+            return result;
+   }
 }

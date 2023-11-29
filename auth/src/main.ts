@@ -1,15 +1,14 @@
 import { UserRepository } from './repository/member.repository';
 import express, { Request, Response, Router, NextFunction } from 'express';
-import dotenv from 'dotenv';
-import axios from 'axios';
 import kakaoRouter from './routes/kakao.routes';
 import naverRouter from './routes/naver.routes';
 import googleRouter from './routes/google.routes';
 import loginRouter from './routes/login.routes';
 import SseService from './utils/sub.utils';
 import { client } from './utils/redis.utils';
-
 import { CustomError, ApiResponse } from './utils/api.utils';
+import cookieParser from 'cookie-parser';
+
 
 const app = express();
 const PORT = 3000;
@@ -26,7 +25,7 @@ const logRequestDetails = (req: Request, res: Response, next: NextFunction) => {
     console.log(`REQUEST TIME => ${currentTime}, REQUEST URL => ${requestURL}`);
     next();
 }
-
+app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 

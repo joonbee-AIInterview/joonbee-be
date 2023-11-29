@@ -19,13 +19,11 @@ export class QuestionController {
       */
      @Get('random')
      async getQuestions(
-          @Query('page') page: string,
+          @Query('page') page: string = "1",
           @Res() response: Response,
      ) {  
           // 유효성 검사
           if (page === "") throw new CustomError('페이지가 비었습니다. ', 400);
-          // 0인 경우 1로 바꾸기
-          if (page === "0") page = "1";
 
           try {
                const data = await this.questionService.getQuestions(Number(page));
