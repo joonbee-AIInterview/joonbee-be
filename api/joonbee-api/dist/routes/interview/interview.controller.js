@@ -23,6 +23,8 @@ let InterviewController = class InterviewController {
     async getInterviews(page, response) {
         if (page === "")
             throw new common_2.CustomError('페이지가 비었습니다. ', 400);
+        if (page === "0")
+            page = "1";
         try {
             const data = await this.interviewService.getInterviews(Number(page));
             const apiResponse = {
@@ -40,6 +42,8 @@ let InterviewController = class InterviewController {
             throw new common_2.CustomError('페이지가 비었습니다. ', 400);
         if (category === "")
             throw new common_2.CustomError('카테고리가 비었습니다. ', 400);
+        if (page === "0")
+            page = "1";
         try {
             const data = await this.interviewService.getInterviewsWithLikeMemberQuestion(Number(page), category);
             const apiResponse = {
