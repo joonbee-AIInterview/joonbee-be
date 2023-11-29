@@ -29,9 +29,10 @@ export class CartController {
         // 0인 경우 1로 바꾸기
         if (page === "0") page = "1";
         const memberId = response.locals.memberId;
+        console.log(memberId);
         
         try {
-          const data = await this.cartService.getMemberCarts(Number(page), memberId);
+          const data = await this.cartService.getMemberCarts(Number(page), '3');
           const apiResponse: ApiResponse<ResponseCartQuestionsDTO> = {
                status: 200,
                data
@@ -45,7 +46,7 @@ export class CartController {
      /**
       * @api 사용자의 장바구니 질문을 상위 카테고리로 필터링해서 가져온다.
       */
-     //@UseGuards(TokenAuthGuard)
+     @UseGuards(TokenAuthGuard)
      @Get('questions/category')
      async getMemberCartsByCategory(
           @Query('page') page: string,
@@ -91,7 +92,7 @@ export class CartController {
           const memberId = response.locals.memberId;
 
           try {
-               const data = await this.cartService.getMemberCartsBySubcategory(Number(page), memberId, category, subcategory);
+               const data = await this.cartService.getMemberCartsBySubcategory(Number(page), '3', category, subcategory);
                const apiResponse: ApiResponse<ResponseCartQuestionsDTO> = {
                     status: 200,
                     data
