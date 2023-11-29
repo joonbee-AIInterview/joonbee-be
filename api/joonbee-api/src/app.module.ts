@@ -7,6 +7,7 @@ import { MemberModule } from './routes/member/member.module';
 import { QuestionModule } from './routes/question/question.module';
 import { CategoryModule } from './routes/category/category.module';
 import { InterviewModule } from './routes/interview/interview.module';
+import { CartModule } from './routes/cart/cart.module';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { InterviewModule } from './routes/interview/interview.module';
     QuestionModule,
     CategoryModule,
     InterviewModule,
+    CartModule,
   ],
   controllers: [AppController],
   providers: [AppService],

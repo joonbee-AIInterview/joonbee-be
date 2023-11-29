@@ -16,6 +16,7 @@ const member_module_1 = require("./routes/member/member.module");
 const question_module_1 = require("./routes/question/question.module");
 const category_module_1 = require("./routes/category/category.module");
 const interview_module_1 = require("./routes/interview/interview.module");
+const cart_module_1 = require("./routes/cart/cart.module");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -31,6 +32,7 @@ exports.AppModule = AppModule = __decorate([
             question_module_1.QuestionModule,
             category_module_1.CategoryModule,
             interview_module_1.InterviewModule,
+            cart_module_1.CartModule,
         ],
         controllers: [app_controller_1.AppController],
         providers: [app_service_1.AppService],

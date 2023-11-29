@@ -1,5 +1,9 @@
-import { Controller, Get, Post } from "@nestjs/common";
+import { Controller, Get, Query, Res, UseGuards } from "@nestjs/common";
 import { CartService } from "./cart.service";
+import { ApiResponse, CustomError } from "src/common/config/common";
+import { ResponseCartQuestionsDTO } from "./dto/response.dto";
+import { Response } from 'express';
+import { TokenAuthGuard } from "src/common/config/auth";
 
 @Controller('/api/cart')
 export class CartController {
@@ -14,32 +18,27 @@ export class CartController {
      /**
       * @api 사용자의 장바구니 질문을 가져온다.(디폴트)
       */
-     @Get()
-     async getMemberCarts() {
-          
-     }
-
-     /**
-      * @api 사용자의 장바구니 질문을 상위 카테고리로 필터링해서 가져온다.
-      */
-     @Get()
-     async getMemberCartsByCategory() {
-          
-     }
-
-     /**
-      * @api 사용자의 장바구니 질문을 하위 카테고리로 필터링해서 가져온다.
-      */
-     @Get()
-     async getMemberCartsBySubcategory() {
-          
-     }
-
-     /**
-      * @api 사용자가 질문을 생성하고 동시에 장바구니에 담는다.
-      */
-     @Post()
-     async insertMemberQuestionIntoCart() {
-          
+     @UseGuards(TokenAuthGuard)
+     @Get('questions')
+     async getMemberCarts(
+          @Query('page') page: string,
+          @Res() response: Response,
+     ) {
+        // 유효성 검사
+        if (page === "") throw new CustomError('페이지가 비었습니다. ', 400);
+        // 0인 경우 1로 바꾸기
+        if (page === "0") page = "1";
+        const memberId = response.locals.memberId;
+        
+        try {
+          const data = await this.cartService.getMemberCarts(Number(page), memberId);
+          const apiResponse: ApiResponse<ResponseCartQuestionsDTO> = {
+               status: 200,
+               data
+          }
+          response.json(apiResponse);
+        } catch (error) {
+             throw new CustomError('알 수 없는 에러 : ' + error,500);
+        }
      }
 }
