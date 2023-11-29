@@ -5,7 +5,7 @@ import { ResponseCartQuestionsDTO } from "./dto/response.dto";
 import { Response } from 'express';
 import { TokenAuthGuard } from "src/common/config/auth";
 
-@Controller('/api/cart')
+@Controller('api/cart')
 export class CartController {
      /**
      * Nest.js에서 @Res() 데커레이터를 사용하면 Express.js의 원시 Response객체에
@@ -29,10 +29,9 @@ export class CartController {
         // 0인 경우 1로 바꾸기
         if (page === "0") page = "1";
         const memberId = response.locals.memberId;
-        console.log(memberId);
         
         try {
-          const data = await this.cartService.getMemberCarts(Number(page), '3');
+          const data = await this.cartService.getMemberCarts(Number(page), memberId);
           const apiResponse: ApiResponse<ResponseCartQuestionsDTO> = {
                status: 200,
                data
@@ -58,10 +57,10 @@ export class CartController {
           if (category === "") throw new CustomError('카테고리가 비었습니다. ', 400);
           // 0인 경우 1로 바꾸기
           if (page === "0") page = "1";
-          // const memberId = response.locals.memberId;
+          const memberId = response.locals.memberId;
 
           try {
-               const data = await this.cartService.getMemberCartsByCategory(Number(page), '3', category);
+               const data = await this.cartService.getMemberCartsByCategory(Number(page), memberId, category);
                const apiResponse: ApiResponse<ResponseCartQuestionsDTO> = {
                     status: 200,
                     data
@@ -92,7 +91,7 @@ export class CartController {
           const memberId = response.locals.memberId;
 
           try {
-               const data = await this.cartService.getMemberCartsBySubcategory(Number(page), '3', category, subcategory);
+               const data = await this.cartService.getMemberCartsBySubcategory(Number(page), memberId, category, subcategory);
                const apiResponse: ApiResponse<ResponseCartQuestionsDTO> = {
                     status: 200,
                     data

@@ -20,7 +20,7 @@ let QuestionController = class QuestionController {
     constructor(questionService) {
         this.questionService = questionService;
     }
-    async getQuestions(page, response) {
+    async getQuestions(page = "1", response) {
         if (page === "")
             throw new common_2.CustomError('페이지가 비었습니다. ', 400);
         try {
