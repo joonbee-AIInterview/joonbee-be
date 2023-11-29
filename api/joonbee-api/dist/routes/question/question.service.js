@@ -41,7 +41,7 @@ let QuestionService = class QuestionService {
             return this.makeResult(rowPacket, countQuery);
         }
         catch (error) {
-            console.log('getQuestions ERROR question.service 148\n' + error);
+            console.log('getQuestions ERROR question.service 43\n' + error);
             throw new common_2.CustomError('메인 페이지 하단 디폴트 랜덤 질문 정보 불러오기 실패', 500);
         }
     }
@@ -74,7 +74,7 @@ let QuestionService = class QuestionService {
             return this.makeResult(rowPacket, countQuery);
         }
         catch (error) {
-            console.log('getQuestionsWithCategory ERROR question.service 148\n' + error);
+            console.log('getQuestionsWithCategory ERROR question.service 86\n' + error);
             throw new common_2.CustomError('메인 페이지 하단 상위카테고리 랜덤 질문 정보 불러오기 실패', 500);
         }
     }
@@ -102,7 +102,7 @@ let QuestionService = class QuestionService {
             return this.makeResult(rowPacket, countQuery);
         }
         catch (error) {
-            console.log('getQuestionsWithSubcategory ERROR question.service 148\n' + error);
+            console.log('getQuestionsWithSubcategory ERROR question.service 123\n' + error);
             throw new common_2.CustomError('메인 페이지 하단 서브카테고리 랜덤 질문 정보 불러오기 실패', 500);
         }
     }

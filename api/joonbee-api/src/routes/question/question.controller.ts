@@ -17,7 +17,7 @@ export class QuestionController {
      /**
       * @api 메인 페이지 하단부분 API, 디폴트로 16개의 랜덤질문을 가져온다.
       */
-     @Get('random')
+     @Get('all')
      async getQuestions(
           @Query('page') page: string = "1",
           @Res() response: Response,
@@ -40,7 +40,7 @@ export class QuestionController {
      /**
       * @api 메인 페이지 하단부분 API, 카테고리로 분류한 16개의 랜덤질문을 가져온다.
       */
-     @Get('random/category')
+     @Get('all/category')
      async getQuestionsByCategory(
           @Query('page') page: string,
           @Query('category') category: string,
@@ -67,7 +67,7 @@ export class QuestionController {
      /**
       * @api 메인 페이지 하단부분 API, 서비카테코리로 분류한 16개의 랜덤질문을 가져온다.
       */
-     @Get('random/subcategory')
+     @Get('all/subcategory')
      async getQuestionsBySubcategory(
           @Query('page') page: string,
           @Query('category') category: string,

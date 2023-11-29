@@ -63,7 +63,7 @@ export class InterviewService {
                };
                return result;
           } catch (error) {
-              console.log(`getInterviews ERROR interview.service: ${error}`);
+              console.log('getInterviews ERROR interview.service 66\n' + error);
               throw new CustomError('메인 페이지 상단 디폴트 랜덤 인터뷰 정보 불러오기 실패', 500);
           }
      }
@@ -110,7 +110,7 @@ export class InterviewService {
                };
                return result;
           } catch(error) {
-               console.log('getInterviewsWithLikeMemberQuestion ERROR interview.service 148\n' + error);
+               console.log('getInterviewsWithLikeMemberQuestion ERROR interview.service 113\n' + error);
                throw new CustomError('메인 페이지 상단 상위 카테고리 랜덤 인터뷰 정보 불러오기 실패', 500);
           }
      }

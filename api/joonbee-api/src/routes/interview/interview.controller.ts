@@ -19,7 +19,7 @@ export class InterviewController {
      /**
       * @api 메인 페이지 상단부분 API, 디폴트로 9개의 랜덤인터뷰를 가져온다.
       */
-     @Get('random')
+     @Get('all')
      async getInterviews(
           @Query('page') page: string,
           @Res() response: Response,
@@ -44,7 +44,7 @@ export class InterviewController {
      /**
       * @api 메인 페이지 상단부분 API, 카테고리로 분류한 9개의 랜덤인터뷰를 가져온다.
       */
-     @Get('random/category')
+     @Get('all/category')
      async getInterviewsWithLikeMemberQuestion(
           @Query('page') page: string,
           @Query('category') category: string,

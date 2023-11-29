@@ -59,7 +59,7 @@ let InterviewController = class InterviewController {
 };
 exports.InterviewController = InterviewController;
 __decorate([
-    (0, common_1.Get)('random'),
+    (0, common_1.Get)('all'),
     __param(0, (0, common_1.Query)('page')),
     __param(1, (0, common_1.Res)()),
     __metadata("design:type", Function),
@@ -67,7 +67,7 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], InterviewController.prototype, "getInterviews", null);
 __decorate([
-    (0, common_1.Get)('random/category'),
+    (0, common_1.Get)('all/category'),
     __param(0, (0, common_1.Query)('page')),
     __param(1, (0, common_1.Query)('category')),
     __param(2, (0, common_1.Res)()),

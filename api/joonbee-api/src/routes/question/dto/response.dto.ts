@@ -8,8 +8,7 @@ export class ResponseQuestionsWithCategoryData {
      subcategoryName: string;
 }
 
-
-// 메인 페이지 하단API 디폴트 DTO
+// 메인 페이지 하단API DTO
 export class ResponseQuestionsDTO {
      total: number;
      result: ResponseQuestionsWithCategoryData[];
