@@ -5,6 +5,8 @@ import { CustomError } from "src/common/config/common";
 import { Cart } from "src/entity/cart.entity";
 import { Repository } from "typeorm";
 import { ResponseCartQuestionsDTO, ResponseCartQuestionsOfMemberData } from "./dto/response.dto";
+import { Question } from "src/entity/question.entity";
+import { Category } from "src/entity/category.entity";
 
 @Injectable()
 export class CartService {
@@ -14,6 +16,10 @@ export class CartService {
      constructor(
           @InjectRepository(Cart) 
           private readonly cartRepository: Repository<Cart>,
+          @InjectRepository(Question)
+          private readonly questionRepository: Repository<Question>,
+          @InjectRepository(Category)
+          private readonly categoryRepository: Repository<Category>,
      ){
           this.PAGE_SIZE = 10;
      }
@@ -107,6 +113,38 @@ export class CartService {
           } catch (error) {
                console.log('getMemberCartsBySubcategory ERROR cart.service 137\n' + error);
                throw new CustomError('면접 전, 사용자의 장바구니 하위카테고리 필터 질문 데이터 전체 조회 실패', 500);
+          }
+     }
+
+     /**
+      * @note 사용자가 입력한 질문을 생성하고 저장 후, 장바구니에 생성과 저장한다.
+      */
+     async insertMemberQuestionIntoCart(memberId: string, categoryName: string, subcategoryName: string, questionContent: string): Promise<void> {
+          try {
+               const category = await this.categoryRepository.findOne({
+                    where: {
+                         categoryName: subcategoryName,
+                    },
+               });
+
+               const questionObj = this.questionRepository.create({
+                    category: category,
+                    gptFlag: 0,
+                    questionLevel: category.categoryLevel,
+                    writer: memberId,
+                    questionContent: questionContent,
+               });
+               const question = await this.questionRepository.save(questionObj);
+
+               const cartObj = this.cartRepository.create({
+                    memberId,
+                    questionId: question.id,
+                    categoryName: subcategoryName,
+               });
+               await this.cartRepository.save(cartObj);
+          } catch (error) {
+               console.log('insertMemberQuestionIntoCart ERROR cart.service 146');
+               throw new CustomError('사용자가 생성한 질문 장바구니 담기 실패', 500);
           }
      }
 

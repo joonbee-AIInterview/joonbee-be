@@ -1,9 +1,11 @@
-import { Controller, Get, Query, Res, UseGuards } from "@nestjs/common";
+import { Body, Controller, Get, Post, Query, Res, UseGuards, ValidationPipe } from "@nestjs/common";
 import { CartService } from "./cart.service";
 import { ApiResponse, CustomError } from "src/common/config/common";
 import { ResponseCartQuestionsDTO } from "./dto/response.dto";
 import { Response } from 'express';
 import { TokenAuthGuard } from "src/common/config/auth";
+import { RequestMemberQuestionInsertCartDTO } from "./dto/request.dto";
+import { ApiBody } from "@nestjs/swagger";
 
 @Controller('api/cart')
 export class CartController {
@@ -96,6 +98,34 @@ export class CartController {
                     status: 200,
                     data
                }
+               response.json(apiResponse);
+          } catch (error) {
+               throw new CustomError('알 수 없는 에러 : ' + error,500);
+          }
+     }
+
+     /**
+      * @api 사용자가 질문을 생성하고 본인의 장바구에 저장한다.
+      */
+     @UseGuards(TokenAuthGuard)
+     @Post('question/save')
+     @ApiBody({ type: RequestMemberQuestionInsertCartDTO})
+     async insertMemberQuestionIntoCart(
+          @Body(new ValidationPipe()) dto: RequestMemberQuestionInsertCartDTO,
+          @Res() response: Response  
+     ) {
+          const { categoryName, subcategoryName, questionContent } = dto;
+          if (categoryName === "") throw new CustomError('카테고리가 비었습니다. ', 400);
+          if (subcategoryName === "") throw new CustomError('서브카테고리가 비었습니다. ', 400);
+          if (questionContent === "") throw new CustomError('질문 내용이 비어있습니다.', 400);
+          const memberId: string = response.locals.memberId;
+
+          try {
+               await this.cartService.insertMemberQuestionIntoCart(memberId, categoryName, subcategoryName, questionContent);
+               const apiResponse: ApiResponse<string> = {
+                    status: 200,
+                    data: '성공'
+                }
                response.json(apiResponse);
           } catch (error) {
                throw new CustomError('알 수 없는 에러 : ' + error,500);
