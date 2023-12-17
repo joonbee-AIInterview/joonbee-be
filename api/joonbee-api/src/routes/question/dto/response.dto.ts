@@ -14,3 +14,18 @@ export class ResponseQuestionsDTO {
      result: ResponseQuestionsWithCategoryData[];
 }
 
+
+/**
+ * 랜덤 GPT 질문 가져오기
+ */
+export class ResponseGPTQuestionsDTO {
+     memberId: string;
+     category: string;
+     result: ResponseGPTQuestionData[];
+}
+
+export class ResponseGPTQuestionData {
+     questionId: number;
+     subcategoryName: string;
+     questionContent: string;
+}

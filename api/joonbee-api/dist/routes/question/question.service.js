@@ -106,6 +106,20 @@ let QuestionService = class QuestionService {
             throw new common_2.CustomError('메인 페이지 하단 서브카테고리 랜덤 질문 정보 불러오기 실패', 500);
         }
     }
+    async getQuestionsByGPT(memberId, categoryName, subcategoryName, questionCount) {
+        try {
+            const rowPacket = await this.questionRepository.createQueryBuilder('q')
+                .select(['q.id as questionId', 'q.question_content as questionContent', 'c.category_name as subcategory'])
+                .innerJoin('Category', 'c', 'q.category_id = c.id AND c.category_name = :categoryName', { categoryName: subcategoryName })
+                .where('q.writer = :writer', { writer: 'gpt' })
+                .orderBy('RAND()').limit(parseInt(questionCount)).getRawMany();
+            return this.makeGPTResult(memberId, categoryName, rowPacket);
+        }
+        catch (error) {
+            console.log('getQuestionsByGPT ERROR question.service 123\n' + error);
+            throw new common_2.CustomError('GPT질문들 가져오기 실패', 500);
+        }
+    }
     makeResult(rowPacket, countQuery) {
         const questionsWithCategoryDTOs = rowPacket.map(packet => ({
             questionId: packet.questionId,
@@ -116,6 +130,19 @@ let QuestionService = class QuestionService {
         const result = {
             total: Number(countQuery.count),
             result: questionsWithCategoryDTOs
+        };
+        return result;
+    }
+    makeGPTResult(memberId, categoryName, rowPacket) {
+        const questionByGptDTOs = rowPacket.map(packet => ({
+            questionId: packet.questionId,
+            subcategoryName: packet.subcategory,
+            questionContent: packet.questionContent,
+        }));
+        const result = {
+            memberId: memberId,
+            category: categoryName,
+            result: questionByGptDTOs,
         };
         return result;
     }

@@ -16,6 +16,7 @@ exports.QuestionController = void 0;
 const common_1 = require("@nestjs/common");
 const question_service_1 = require("./question.service");
 const common_2 = require("../../common/config/common");
+const auth_1 = require("../../common/config/auth");
 let QuestionController = class QuestionController {
     constructor(questionService) {
         this.questionService = questionService;
@@ -75,6 +76,26 @@ let QuestionController = class QuestionController {
             throw new common_2.CustomError('알 수 없는 에러 : ' + error, 500);
         }
     }
+    async getQuestionsByGPT(category, subcategory, questionCount, response) {
+        if (category === "")
+            throw new common_2.CustomError('카테고리가 비었습니다. ', 400);
+        if (subcategory === "")
+            throw new common_2.CustomError('서브카테고리가 비었습니다. ', 400);
+        if (![2, 4, 6, 8, 10].includes(parseInt(questionCount)))
+            throw new common_2.CustomError('질문의 개수를 2, 4, 6, 8, 10 중에서 선택해주세요. ', 400);
+        const memberId = response.locals.memberId;
+        try {
+            const data = await this.questionService.getQuestionsByGPT(memberId, category, subcategory, questionCount);
+            const apiResponse = {
+                status: 200,
+                data
+            };
+            response.json(apiResponse);
+        }
+        catch (error) {
+            throw new common_2.CustomError('알 수 없는 에러 : ' + error, 500);
+        }
+    }
 };
 exports.QuestionController = QuestionController;
 __decorate([
@@ -104,6 +125,17 @@ __decorate([
     __metadata("design:paramtypes", [String, String, String, Object]),
     __metadata("design:returntype", Promise)
 ], QuestionController.prototype, "getQuestionsBySubcategory", null);
+__decorate([
+    (0, common_1.UseGuards)(auth_1.TokenAuthGuard),
+    (0, common_1.Get)('gpt'),
+    __param(0, (0, common_1.Query)('category')),
+    __param(1, (0, common_1.Query)('subcategory')),
+    __param(2, (0, common_1.Query)('questionCount')),
+    __param(3, (0, common_1.Res)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, String, String, Object]),
+    __metadata("design:returntype", Promise)
+], QuestionController.prototype, "getQuestionsByGPT", null);
 exports.QuestionController = QuestionController = __decorate([
     (0, common_1.Controller)('api/question'),
     __metadata("design:paramtypes", [question_service_1.QuestionService])
