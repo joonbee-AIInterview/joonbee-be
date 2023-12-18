@@ -10,7 +10,7 @@ import { Category } from "src/entity/category.entity";
      imports: [TypeOrmModule.forFeature([
           Interview,
           InterviewAndQuestion,
-          Category
+          Category,
      ])],
      controllers: [InterviewController],
      providers: [InterviewService]

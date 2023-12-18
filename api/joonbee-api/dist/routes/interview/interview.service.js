@@ -36,7 +36,7 @@ let InterviewService = class InterviewService {
                 .getRawOne();
             const rowPacket = await this.interviewRepository
                 .createQueryBuilder('interview')
-                .select(['interview.id as interviewId', 'interview.member_id as memberId', 'm.thumbnail as thumbnail', 'interview.category_name as categoryName', 'COUNT(l.member_id) as likeCount',])
+                .select(['interview.id as interviewId', 'interview.member_id as memberId', 'm.thumbnail as thumbnail', 'm.nick_name as nickname', 'interview.category_name as categoryName', 'COUNT(l.member_id) as likeCount',])
                 .innerJoin(member_entity_1.Member, 'm', 'interview.member_id = m.id')
                 .leftJoin(like_entity_1.Like, 'l', 'interview.id = l.interview_id')
                 .groupBy('interview.id, interview.member_id, m.thumbnail, interview.category_name')
@@ -45,7 +45,7 @@ let InterviewService = class InterviewService {
                 .limit(this.PAGE_SIZE)
                 .getRawMany();
             const interviewsWithQuestionCategoryMemberDTOs = await Promise.all(rowPacket.map(async (packet) => {
-                const { interviewId, memberId, thumbnail, categoryName, likeCount } = packet;
+                const { interviewId, memberId, thumbnail, categoryName, likeCount, nickname } = packet;
                 const questionsQuery = await this.interviewAndQuestionRepository
                     .createQueryBuilder('iaq')
                     .select(['q.id as questionId', 'q.question_content as questionContent',])
@@ -53,7 +53,7 @@ let InterviewService = class InterviewService {
                     .where('iaq.interview_id = :interviewId', { interviewId })
                     .getRawMany();
                 const questions = questionsQuery.map(({ questionId, questionContent }) => ({ questionId, questionContent, }));
-                return { interviewId, memberId, thumbnail, categoryName, likeCount, questions, };
+                return { interviewId, memberId, nickname, thumbnail, categoryName, likeCount, questions, };
             }));
             const result = {
                 total: Number(countQuery.count),
@@ -76,7 +76,7 @@ let InterviewService = class InterviewService {
             console.log(countQuery);
             const rowPacket = await this.interviewRepository
                 .createQueryBuilder('interview')
-                .select(['interview.id as interviewId', 'interview.member_id as memberId', 'm.thumbnail as thumbnail', 'interview.category_name as categoryName', 'COUNT(l.member_id) as likeCount',])
+                .select(['interview.id as interviewId', 'interview.member_id as memberId', 'm.thumbnail as thumbnail', 'm.nick_name as nickname', 'interview.category_name as categoryName', 'COUNT(l.member_id) as likeCount',])
                 .innerJoin(member_entity_1.Member, 'm', 'interview.member_id = m.id')
                 .leftJoin(like_entity_1.Like, 'l', 'interview.id = l.interview_id')
                 .where('interview.categoryName = :categoryName', { categoryName: categoryName })
@@ -86,7 +86,7 @@ let InterviewService = class InterviewService {
                 .limit(this.PAGE_SIZE)
                 .getRawMany();
             const interviewsWithQuestionCategoryMemberDTOs = await Promise.all(rowPacket.map(async (packet) => {
-                const { interviewId, memberId, thumbnail, categoryName, likeCount } = packet;
+                const { interviewId, memberId, thumbnail, categoryName, likeCount, nickname } = packet;
                 const questionsQuery = await this.interviewAndQuestionRepository
                     .createQueryBuilder('iaq')
                     .select(['q.id as questionId', 'q.question_content as questionContent',])
@@ -94,7 +94,7 @@ let InterviewService = class InterviewService {
                     .where('iaq.interview_id = :interviewId', { interviewId })
                     .getRawMany();
                 const questions = questionsQuery.map(({ questionId, questionContent }) => ({ questionId, questionContent, }));
-                return { interviewId, memberId, thumbnail, categoryName, likeCount, questions, };
+                return { interviewId, memberId, nickname, thumbnail, categoryName, likeCount, questions, };
             }));
             const result = {
                 total: Number(countQuery.count),

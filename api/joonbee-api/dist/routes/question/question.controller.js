@@ -17,55 +17,44 @@ const common_1 = require("@nestjs/common");
 const question_service_1 = require("./question.service");
 const common_2 = require("../../common/config/common");
 const auth_1 = require("../../common/config/auth");
+const category_entity_1 = require("../../entity/category.entity");
+const typeorm_1 = require("typeorm");
+const typeorm_2 = require("@nestjs/typeorm");
 let QuestionController = class QuestionController {
-    constructor(questionService) {
+    constructor(questionService, categoryRepository) {
         this.questionService = questionService;
+        this.categoryRepository = categoryRepository;
     }
-    async getQuestions(page = "1", response) {
+    async getQuestions(page = "1", category, subCategory, response) {
         if (page === "")
             throw new common_2.CustomError('페이지가 비었습니다. ', 400);
-        try {
-            const data = await this.questionService.getQuestions(Number(page));
-            const apiResponse = {
-                status: 200,
-                data
-            };
-            response.json(apiResponse);
-        }
-        catch (error) {
-            throw new common_2.CustomError('알 수 없는 에러 : ' + error, 500);
-        }
-    }
-    async getQuestionsByCategory(page, category, response) {
-        if (page === "")
-            throw new common_2.CustomError('페이지가 비었습니다. ', 400);
-        if (category === "")
-            throw new common_2.CustomError('카테고리가 비었습니다. ', 400);
         if (page === "0")
             page = "1";
+        let data;
         try {
-            const data = await this.questionService.getQuestionsWithCategory(Number(page), category);
-            const apiResponse = {
-                status: 200,
-                data
-            };
-            response.json(apiResponse);
-        }
-        catch (error) {
-            throw new common_2.CustomError('알 수 없는 에러 : ' + error, 500);
-        }
-    }
-    async getQuestionsBySubcategory(page, category, subCategory, response) {
-        if (page === "")
-            throw new common_2.CustomError('페이지가 비었습니다. ', 400);
-        if (category === "")
-            throw new common_2.CustomError('카테고리가 비었습니다. ', 400);
-        if (subCategory === "")
-            throw new common_2.CustomError('서브카테고리가 비었습니다. ', 400);
-        if (page === "0")
-            page = "1";
-        try {
-            const data = await this.questionService.getQuestionsWithSubcategory(Number(page), category, subCategory);
+            if (category === "" && subCategory === "") {
+                data = await this.questionService.getQuestions(Number(page));
+            }
+            else if (category !== "" && subCategory === "") {
+                const check = await this.categoryRepository.findOne({
+                    where: {
+                        categoryName: category,
+                    },
+                });
+                if (!check || check.categoryLevel !== 0)
+                    throw new common_2.CustomError('데이터베이스에 존재하지 않는 상위카테고리입니다. ', 404);
+                data = await this.questionService.getQuestionsWithCategory(Number(page), category);
+            }
+            else {
+                const check = await this.categoryRepository.findOne({
+                    where: {
+                        categoryName: subCategory,
+                    },
+                });
+                if (!check || check.categoryLevel !== 1)
+                    throw new common_2.CustomError('데이터베이스에 존재하지 않는 하위카테고리입니다. ', 404);
+                data = await this.questionService.getQuestionsWithSubcategory(Number(page), category, subCategory);
+            }
             const apiResponse = {
                 status: 200,
                 data
@@ -101,30 +90,13 @@ exports.QuestionController = QuestionController;
 __decorate([
     (0, common_1.Get)('all'),
     __param(0, (0, common_1.Query)('page')),
-    __param(1, (0, common_1.Res)()),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, Object]),
-    __metadata("design:returntype", Promise)
-], QuestionController.prototype, "getQuestions", null);
-__decorate([
-    (0, common_1.Get)('all/category'),
-    __param(0, (0, common_1.Query)('page')),
-    __param(1, (0, common_1.Query)('category')),
-    __param(2, (0, common_1.Res)()),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, String, Object]),
-    __metadata("design:returntype", Promise)
-], QuestionController.prototype, "getQuestionsByCategory", null);
-__decorate([
-    (0, common_1.Get)('all/subcategory'),
-    __param(0, (0, common_1.Query)('page')),
     __param(1, (0, common_1.Query)('category')),
     __param(2, (0, common_1.Query)('subcategory')),
     __param(3, (0, common_1.Res)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String, String, String, Object]),
     __metadata("design:returntype", Promise)
-], QuestionController.prototype, "getQuestionsBySubcategory", null);
+], QuestionController.prototype, "getQuestions", null);
 __decorate([
     (0, common_1.UseGuards)(auth_1.TokenAuthGuard),
     (0, common_1.Get)('gpt'),
@@ -138,6 +110,8 @@ __decorate([
 ], QuestionController.prototype, "getQuestionsByGPT", null);
 exports.QuestionController = QuestionController = __decorate([
     (0, common_1.Controller)('api/question'),
-    __metadata("design:paramtypes", [question_service_1.QuestionService])
+    __param(1, (0, typeorm_2.InjectRepository)(category_entity_1.Category)),
+    __metadata("design:paramtypes", [question_service_1.QuestionService,
+        typeorm_1.Repository])
 ], QuestionController);
 //# sourceMappingURL=question.controller.js.map

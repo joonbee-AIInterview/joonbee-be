@@ -22,7 +22,7 @@ exports.InterviewModule = InterviewModule = __decorate([
         imports: [typeorm_1.TypeOrmModule.forFeature([
                 interview_entity_1.Interview,
                 and_question_entity_1.InterviewAndQuestion,
-                category_entity_1.Category
+                category_entity_1.Category,
             ])],
         controllers: [interview_controller_1.InterviewController],
         providers: [interview_service_1.InterviewService]
