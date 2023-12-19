@@ -1,4 +1,4 @@
-import { Controller, Get, Query, Res } from '@nestjs/common';
+import { Controller, Get, Query, Res, UseGuards } from '@nestjs/common';
 import { InterviewService } from './interview.service';
 import { Response } from 'express';
 import { ApiResponse, CustomError } from 'src/common/config/common';
@@ -6,6 +6,7 @@ import { ResponseInterviewsDTO } from './dto/response.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Category } from 'src/entity/category.entity';
 import { Repository } from 'typeorm';
+import { CheckLogin } from './const/check.login';
 
 @Controller('api/interview')
 export class InterviewController {
@@ -25,6 +26,7 @@ export class InterviewController {
      /**
       * @api 메인 페이지 상단부분 API
       */
+     @UseGuards(CheckLogin)
      @Get('all')
      async getInterviews(
           @Query('page') page: string,
@@ -32,10 +34,11 @@ export class InterviewController {
           @Res() response: Response,
      ) {  
           let data;
-
+          const memberId = response.locals.memberId;
+                 
           try {
                if (category === "") { 
-                    data = await this.interviewService.getInterviews(Number(page));
+                    data = await this.interviewService.getInterviews(Number(page), memberId);
                } else {
                     const check = await this.categoryRepository.findOne({
                          where: {
@@ -43,7 +46,7 @@ export class InterviewController {
                          },
                     });
                     if (!check || check.categoryLevel !== 0) throw new CustomError('데이터베이스에 존재하지 않는 상위카테고리입니다. ', 404);
-                    data = await this.interviewService.getInterviewsWithLikeMemberQuestion(Number(page), category);
+                    data = await this.interviewService.getInterviewsWithLikeMemberQuestion(Number(page), memberId, category);
                }
                const apiResponse: ApiResponse<ResponseInterviewsDTO> = {
                     status: 200,

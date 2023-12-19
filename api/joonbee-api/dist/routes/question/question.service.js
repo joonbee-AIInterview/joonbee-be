@@ -110,7 +110,7 @@ let QuestionService = class QuestionService {
         try {
             const rowPacket = await this.questionRepository.createQueryBuilder('q')
                 .select(['q.id as questionId', 'q.question_content as questionContent', 'c.category_name as subcategory'])
-                .innerJoin('Category', 'c', 'q.category_id = c.id AND c.category_name = :categoryName', { categoryName: subcategoryName })
+                .innerJoin('Category', 'c', 'q.category_id = c.id AND c.category_name IN (:...categoryNames)', { categoryNames: subcategoryName })
                 .where('q.writer = :writer', { writer: 'gpt' })
                 .orderBy('RAND()').limit(parseInt(questionCount)).getRawMany();
             return this.makeGPTResult(memberId, categoryName, rowPacket);

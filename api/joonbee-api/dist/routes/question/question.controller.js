@@ -25,17 +25,17 @@ let QuestionController = class QuestionController {
         this.questionService = questionService;
         this.categoryRepository = categoryRepository;
     }
-    async getQuestions(page = "1", category, subCategory, response) {
+    async getQuestions(page = "1", category, subcategory, response) {
         if (page === "")
             throw new common_2.CustomError('페이지가 비었습니다. ', 400);
         if (page === "0")
             page = "1";
         let data;
         try {
-            if (category === "" && subCategory === "") {
+            if (category === "" && subcategory === "") {
                 data = await this.questionService.getQuestions(Number(page));
             }
-            else if (category !== "" && subCategory === "") {
+            else if (category !== "" && subcategory === "") {
                 const check = await this.categoryRepository.findOne({
                     where: {
                         categoryName: category,
@@ -46,14 +46,21 @@ let QuestionController = class QuestionController {
                 data = await this.questionService.getQuestionsWithCategory(Number(page), category);
             }
             else {
-                const check = await this.categoryRepository.findOne({
+                const checkCategory = await this.categoryRepository.findOne({
                     where: {
-                        categoryName: subCategory,
+                        categoryName: category,
                     },
                 });
-                if (!check || check.categoryLevel !== 1)
+                if (!checkCategory || checkCategory.categoryLevel !== 0)
+                    throw new common_2.CustomError('데이터베이스에 존재하지 않는 상위카테고리입니다. ', 404);
+                const checkSubcategory = await this.categoryRepository.findOne({
+                    where: {
+                        categoryName: subcategory,
+                    },
+                });
+                if (!checkSubcategory || checkSubcategory.categoryLevel !== 1)
                     throw new common_2.CustomError('데이터베이스에 존재하지 않는 하위카테고리입니다. ', 404);
-                data = await this.questionService.getQuestionsWithSubcategory(Number(page), category, subCategory);
+                data = await this.questionService.getQuestionsWithSubcategory(Number(page), category, subcategory);
             }
             const apiResponse = {
                 status: 200,
@@ -68,7 +75,7 @@ let QuestionController = class QuestionController {
     async getQuestionsByGPT(category, subcategory, questionCount, response) {
         if (category === "")
             throw new common_2.CustomError('카테고리가 비었습니다. ', 400);
-        if (subcategory === "")
+        if (subcategory.length <= 0)
             throw new common_2.CustomError('서브카테고리가 비었습니다. ', 400);
         if (![2, 4, 6, 8, 10].includes(parseInt(questionCount)))
             throw new common_2.CustomError('질문의 개수를 2, 4, 6, 8, 10 중에서 선택해주세요. ', 400);
@@ -101,11 +108,11 @@ __decorate([
     (0, common_1.UseGuards)(auth_1.TokenAuthGuard),
     (0, common_1.Get)('gpt'),
     __param(0, (0, common_1.Query)('category')),
-    __param(1, (0, common_1.Query)('subcategory')),
+    __param(1, (0, common_1.Query)('subcategory', new common_1.ParseArrayPipe({ items: String, separator: ',' }))),
     __param(2, (0, common_1.Query)('questionCount')),
     __param(3, (0, common_1.Res)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, String, String, Object]),
+    __metadata("design:paramtypes", [String, Array, String, Object]),
     __metadata("design:returntype", Promise)
 ], QuestionController.prototype, "getQuestionsByGPT", null);
 exports.QuestionController = QuestionController = __decorate([

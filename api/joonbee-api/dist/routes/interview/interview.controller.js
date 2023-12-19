@@ -19,6 +19,7 @@ const common_2 = require("../../common/config/common");
 const typeorm_1 = require("@nestjs/typeorm");
 const category_entity_1 = require("../../entity/category.entity");
 const typeorm_2 = require("typeorm");
+const check_login_1 = require("./const/check.login");
 let InterviewController = class InterviewController {
     constructor(interviewService, categoryRepository) {
         this.interviewService = interviewService;
@@ -26,9 +27,10 @@ let InterviewController = class InterviewController {
     }
     async getInterviews(page, category, response) {
         let data;
+        const memberId = response.locals.memberId;
         try {
             if (category === "") {
-                data = await this.interviewService.getInterviews(Number(page));
+                data = await this.interviewService.getInterviews(Number(page), memberId);
             }
             else {
                 const check = await this.categoryRepository.findOne({
@@ -38,7 +40,7 @@ let InterviewController = class InterviewController {
                 });
                 if (!check || check.categoryLevel !== 0)
                     throw new common_2.CustomError('데이터베이스에 존재하지 않는 상위카테고리입니다. ', 404);
-                data = await this.interviewService.getInterviewsWithLikeMemberQuestion(Number(page), category);
+                data = await this.interviewService.getInterviewsWithLikeMemberQuestion(Number(page), memberId, category);
             }
             const apiResponse = {
                 status: 200,
@@ -53,6 +55,7 @@ let InterviewController = class InterviewController {
 };
 exports.InterviewController = InterviewController;
 __decorate([
+    (0, common_1.UseGuards)(check_login_1.CheckLogin),
     (0, common_1.Get)('all'),
     __param(0, (0, common_1.Query)('page')),
     __param(1, (0, common_1.Query)('category')),

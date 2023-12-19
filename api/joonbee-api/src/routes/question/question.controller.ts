@@ -1,4 +1,4 @@
-import { Controller,Get, Query, Res, UseGuards } from "@nestjs/common";
+import { Controller,Get, ParseArrayPipe, Query, Res, UseGuards } from "@nestjs/common";
 import { QuestionService } from "src/routes/question/question.service";
 import { ApiResponse, CustomError } from "src/common/config/common";
 import { ResponseGPTQuestionsDTO, ResponseQuestionsDTO } from "./dto/response.dto";
@@ -30,7 +30,7 @@ export class QuestionController {
      async getQuestions(
           @Query('page') page: string = "1",
           @Query('category') category: string,
-          @Query('subcategory') subCategory: string,
+          @Query('subcategory') subcategory: string,
           @Res() response: Response,
      ) {  
           // 유효성 검사
@@ -40,9 +40,9 @@ export class QuestionController {
           let data;
 
           try {
-               if (category === "" && subCategory === "") {
+               if (category === "" && subcategory === "") {
                     data = await this.questionService.getQuestions(Number(page));
-               } else if (category !== "" && subCategory === "") {
+               } else if (category !== "" && subcategory === "") {
                     const check = await this.categoryRepository.findOne({
                          where: {
                               categoryName: category,
@@ -51,13 +51,19 @@ export class QuestionController {
                     if (!check || check.categoryLevel !== 0) throw new CustomError('데이터베이스에 존재하지 않는 상위카테고리입니다. ', 404);
                     data = await this.questionService.getQuestionsWithCategory(Number(page), category);
                } else {
-                    const check = await this.categoryRepository.findOne({
+                    const checkCategory = await this.categoryRepository.findOne({
                          where: {
-                              categoryName: subCategory,
+                              categoryName: category,
                          },
                     });
-                    if (!check || check.categoryLevel !== 1) throw new CustomError('데이터베이스에 존재하지 않는 하위카테고리입니다. ', 404);
-                    data = await this.questionService.getQuestionsWithSubcategory(Number(page), category, subCategory);
+                    if (!checkCategory || checkCategory.categoryLevel !== 0) throw new CustomError('데이터베이스에 존재하지 않는 상위카테고리입니다. ', 404);
+                    const checkSubcategory = await this.categoryRepository.findOne({
+                         where: {
+                              categoryName: subcategory,
+                         },
+                    }); 
+                    if (!checkSubcategory || checkSubcategory.categoryLevel !== 1) throw new CustomError('데이터베이스에 존재하지 않는 하위카테고리입니다. ', 404);
+                    data = await this.questionService.getQuestionsWithSubcategory(Number(page), category, subcategory);
                }
 
                const apiResponse: ApiResponse<ResponseQuestionsDTO> = {
@@ -133,15 +139,14 @@ export class QuestionController {
      @Get('gpt')
      async getQuestionsByGPT(
           @Query('category') category: string,
-          @Query('subcategory') subcategory: string,
+          @Query('subcategory', new ParseArrayPipe({ items: String, separator: ',' })) subcategory: string[],
           @Query('questionCount') questionCount: string,
           @Res() response: Response  
      ) {
           if (category === "") throw new CustomError('카테고리가 비었습니다. ', 400);
-          if (subcategory === "") throw new CustomError('서브카테고리가 비었습니다. ', 400);
+          if (subcategory.length <= 0) throw new CustomError('서브카테고리가 비었습니다. ', 400);
           if (![2, 4, 6, 8, 10].includes(parseInt(questionCount))) throw new CustomError('질문의 개수를 2, 4, 6, 8, 10 중에서 선택해주세요. ', 400);
           const memberId: string = response.locals.memberId;
-
           try {
                const data = await this.questionService.getQuestionsByGPT(memberId, category, subcategory, questionCount);
                const apiResponse: ApiResponse<ResponseGPTQuestionsDTO> = {
@@ -149,7 +154,7 @@ export class QuestionController {
                     data
                 }
                response.json(apiResponse);
-          } catch (error) {
+          } catch (error) { 
                throw new CustomError('알 수 없는 에러 : ' + error,500);
           }
      }

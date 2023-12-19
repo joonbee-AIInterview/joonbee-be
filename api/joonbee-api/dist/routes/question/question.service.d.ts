@@ -11,7 +11,7 @@ export declare class QuestionService {
     getQuestions(page: number): Promise<ResponseQuestionsDTO>;
     getQuestionsWithCategory(page: number, categoryName: string): Promise<ResponseQuestionsDTO>;
     getQuestionsWithSubcategory(page: number, categoryName: string, subCategoryName: string): Promise<ResponseQuestionsDTO>;
-    getQuestionsByGPT(memberId: string, categoryName: string, subcategoryName: string, questionCount: string): Promise<ResponseGPTQuestionsDTO>;
+    getQuestionsByGPT(memberId: string, categoryName: string, subcategoryName: string[], questionCount: string): Promise<ResponseGPTQuestionsDTO>;
     makeResult(rowPacket: RowDataPacket[], countQuery: RowDataPacket): ResponseQuestionsDTO;
     makeGPTResult(memberId: string, categoryName: string, rowPacket: RowDataPacket[]): ResponseGPTQuestionsDTO;
 }
