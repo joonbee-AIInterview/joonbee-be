@@ -6,5 +6,5 @@ export declare class InterviewController {
     private readonly interviewService;
     private readonly categoryRepository;
     constructor(interviewService: InterviewService, categoryRepository: Repository<Category>);
-    getInterviews(page: string, category: string, response: Response): Promise<void>;
+    getInterviews(page: string, category: string, sort: string, response: Response): Promise<void>;
 }

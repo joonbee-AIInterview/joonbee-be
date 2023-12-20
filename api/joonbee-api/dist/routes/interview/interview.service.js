@@ -28,7 +28,7 @@ let InterviewService = class InterviewService {
         this.interviewAndQuestionRepository = interviewAndQuestionRepository;
         this.PAGE_SIZE = 9;
     }
-    async getInterviews(page, memberId) {
+    async getInterviews(page, memberId, sort) {
         let rowPacket;
         try {
             const countQuery = await this.interviewRepository
@@ -36,33 +36,78 @@ let InterviewService = class InterviewService {
                 .select('COUNT(interview.id)', 'count')
                 .getRawOne();
             if (memberId === undefined) {
-                rowPacket = await this.interviewRepository
-                    .createQueryBuilder('interview')
-                    .select(['interview.id as interviewId', 'interview.member_id as memberId', 'm.thumbnail as thumbnail', 'm.nick_name as nickname', 'interview.category_name as categoryName', 'COUNT(l.member_id) as likeCount',])
-                    .innerJoin(member_entity_1.Member, 'm', 'interview.member_id = m.id')
-                    .leftJoin(like_entity_1.Like, 'l', 'interview.id = l.interview_id')
-                    .groupBy('interview.id, interview.member_id, m.thumbnail, interview.category_name')
-                    .orderBy('likeCount', 'DESC').offset((page - 1) * this.PAGE_SIZE).limit(this.PAGE_SIZE).getRawMany();
+                if (sort === 'like') {
+                    rowPacket = await this.interviewRepository
+                        .createQueryBuilder('interview')
+                        .select(['interview.id as interviewId',
+                        'interview.member_id as memberId',
+                        'm.thumbnail as thumbnail',
+                        'm.nick_name as nickname',
+                        'interview.category_name as categoryName',
+                        'COUNT(l.member_id) as likeCount',
+                        'CASE WHEN EXISTS (SELECT 1 FROM `like` ll WHERE ll.interview_id = interview.id and ll.member_id = :memberId) then "Y" ELSE "N" END as bool'])
+                        .innerJoin(member_entity_1.Member, 'm', 'interview.member_id = m.id')
+                        .leftJoin(like_entity_1.Like, 'l', 'interview.id = l.interview_id')
+                        .groupBy('interview.id, interview.member_id, m.thumbnail, interview.category_name')
+                        .orderBy('likeCount', 'DESC').offset((page - 1) * this.PAGE_SIZE).limit(this.PAGE_SIZE).getRawMany();
+                }
+                else {
+                    rowPacket = await this.interviewRepository
+                        .createQueryBuilder('interview')
+                        .select(['interview.id as interviewId',
+                        'interview.member_id as memberId',
+                        'm.thumbnail as thumbnail',
+                        'm.nick_name as nickname',
+                        'interview.category_name as categoryName',
+                        'COUNT(l.member_id) as likeCount',
+                        'CASE WHEN EXISTS (SELECT 1 FROM `like` ll WHERE ll.interview_id = interview.id and ll.member_id = :memberId) then "Y" ELSE "N" END as bool'])
+                        .innerJoin(member_entity_1.Member, 'm', 'interview.member_id = m.id')
+                        .leftJoin(like_entity_1.Like, 'l', 'interview.id = l.interview_id')
+                        .groupBy('interview.id, interview.member_id, m.thumbnail, interview.category_name')
+                        .orderBy('interview.createdAt', 'DESC').offset((page - 1) * this.PAGE_SIZE).limit(this.PAGE_SIZE).getRawMany();
+                }
             }
             else {
-                rowPacket = await this.interviewRepository
-                    .createQueryBuilder('interview')
-                    .select(['interview.id as interviewId', 'interview.member_id as memberId', 'm.thumbnail as thumbnail', 'm.nick_name as nickname', 'interview.category_name as categoryName', 'COUNT(l.member_id) as likeCount',
-                    'CASE WHEN EXISTS (SELECT 1 FROM `like` ll WHERE ll.interview_id = interview.id and ll.member_id = :memberId) then "Y" ELSE "N" END as bool',])
-                    .innerJoin(member_entity_1.Member, 'm', 'interview.member_id = m.id')
-                    .leftJoin(like_entity_1.Like, 'l', 'interview.id = l.interview_id')
-                    .groupBy('interview.id, interview.member_id, m.thumbnail, interview.category_name').setParameter('memberId', memberId)
-                    .orderBy('likeCount', 'DESC').offset((page - 1) * this.PAGE_SIZE).limit(this.PAGE_SIZE).getRawMany();
+                if (sort === 'like') {
+                    rowPacket = await this.interviewRepository
+                        .createQueryBuilder('interview')
+                        .select(['interview.id as interviewId',
+                        'interview.member_id as memberId',
+                        'm.thumbnail as thumbnail',
+                        'm.nick_name as nickname',
+                        'interview.category_name as categoryName',
+                        'COUNT(l.member_id) as likeCount',
+                        'CASE WHEN EXISTS (SELECT 1 FROM `like` ll WHERE ll.interview_id = interview.id and ll.member_id = :memberId) then "Y" ELSE "N" END as bool'])
+                        .innerJoin(member_entity_1.Member, 'm', 'interview.member_id = m.id')
+                        .leftJoin(like_entity_1.Like, 'l', 'interview.id = l.interview_id')
+                        .groupBy('interview.id, interview.member_id, m.thumbnail, interview.category_name').setParameter('memberId', memberId)
+                        .orderBy('likeCount', 'DESC').offset((page - 1) * this.PAGE_SIZE).limit(this.PAGE_SIZE).getRawMany();
+                }
+                else {
+                    rowPacket = await this.interviewRepository
+                        .createQueryBuilder('interview')
+                        .select(['interview.id as interviewId',
+                        'interview.member_id as memberId',
+                        'm.thumbnail as thumbnail',
+                        'm.nick_name as nickname',
+                        'interview.category_name as categoryName',
+                        'COUNT(l.member_id) as likeCount',
+                        'CASE WHEN EXISTS (SELECT 1 FROM `like` ll WHERE ll.interview_id = interview.id and ll.member_id = :memberId) then "Y" ELSE "N" END as bool'])
+                        .innerJoin(member_entity_1.Member, 'm', 'interview.member_id = m.id')
+                        .leftJoin(like_entity_1.Like, 'l', 'interview.id = l.interview_id')
+                        .groupBy('interview.id, interview.member_id, m.thumbnail, interview.category_name').setParameter('memberId', memberId)
+                        .orderBy('interview.createdAt', 'DESC').offset((page - 1) * this.PAGE_SIZE).limit(this.PAGE_SIZE).getRawMany();
+                }
             }
             const interviewsWithQuestionCategoryMemberDTOs = await Promise.all(rowPacket.map(async (packet) => {
-                const { interviewId, memberId, thumbnail, categoryName, likeCount, nickname } = packet;
+                const { interviewId, memberId, thumbnail, categoryName, likeCount, nickname, bool } = packet;
                 const questionsQuery = await this.interviewAndQuestionRepository
                     .createQueryBuilder('iaq')
                     .select(['q.id as questionId', 'q.question_content as questionContent',])
                     .innerJoin(question_entity_1.Question, 'q', 'iaq.question_id = q.id')
                     .where('iaq.interview_id = :interviewId', { interviewId }).getRawMany();
                 const questions = questionsQuery.map(({ questionId, questionContent }) => ({ questionId, questionContent, }));
-                return { interviewId, memberId, nickname, thumbnail, categoryName, likeCount, questions, };
+                return { interviewId, bool, memberId, nickname, thumbnail, categoryName, likeCount, questions };
             }));
             const result = {
                 total: Number(countQuery.count),
@@ -75,7 +120,7 @@ let InterviewService = class InterviewService {
             throw new common_2.CustomError('메인 페이지 상단 디폴트 랜덤 인터뷰 정보 불러오기 실패', 500);
         }
     }
-    async getInterviewsWithLikeMemberQuestion(page, memberId, categoryName) {
+    async getInterviewsWithLikeMemberQuestion(page, memberId, categoryName, sort) {
         let rowPacket;
         try {
             const countQuery = await this.interviewRepository
@@ -83,33 +128,82 @@ let InterviewService = class InterviewService {
                 .select('COUNT(interview.id)', 'count')
                 .where('interview.categoryName = :categoryName', { categoryName: categoryName }).getRawOne();
             if (memberId === undefined) {
-                rowPacket = await this.interviewRepository
-                    .createQueryBuilder('interview')
-                    .select(['interview.id as interviewId', 'interview.member_id as memberId', 'm.thumbnail as thumbnail', 'm.nick_name as nickname', 'interview.category_name as categoryName', 'COUNT(l.member_id) as likeCount',])
-                    .innerJoin(member_entity_1.Member, 'm', 'interview.member_id = m.id')
-                    .leftJoin(like_entity_1.Like, 'l', 'interview.id = l.interview_id')
-                    .where('interview.categoryName = :categoryName', { categoryName: categoryName })
-                    .groupBy('interview.id, interview.member_id, m.thumbnail, interview.category_name')
-                    .orderBy('likeCount', 'DESC').offset((page - 1) * this.PAGE_SIZE).limit(this.PAGE_SIZE).getRawMany();
+                if (sort === 'like') {
+                    rowPacket = await this.interviewRepository
+                        .createQueryBuilder('interview')
+                        .select(['interview.id as interviewId',
+                        'interview.member_id as memberId',
+                        'm.thumbnail as thumbnail',
+                        'm.nick_name as nickname',
+                        'interview.category_name as categoryName',
+                        'COUNT(l.member_id) as likeCount',
+                        'CASE WHEN EXISTS (SELECT 1 FROM `like` ll WHERE ll.interview_id = interview.id and ll.member_id = :memberId) then "Y" ELSE "N" END as bool'])
+                        .innerJoin(member_entity_1.Member, 'm', 'interview.member_id = m.id')
+                        .leftJoin(like_entity_1.Like, 'l', 'interview.id = l.interview_id')
+                        .where('interview.categoryName = :categoryName', { categoryName: categoryName })
+                        .groupBy('interview.id, interview.member_id, m.thumbnail, interview.category_name')
+                        .orderBy('likeCount', 'DESC').offset((page - 1) * this.PAGE_SIZE).limit(this.PAGE_SIZE).getRawMany();
+                }
+                else {
+                    rowPacket = await this.interviewRepository
+                        .createQueryBuilder('interview')
+                        .select(['interview.id as interviewId',
+                        'interview.member_id as memberId',
+                        'm.thumbnail as thumbnail',
+                        'm.nick_name as nickname',
+                        'interview.category_name as categoryName',
+                        'COUNT(l.member_id) as likeCount',
+                        'CASE WHEN EXISTS (SELECT 1 FROM `like` ll WHERE ll.interview_id = interview.id and ll.member_id = :memberId) then "Y" ELSE "N" END as bool'])
+                        .innerJoin(member_entity_1.Member, 'm', 'interview.member_id = m.id')
+                        .leftJoin(like_entity_1.Like, 'l', 'interview.id = l.interview_id')
+                        .where('interview.categoryName = :categoryName', { categoryName: categoryName })
+                        .groupBy('interview.id, interview.member_id, m.thumbnail, interview.category_name')
+                        .orderBy('interview.createdAt', 'DESC').offset((page - 1) * this.PAGE_SIZE).limit(this.PAGE_SIZE).getRawMany();
+                }
             }
             else {
-                rowPacket = await this.interviewRepository
-                    .createQueryBuilder('interview')
-                    .select(['interview.id as interviewId', 'interview.member_id as memberId', 'm.thumbnail as thumbnail', 'm.nick_name as nickname', 'interview.category_name as categoryName', 'COUNT(l.member_id) as likeCount',])
-                    .innerJoin(member_entity_1.Member, 'm', 'interview.member_id = m.id')
-                    .leftJoin(like_entity_1.Like, 'l', 'interview.id = l.interview_id')
-                    .groupBy('interview.id, interview.member_id, m.thumbnail, interview.category_name')
-                    .orderBy('likeCount', 'DESC').offset((page - 1) * this.PAGE_SIZE).limit(this.PAGE_SIZE).getRawMany();
+                if (sort === 'like') {
+                    rowPacket = await this.interviewRepository
+                        .createQueryBuilder('interview')
+                        .select(['interview.id as interviewId',
+                        'interview.member_id as memberId',
+                        'm.thumbnail as thumbnail',
+                        'm.nick_name as nickname',
+                        'interview.category_name as categoryName',
+                        'COUNT(l.member_id) as likeCount',
+                        'CASE WHEN EXISTS (SELECT 1 FROM `like` ll WHERE ll.interview_id = interview.id and ll.member_id = :memberId) then "Y" ELSE "N" END as bool'])
+                        .innerJoin(member_entity_1.Member, 'm', 'interview.member_id = m.id')
+                        .leftJoin(like_entity_1.Like, 'l', 'interview.id = l.interview_id')
+                        .where('interview.categoryName = :categoryName', { categoryName: categoryName })
+                        .groupBy('interview.id, interview.member_id, m.thumbnail, interview.category_name').setParameter('memberId', memberId)
+                        .orderBy('likeCount', 'DESC').offset((page - 1) * this.PAGE_SIZE).limit(this.PAGE_SIZE).getRawMany();
+                }
+                else {
+                    rowPacket = await this.interviewRepository
+                        .createQueryBuilder('interview')
+                        .select(['interview.id as interviewId',
+                        'interview.member_id as memberId',
+                        'm.thumbnail as thumbnail',
+                        'm.nick_name as nickname',
+                        'interview.category_name as categoryName',
+                        'COUNT(l.member_id) as likeCount',
+                        'CASE WHEN EXISTS (SELECT 1 FROM `like` ll WHERE ll.interview_id = interview.id and ll.member_id = :memberId) then "Y" ELSE "N" END as bool'])
+                        .innerJoin(member_entity_1.Member, 'm', 'interview.member_id = m.id')
+                        .leftJoin(like_entity_1.Like, 'l', 'interview.id = l.interview_id')
+                        .where('interview.categoryName = :categoryName', { categoryName: categoryName })
+                        .groupBy('interview.id, interview.member_id, m.thumbnail, interview.category_name').setParameter('memberId', memberId)
+                        .orderBy('interview.createdAt', 'DESC').offset((page - 1) * this.PAGE_SIZE).limit(this.PAGE_SIZE).getRawMany();
+                }
             }
             const interviewsWithQuestionCategoryMemberDTOs = await Promise.all(rowPacket.map(async (packet) => {
-                const { interviewId, memberId, thumbnail, categoryName, likeCount, nickname } = packet;
+                const { interviewId, memberId, thumbnail, categoryName, likeCount, nickname, bool } = packet;
                 const questionsQuery = await this.interviewAndQuestionRepository
                     .createQueryBuilder('iaq')
                     .select(['q.id as questionId', 'q.question_content as questionContent',])
                     .innerJoin(question_entity_1.Question, 'q', 'iaq.question_id = q.id')
                     .where('iaq.interview_id = :interviewId', { interviewId }).getRawMany();
                 const questions = questionsQuery.map(({ questionId, questionContent }) => ({ questionId, questionContent, }));
-                return { interviewId, memberId, nickname, thumbnail, categoryName, likeCount, questions, };
+                return { interviewId, bool, memberId, nickname, thumbnail, categoryName, likeCount, questions };
             }));
             const result = {
                 total: Number(countQuery.count),
