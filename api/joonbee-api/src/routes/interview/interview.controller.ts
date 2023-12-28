@@ -34,13 +34,11 @@ export class InterviewController {
           @Query('sort') sort: string,
           @Res() response: Response,
      ) {  
-          // 유효성 검사
           if (page === "") throw new CustomError('페이지가 비었습니다. ', 400);
           if (!['latest', 'like'].includes(sort)) throw new CustomError('정렬기준이 틀렸습니다. ', 400);
-          // 0인 경우 1로 바꾸기
           if (page === "0") page = "1";
           let data;
-          const memberId = '송재근'//response.locals.memberId;
+          const memberId = response.locals.memberId;
 
           try {
                if (category === "") { 
@@ -63,30 +61,4 @@ export class InterviewController {
                throw new CustomError('알 수 없는 에러 : ' + error,500);
           }
      }
-
-     // /**
-     //  * @api 메인 페이지 상단부분 API, 카테고리로 분류한 9개의 랜덤인터뷰를 가져온다.
-     //  */
-     // @Get('all/category')
-     // async getInterviewsWithLikeMemberQuestion(
-     //      @Query('page') page: string,
-     //      @Query('category') category: string,
-     //      @Res() response: Response,
-     // ) {  
-     //      // 유효성 검사
-     //      if (page === "") throw new CustomError('페이지가 비었습니다. ', 400);
-     //      // 0인 경우 1로 바꾸기
-     //      if (page === "0") page = "1";
-
-     //      try {
-     //           const data = await this.interviewService.getInterviewsWithLikeMemberQuestion(Number(page), category);
-     //           const apiResponse: ApiResponse<ResponseInterviewsDTO> = {
-     //                status: 200,
-     //                data
-     //           }
-     //           response.json(apiResponse);
-     //      } catch(error) {
-     //           throw new CustomError('알 수 없는 에러 : ' + error,500);
-     //      }
-     // }
 }

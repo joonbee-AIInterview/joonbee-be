@@ -45,7 +45,7 @@ let InterviewService = class InterviewService {
                         'm.nick_name as nickname',
                         'interview.category_name as categoryName',
                         'COUNT(l.member_id) as likeCount',
-                        'CASE WHEN EXISTS (SELECT 1 FROM `like` ll WHERE ll.interview_id = interview.id and ll.member_id = :memberId) then "Y" ELSE "N" END as bool'])
+                        'interview.createdAt as createdAt'])
                         .innerJoin(member_entity_1.Member, 'm', 'interview.member_id = m.id')
                         .leftJoin(like_entity_1.Like, 'l', 'interview.id = l.interview_id')
                         .groupBy('interview.id, interview.member_id, m.thumbnail, interview.category_name')
@@ -60,7 +60,7 @@ let InterviewService = class InterviewService {
                         'm.nick_name as nickname',
                         'interview.category_name as categoryName',
                         'COUNT(l.member_id) as likeCount',
-                        'CASE WHEN EXISTS (SELECT 1 FROM `like` ll WHERE ll.interview_id = interview.id and ll.member_id = :memberId) then "Y" ELSE "N" END as bool'])
+                        'interview.createdAt as createdAt'])
                         .innerJoin(member_entity_1.Member, 'm', 'interview.member_id = m.id')
                         .leftJoin(like_entity_1.Like, 'l', 'interview.id = l.interview_id')
                         .groupBy('interview.id, interview.member_id, m.thumbnail, interview.category_name')
@@ -77,7 +77,7 @@ let InterviewService = class InterviewService {
                         'm.nick_name as nickname',
                         'interview.category_name as categoryName',
                         'COUNT(l.member_id) as likeCount',
-                        'CASE WHEN EXISTS (SELECT 1 FROM `like` ll WHERE ll.interview_id = interview.id and ll.member_id = :memberId) then "Y" ELSE "N" END as bool'])
+                        'CASE WHEN EXISTS (SELECT 1 FROM `like` ll WHERE ll.interview_id = interview.id and ll.member_id = :memberId) then "true" ELSE "false" END as bool'])
                         .innerJoin(member_entity_1.Member, 'm', 'interview.member_id = m.id')
                         .leftJoin(like_entity_1.Like, 'l', 'interview.id = l.interview_id')
                         .groupBy('interview.id, interview.member_id, m.thumbnail, interview.category_name').setParameter('memberId', memberId)
@@ -92,7 +92,7 @@ let InterviewService = class InterviewService {
                         'm.nick_name as nickname',
                         'interview.category_name as categoryName',
                         'COUNT(l.member_id) as likeCount',
-                        'CASE WHEN EXISTS (SELECT 1 FROM `like` ll WHERE ll.interview_id = interview.id and ll.member_id = :memberId) then "Y" ELSE "N" END as bool'])
+                        'CASE WHEN EXISTS (SELECT 1 FROM `like` ll WHERE ll.interview_id = interview.id and ll.member_id = :memberId) then "true" ELSE "false" END as bool'])
                         .innerJoin(member_entity_1.Member, 'm', 'interview.member_id = m.id')
                         .leftJoin(like_entity_1.Like, 'l', 'interview.id = l.interview_id')
                         .groupBy('interview.id, interview.member_id, m.thumbnail, interview.category_name').setParameter('memberId', memberId)
@@ -103,11 +103,12 @@ let InterviewService = class InterviewService {
                 const { interviewId, memberId, thumbnail, categoryName, likeCount, nickname, bool } = packet;
                 const questionsQuery = await this.interviewAndQuestionRepository
                     .createQueryBuilder('iaq')
-                    .select(['q.id as questionId', 'q.question_content as questionContent',])
+                    .select(['q.id as questionId', 'q.question_content as questionContent'])
                     .innerJoin(question_entity_1.Question, 'q', 'iaq.question_id = q.id')
                     .where('iaq.interview_id = :interviewId', { interviewId }).getRawMany();
+                const liked = Boolean(bool);
                 const questions = questionsQuery.map(({ questionId, questionContent }) => ({ questionId, questionContent, }));
-                return { interviewId, bool, memberId, nickname, thumbnail, categoryName, likeCount, questions };
+                return { interviewId, liked, memberId, nickname, thumbnail, categoryName, likeCount, questions };
             }));
             const result = {
                 total: Number(countQuery.count),
@@ -129,6 +130,7 @@ let InterviewService = class InterviewService {
                 .where('interview.categoryName = :categoryName', { categoryName: categoryName }).getRawOne();
             if (memberId === undefined) {
                 if (sort === 'like') {
+                    console.log('로그인 X 정렬 like');
                     rowPacket = await this.interviewRepository
                         .createQueryBuilder('interview')
                         .select(['interview.id as interviewId',
@@ -137,7 +139,7 @@ let InterviewService = class InterviewService {
                         'm.nick_name as nickname',
                         'interview.category_name as categoryName',
                         'COUNT(l.member_id) as likeCount',
-                        'CASE WHEN EXISTS (SELECT 1 FROM `like` ll WHERE ll.interview_id = interview.id and ll.member_id = :memberId) then "Y" ELSE "N" END as bool'])
+                        'interview.createdAt as createdAt'])
                         .innerJoin(member_entity_1.Member, 'm', 'interview.member_id = m.id')
                         .leftJoin(like_entity_1.Like, 'l', 'interview.id = l.interview_id')
                         .where('interview.categoryName = :categoryName', { categoryName: categoryName })
@@ -145,6 +147,7 @@ let InterviewService = class InterviewService {
                         .orderBy('likeCount', 'DESC').offset((page - 1) * this.PAGE_SIZE).limit(this.PAGE_SIZE).getRawMany();
                 }
                 else {
+                    console.log('로그인 X 정렬 latest');
                     rowPacket = await this.interviewRepository
                         .createQueryBuilder('interview')
                         .select(['interview.id as interviewId',
@@ -153,7 +156,7 @@ let InterviewService = class InterviewService {
                         'm.nick_name as nickname',
                         'interview.category_name as categoryName',
                         'COUNT(l.member_id) as likeCount',
-                        'CASE WHEN EXISTS (SELECT 1 FROM `like` ll WHERE ll.interview_id = interview.id and ll.member_id = :memberId) then "Y" ELSE "N" END as bool'])
+                        'interview.createdAt as createdAt'])
                         .innerJoin(member_entity_1.Member, 'm', 'interview.member_id = m.id')
                         .leftJoin(like_entity_1.Like, 'l', 'interview.id = l.interview_id')
                         .where('interview.categoryName = :categoryName', { categoryName: categoryName })
@@ -163,6 +166,7 @@ let InterviewService = class InterviewService {
             }
             else {
                 if (sort === 'like') {
+                    console.log('로그인 O 정렬 like');
                     rowPacket = await this.interviewRepository
                         .createQueryBuilder('interview')
                         .select(['interview.id as interviewId',
@@ -171,7 +175,7 @@ let InterviewService = class InterviewService {
                         'm.nick_name as nickname',
                         'interview.category_name as categoryName',
                         'COUNT(l.member_id) as likeCount',
-                        'CASE WHEN EXISTS (SELECT 1 FROM `like` ll WHERE ll.interview_id = interview.id and ll.member_id = :memberId) then "Y" ELSE "N" END as bool'])
+                        'CASE WHEN EXISTS (SELECT 1 FROM `like` ll WHERE ll.interview_id = interview.id and ll.member_id = :memberId) then "true" ELSE "false" END as bool'])
                         .innerJoin(member_entity_1.Member, 'm', 'interview.member_id = m.id')
                         .leftJoin(like_entity_1.Like, 'l', 'interview.id = l.interview_id')
                         .where('interview.categoryName = :categoryName', { categoryName: categoryName })
@@ -179,6 +183,7 @@ let InterviewService = class InterviewService {
                         .orderBy('likeCount', 'DESC').offset((page - 1) * this.PAGE_SIZE).limit(this.PAGE_SIZE).getRawMany();
                 }
                 else {
+                    console.log('로그인 O 정렬 latest');
                     rowPacket = await this.interviewRepository
                         .createQueryBuilder('interview')
                         .select(['interview.id as interviewId',
@@ -187,7 +192,7 @@ let InterviewService = class InterviewService {
                         'm.nick_name as nickname',
                         'interview.category_name as categoryName',
                         'COUNT(l.member_id) as likeCount',
-                        'CASE WHEN EXISTS (SELECT 1 FROM `like` ll WHERE ll.interview_id = interview.id and ll.member_id = :memberId) then "Y" ELSE "N" END as bool'])
+                        'CASE WHEN EXISTS (SELECT 1 FROM `like` ll WHERE ll.interview_id = interview.id and ll.member_id = :memberId) then "true" ELSE "false" END as bool'])
                         .innerJoin(member_entity_1.Member, 'm', 'interview.member_id = m.id')
                         .leftJoin(like_entity_1.Like, 'l', 'interview.id = l.interview_id')
                         .where('interview.categoryName = :categoryName', { categoryName: categoryName })
@@ -202,8 +207,9 @@ let InterviewService = class InterviewService {
                     .select(['q.id as questionId', 'q.question_content as questionContent',])
                     .innerJoin(question_entity_1.Question, 'q', 'iaq.question_id = q.id')
                     .where('iaq.interview_id = :interviewId', { interviewId }).getRawMany();
+                const liked = Boolean(bool);
                 const questions = questionsQuery.map(({ questionId, questionContent }) => ({ questionId, questionContent, }));
-                return { interviewId, bool, memberId, nickname, thumbnail, categoryName, likeCount, questions };
+                return { interviewId, liked, memberId, nickname, thumbnail, categoryName, likeCount, questions };
             }));
             const result = {
                 total: Number(countQuery.count),

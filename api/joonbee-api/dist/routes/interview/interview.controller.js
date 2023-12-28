@@ -33,7 +33,7 @@ let InterviewController = class InterviewController {
         if (page === "0")
             page = "1";
         let data;
-        const memberId = '송재근';
+        const memberId = response.locals.memberId;
         try {
             if (category === "") {
                 data = await this.interviewService.getInterviews(Number(page), memberId, sort);
