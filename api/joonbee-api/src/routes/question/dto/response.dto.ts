@@ -29,3 +29,19 @@ export class ResponseGPTQuestionData {
      subcategoryName: string;
      questionContent: string;
 }
+
+
+
+/**
+ * findMemberCheckQuestions
+ */
+export class ResponseQuestionsInfoDTO {
+     result: ResponseQuestionsData[];
+}
+
+export class ResponseQuestionsData {
+     questionId: number;
+     category: string;
+     subcategory: string;
+     questionContent: string;
+}

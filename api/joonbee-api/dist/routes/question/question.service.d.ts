@@ -2,7 +2,7 @@ import { RowDataPacket } from 'mysql2';
 import { Category } from "src/entity/category.entity";
 import { Question } from "src/entity/question.entity";
 import { Repository } from "typeorm";
-import { ResponseGPTQuestionsDTO, ResponseQuestionsDTO } from "./dto/response.dto";
+import { ResponseGPTQuestionsDTO, ResponseQuestionsDTO, ResponseQuestionsInfoDTO } from "./dto/response.dto";
 export declare class QuestionService {
     private readonly questionRepository;
     private readonly categoryRepository;
@@ -13,5 +13,6 @@ export declare class QuestionService {
     getQuestionsWithSubcategory(page: number, categoryName: string, subCategoryName: string): Promise<ResponseQuestionsDTO>;
     getQuestionsByGPT(memberId: string, categoryName: string, subcategoryName: string[], questionCount: string): Promise<ResponseGPTQuestionsDTO>;
     makeResult(rowPacket: RowDataPacket[], countQuery: RowDataPacket): ResponseQuestionsDTO;
+    findMemberCheckQuestions(memberId: string, questionIds: number[]): Promise<ResponseQuestionsInfoDTO>;
     makeGPTResult(memberId: string, categoryName: string, rowPacket: RowDataPacket[]): ResponseGPTQuestionsDTO;
 }

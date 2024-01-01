@@ -133,6 +133,39 @@ let QuestionService = class QuestionService {
         };
         return result;
     }
+    async findMemberCheckQuestions(memberId, questionIds) {
+        try {
+            for (let i = 0; i < questionIds.length; i++) {
+                const questionExists = await this.questionRepository.exist({ where: { id: questionIds[i] } });
+                if (!questionExists)
+                    throw new common_2.CustomError(`${questionIds[i]}이 존재하지 않습니다. `, 400);
+            }
+            const rowPacket = await this.questionRepository.createQueryBuilder('q')
+                .select([
+                'q.id AS questionId',
+                'c.category_name AS category',
+                '(SELECT c2.category_name FROM category c2 WHERE c2.id = c.category_upper_id) AS subcategory',
+                'q.question_content AS questionContent',
+            ])
+                .innerJoin('q.category', 'c')
+                .where('q.id IN (:...questionIds)', { questionIds })
+                .getRawMany();
+            const questionsDTOs = rowPacket.map(packet => ({
+                questionId: packet.questionId,
+                category: packet.category,
+                subcategory: packet.subcategory,
+                questionContent: packet.questionContent,
+            }));
+            const result = {
+                result: questionsDTOs,
+            };
+            return result;
+        }
+        catch (error) {
+            console.log('findMemberCheckQuestions ERROR cart.service 100\n' + error);
+            throw new common_2.CustomError('선택한 사용자 질문 인터뷰에 저장하기 실패', 500);
+        }
+    }
     makeGPTResult(memberId, categoryName, rowPacket) {
         const questionByGptDTOs = rowPacket.map(packet => ({
             questionId: packet.questionId,

@@ -92,6 +92,20 @@ let QuestionController = class QuestionController {
             throw new common_2.CustomError('알 수 없는 에러 : ' + error, 500);
         }
     }
+    async findMemberCheckQuestions(questionIds, response) {
+        const memberId = response.locals.memberId;
+        try {
+            const data = await this.questionService.findMemberCheckQuestions(memberId, questionIds);
+            const apiResponse = {
+                status: 200,
+                data
+            };
+            response.json(apiResponse);
+        }
+        catch (error) {
+            throw new common_2.CustomError('알 수 없는 에러 : ' + error, 500);
+        }
+    }
 };
 exports.QuestionController = QuestionController;
 __decorate([
@@ -115,6 +129,15 @@ __decorate([
     __metadata("design:paramtypes", [String, Array, String, Object]),
     __metadata("design:returntype", Promise)
 ], QuestionController.prototype, "getQuestionsByGPT", null);
+__decorate([
+    (0, common_1.UseGuards)(auth_1.TokenAuthGuard),
+    (0, common_1.Get)(),
+    __param(0, (0, common_1.Query)('questionIds', new common_1.ParseArrayPipe({ items: Number, separator: ',' }))),
+    __param(1, (0, common_1.Res)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Array, Object]),
+    __metadata("design:returntype", Promise)
+], QuestionController.prototype, "findMemberCheckQuestions", null);
 exports.QuestionController = QuestionController = __decorate([
     (0, common_1.Controller)('api/question'),
     __param(1, (0, typeorm_2.InjectRepository)(category_entity_1.Category)),

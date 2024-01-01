@@ -8,4 +8,5 @@ export declare class QuestionController {
     constructor(questionService: QuestionService, categoryRepository: Repository<Category>);
     getQuestions(page: string, category: string, subcategory: string, response: Response): Promise<void>;
     getQuestionsByGPT(category: string, subcategory: string[], questionCount: string, response: Response): Promise<void>;
+    findMemberCheckQuestions(questionIds: number[], response: Response): Promise<void>;
 }
