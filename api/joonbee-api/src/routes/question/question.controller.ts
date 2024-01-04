@@ -8,6 +8,7 @@ import { Category } from "src/entity/category.entity";
 import { Repository } from "typeorm";
 import { InjectRepository } from "@nestjs/typeorm";
 import { ApiBody } from "@nestjs/swagger";
+import { CheckLogin } from "../interview/const/check.login";
 
 @Controller('api/question')
 export class QuestionController {
@@ -34,9 +35,7 @@ export class QuestionController {
           @Query('subcategory') subcategory: string,
           @Res() response: Response,
      ) {  
-          // 유효성 검사
           if (page === "") throw new CustomError('페이지가 비었습니다. ', 400);
-          // 0인 경우 1로 바꾸기
           if (page === "0") page = "1";
           let data;
 
@@ -51,7 +50,7 @@ export class QuestionController {
                     });
                     if (!check || check.categoryLevel !== 0) throw new CustomError('데이터베이스에 존재하지 않는 상위카테고리입니다. ', 404);
                     data = await this.questionService.getQuestionsWithCategory(Number(page), category);
-               } else {
+               } else if (category !== "" && subcategory !== "") {
                     const checkCategory = await this.categoryRepository.findOne({
                          where: {
                               categoryName: category,
@@ -65,6 +64,8 @@ export class QuestionController {
                     }); 
                     if (!checkSubcategory || checkSubcategory.categoryLevel !== 1) throw new CustomError('데이터베이스에 존재하지 않는 하위카테고리입니다. ', 404);
                     data = await this.questionService.getQuestionsWithSubcategory(Number(page), category, subcategory);
+               } else {
+                    throw new CustomError('category와 subcategory를 올바르게 입력하지 않았습니다. ', 404);
                }
 
                const apiResponse: ApiResponse<ResponseQuestionsDTO> = {

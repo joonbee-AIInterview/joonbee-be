@@ -45,7 +45,7 @@ let QuestionController = class QuestionController {
                     throw new common_2.CustomError('데이터베이스에 존재하지 않는 상위카테고리입니다. ', 404);
                 data = await this.questionService.getQuestionsWithCategory(Number(page), category);
             }
-            else {
+            else if (category !== "" && subcategory !== "") {
                 const checkCategory = await this.categoryRepository.findOne({
                     where: {
                         categoryName: category,
@@ -61,6 +61,9 @@ let QuestionController = class QuestionController {
                 if (!checkSubcategory || checkSubcategory.categoryLevel !== 1)
                     throw new common_2.CustomError('데이터베이스에 존재하지 않는 하위카테고리입니다. ', 404);
                 data = await this.questionService.getQuestionsWithSubcategory(Number(page), category, subcategory);
+            }
+            else {
+                throw new common_2.CustomError('category와 subcategory를 올바르게 입력하지 않았습니다. ', 404);
             }
             const apiResponse = {
                 status: 200,
